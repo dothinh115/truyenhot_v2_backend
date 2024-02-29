@@ -1,17 +1,17 @@
 #!/bin/bash
+log_file="./deploy.log"
+log_time=$(date +"%Y-%m-%d %H:%M:%S")
+
 git fetch origin
 
 CHANGES=$(git log HEAD..origin/main --oneline)
 if [ $CHANGES ]; then
-    git pull
-    #code deploy của bạn
-    #ví dụ bằng pm2
-    #pm2 stop nest (dừng quá trình)
-    #pm2 delete nest (xoá quá trình)
-    #PORT=5555 pm2 start yarn --name "nest" -- start
-    echo "Có thay đổi"
+    pm2 stop nest 
+    pm2 delete nest 
+    PORT=5555 pm2 start yarn --name "nest" -- start
+    log_content="Deploy thành công"
 else 
-    echo "Không có thay đổi"
+    log_content="Deploy thành công"
 fi
-sleep 60
-./autoDeploy.sh
+
+echo "$log_time: $log_content" >> "$log_file"

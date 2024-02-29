@@ -2,5 +2,8 @@
     "EXCLUDED_ROUTE": ["auth", "me", "route"],
     "TEXT_SEARCH": ["title", "name"],
     "TIMESTAMP": true,
-    "VERSION_KEY": false
+    "VERSION_KEY": false,
+    "AUTH": {
+        "BROWSER_ID_CHECK": false
+    }
 }

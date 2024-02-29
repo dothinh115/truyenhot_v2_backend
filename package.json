@@ -32,7 +32,6 @@
     "@typegoose/auto-increment": "^4.2.0",
     "axios": "^1.6.7",
     "bcryptjs": "^2.4.3",
-    "child_process": "^1.0.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "escape-string-regexp": "^5.0.0",

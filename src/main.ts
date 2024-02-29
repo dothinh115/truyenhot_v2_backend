@@ -8,7 +8,11 @@ async function bootstrap() {
   app.enableCors();
   app.setGlobalPrefix('/api');
   app.use(express.static('.'));
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+    }),
+  );
 
   await app.listen(4567);
 }

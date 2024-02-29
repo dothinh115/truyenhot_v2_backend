@@ -1,21 +1,20 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
-import { RoleModule } from './role/role.module';
-import { CommonModule } from './common/common.module';
-import { QueryModule } from './query/query.module';
-import { MeModule } from './me/me.module';
-import { MailModule } from './mail/mail.module';
-import { PermisionModule } from './permission/permision.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UserModule } from './modules/user/user.module';
+import { RoleModule } from './modules/role/role.module';
+import { QueryModule } from './modules/query/query.module';
+import { MeModule } from './modules/me/me.module';
+import { MailModule } from './modules/mail/mail.module';
+import { PermisionModule } from './modules/permission/permision.module';
 import { DiscoveryModule } from '@nestjs/core';
-import { StrategyModule } from './strategy/strategy.module';
-import { RouteModule } from './route/route.module';
-import { SettingModule } from './setting/setting.module';
+import { StrategyModule } from './modules/strategy/strategy.module';
+import { RouteModule } from './modules/route/route.module';
+import { SettingModule } from './modules/setting/setting.module';
 import globalPlugin from './utils/mongoose/middleware/global.middleware';
 import { Connection } from 'mongoose';
-import { BootstrapModule } from './bootstrap/bootstrap.module';
+import { BootstrapModule } from './modules/bootstrap/bootstrap.module';
 
 @Global()
 @Module({
@@ -33,7 +32,6 @@ import { BootstrapModule } from './bootstrap/bootstrap.module';
     AuthModule,
     UserModule,
     RoleModule,
-    CommonModule,
     QueryModule,
     MeModule,
     MailModule,
