@@ -154,7 +154,6 @@ export class OnBootStrapService implements OnApplicationBootstrap {
   async onApplicationBootstrap() {
     await this.bootstrapService.createSetting();
     await this.bootstrapService.handlePath();
-
     console.log('Tạo thành công các permissions');
     await this.bootstrapService.rootUserCheck();
   }
