@@ -29,7 +29,10 @@ export class BoostrapService {
   //Tạo setting object
   async createSetting() {
     const exist = await this.settingModel.findOne();
-    if (!exist) await this.settingModel.create({});
+    if (!exist) {
+      await this.settingModel.create({});
+      console.log('Tạo thành công setting');
+    }
   }
 
   //Hàm check và lưu toàn bộ path trong dự án
@@ -126,14 +129,14 @@ export class BoostrapService {
   //Hàm check root_user
   async rootUserCheck() {
     const setting = await this.settingModel.findOne();
-    if (setting && setting.rootUser) return;
-    const rootUser = {
+    const rootUser = await this.userModel.findOne({ rootUser: true });
+    if (setting.rootUser && rootUser) return;
+    const created = await this.userModel.create({
       email: this.configService.get('ROOT_USER'),
       password: this.configService.get('ROOT_PASS'),
       actived: true,
       rootUser: true,
-    };
-    const created = await this.userModel.create(rootUser);
+    });
     await this.settingModel.findOneAndUpdate({
       rootUser: created._id,
     });
@@ -150,10 +153,8 @@ export class OnBootStrapService implements OnApplicationBootstrap {
   constructor(private bootstrapService: BoostrapService) {}
   async onApplicationBootstrap() {
     await this.bootstrapService.createSetting();
-    console.log('Tạo thành công setting');
     await this.bootstrapService.handlePath();
     console.log('Tạo thành công các permissions');
     await this.bootstrapService.rootUserCheck();
-    console.log('Tạo thành công root user');
   }
 }
