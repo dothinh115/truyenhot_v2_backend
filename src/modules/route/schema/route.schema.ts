@@ -1,6 +1,6 @@
 import { Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import DefaultRoute from 'src/utils/mongoose/model/route.model';
+import DefaultRoute from 'src/models/route.model';
 
 export type RouteDocument = HydratedDocument<Route>;
 

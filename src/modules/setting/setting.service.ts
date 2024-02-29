@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { UpdateSettingDto } from './dto/update-setting.dto';
-import { TQuery } from 'src/utils/model/query.model';
+import { TQuery } from 'src/utils/models/query.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Setting } from './schema/setting.schema';
 import { Model } from 'mongoose';

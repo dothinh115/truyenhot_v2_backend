@@ -5,9 +5,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Permission } from 'src/modules/permission/schema/permission.schema';
 import { User } from 'src/modules/user/schema/user.schema';
-import { TRoute } from 'src/utils/model/route.model';
+import { TRoute } from 'src/utils/models/route.model';
 import settings from '../../settings.json';
-import { Route } from 'src/utils/mongoose/schema/route.schema';
+import { Route } from 'src/modules/route/schema/route.schema';
 import { Setting } from 'src/modules/setting/schema/setting.schema';
 
 export class BoostrapService {

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { numberRegex } from 'src/utils/model/common.model';
-import { TPopulate, TQuery } from 'src/utils/model/query.model';
+import { numberRegex } from 'src/utils/models/common.model';
+import { TPopulate, TQuery } from 'src/utils/models/query.model';
 import * as qs from 'qs';
 import settings from '../../settings.json';
-import { toNonAccented } from 'src/utils/function/function';
+import { toNonAccented } from 'src/utils/functions/function';
 @Injectable()
 export class QueryService {
   private handleField(fields: string) {

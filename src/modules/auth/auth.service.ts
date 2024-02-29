@@ -5,7 +5,7 @@ import { User } from 'src/modules/user/schema/user.schema';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RefreshToken } from 'src/modules/auth/schema/refresh-token.schema';
 import { RegisterAuthDto } from './dto/register-auth.dto';
-import { TQuery } from 'src/utils/model/query.model';
+import { TQuery } from 'src/utils/models/query.model';
 import { UserService } from 'src/modules/user/user.service';
 import { MailService } from 'src/modules/mail/mail.service';
 import { RefreshTokenAuthDto } from './dto/refresh-token-auth.dto';

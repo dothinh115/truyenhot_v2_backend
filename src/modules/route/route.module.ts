@@ -2,7 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { RouteService } from './route.service';
 import { RouteController } from './route.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Route, RouteSchema } from '../../utils/mongoose/schema/route.schema';
+import { Route, RouteSchema } from './schema/route.schema';
 
 @Global()
 @Module({

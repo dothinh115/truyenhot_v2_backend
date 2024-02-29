@@ -10,7 +10,7 @@ import {
 import { PermisionService } from './permision.service';
 import { UpdatePermisionDto } from './dto/update-permision.dto';
 import { RolesGuard } from 'src/modules/guard/roles.guard';
-import { TQuery } from 'src/utils/model/query.model';
+import { TQuery } from 'src/utils/models/query.model';
 import { TokenRequired } from 'src/modules/strategy';
 
 @Controller('permission')

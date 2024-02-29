@@ -13,10 +13,10 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { TQuery } from 'src/utils/model/query.model';
+import { TQuery } from 'src/utils/models/query.model';
 import { TokenRequired } from 'src/modules/strategy';
 import { RolesGuard } from 'src/modules/guard/roles.guard';
-import { CustomRequest } from 'src/utils/model/request.model';
+import { CustomRequest } from 'src/utils/models/request.model';
 
 @Controller('user')
 export class UserController {

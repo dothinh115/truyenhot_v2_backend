@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose';
-import { toSlug } from 'src/utils/function/function';
+import { toSlug } from 'src/utils/functions/function';
 
 export default function rolePlugin<T>(schema: Schema) {
   schema.pre('save', async function (next) {

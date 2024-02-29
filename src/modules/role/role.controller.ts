@@ -12,7 +12,7 @@ import {
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { TQuery } from 'src/utils/model/query.model';
+import { TQuery } from 'src/utils/models/query.model';
 import { TokenRequired } from 'src/modules/strategy';
 import { RolesGuard } from 'src/modules/guard/roles.guard';
 

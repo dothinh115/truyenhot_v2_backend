@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { UpdatePermisionDto } from './dto/update-permision.dto';
-import { TQuery } from 'src/utils/model/query.model';
+import { TQuery } from 'src/utils/models/query.model';
 import { QueryService } from 'src/modules/query/query.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Permission } from './schema/permission.schema';

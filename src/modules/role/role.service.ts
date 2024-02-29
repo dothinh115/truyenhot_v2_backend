@@ -8,9 +8,9 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Role } from './schema/role.schema';
 import { Model } from 'mongoose';
-import { TQuery } from 'src/utils/model/query.model';
+import { TQuery } from 'src/utils/models/query.model';
 import { QueryService } from 'src/modules/query/query.service';
-import { toSlug } from 'src/utils/function/function';
+import { toSlug } from 'src/utils/functions/function';
 
 @Injectable()
 export class RoleService {

@@ -7,9 +7,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
 import { Model } from 'mongoose';
-import { TQuery } from 'src/utils/model/query.model';
+import { TQuery } from 'src/utils/models/query.model';
 import { QueryService } from 'src/modules/query/query.service';
-import { CustomRequest } from 'src/utils/model/request.model';
+import { CustomRequest } from 'src/utils/models/request.model';
 
 @Injectable()
 export class UserService {

@@ -1,7 +1,7 @@
 import { Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import userPlugin from '../../../utils/mongoose/middleware/user.middleware';
-import DefaultUser from 'src/utils/mongoose/model/user.model';
+import userPlugin from '../../../middlewares/mongoose/user.middleware';
+import DefaultUser from 'src/models/user.model';
 export type UserDocument = HydratedDocument<User>;
 
 @Schema()

@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
-import settings from '../../../settings.json';
-import { toNonAccented } from 'src/utils/function/function';
+import settings from '../../settings.json';
+import { toNonAccented } from 'src/utils/functions/function';
 
 export default function globalPlugin<T>(schema: Schema) {
   if (settings.TIMESTAMP) schema.set('timestamps', true);

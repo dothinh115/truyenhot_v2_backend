@@ -12,7 +12,7 @@ import { DiscoveryModule } from '@nestjs/core';
 import { StrategyModule } from './modules/strategy/strategy.module';
 import { RouteModule } from './modules/route/route.module';
 import { SettingModule } from './modules/setting/setting.module';
-import globalPlugin from './utils/mongoose/middleware/global.middleware';
+import globalPlugin from './middlewares/mongoose/global.middleware';
 import { Connection } from 'mongoose';
 import { BootstrapModule } from './modules/bootstrap/bootstrap.module';
 
