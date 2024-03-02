@@ -8,12 +8,7 @@ export default function referenceCheckPlugin<T>(schema: Schema<T>) {
     const record = await this.model.findOne(query);
     const allModelNames = this.model.db.modelNames();
     //chạy qua từng model để check
-    let result = false;
     for (const modelName of allModelNames) {
-      //dừng khi result = true;
-      while (result) {
-        break;
-      }
       const model = this.model.db.model(modelName);
       const modelSchema: Schema<Document> = model.schema;
       //chạy qua schema của model để check
@@ -26,14 +21,11 @@ export default function referenceCheckPlugin<T>(schema: Schema<T>) {
 
         //1 trong các field của schema tham chiếu đến record thì lập tức dừng
         if (exists) {
-          result = true;
-          break;
+          throw new Error(
+            `Record hiện tại đang được tham chiếu đến ở model ${modelName}, vui lòng kiểm tra lại!`,
+          );
         }
       }
-      if (result)
-        throw new Error(
-          'Record hiện tại đang được tham chiếu đến ở nơi khác, vui lòng kiểm tra lại!',
-        );
     }
 
     next();
