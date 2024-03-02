@@ -17,4 +17,4 @@ export const StatusSchema = SchemaFactory.createForClass(Status);
 
 StatusSchema.plugin(AutoIncrementID, { startAt: 1 });
 
-StatusSchema.plugin(autoSlug('title'));
+StatusSchema.plugin(autoSlug);

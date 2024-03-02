@@ -17,4 +17,4 @@ export const CategorySchema = SchemaFactory.createForClass(Category);
 
 CategorySchema.plugin(AutoIncrementID);
 
-CategorySchema.plugin(autoSlug('title'));
+CategorySchema.plugin(autoSlug);

@@ -23,4 +23,4 @@ export const ChapterSchema = SchemaFactory.createForClass(Chapter);
 
 ChapterSchema.plugin(AutoIncrementID, { startAt: 1 });
 
-ChapterSchema.plugin(autoSlug('name'));
+ChapterSchema.plugin(autoSlug, { field: 'name' });

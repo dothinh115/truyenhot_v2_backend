@@ -5,5 +5,6 @@
     "VERSION_KEY": false,
     "AUTH": {
         "BROWSER_ID_CHECK": false // true nếu muốn check cả browserId, bắt buộc phải truyền thêm browserId khi login và refreshToken
-    }
+    },
+    "REFERENCE_CHECK": true
 }

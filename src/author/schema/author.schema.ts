@@ -17,4 +17,4 @@ export const AuthorSchema = SchemaFactory.createForClass(Author);
 
 AuthorSchema.plugin(AutoIncrementID, { startAt: 1 });
 
-AuthorSchema.plugin(autoSlug('name'));
+AuthorSchema.plugin(autoSlug, { field: 'name' });

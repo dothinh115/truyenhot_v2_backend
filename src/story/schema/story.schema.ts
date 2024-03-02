@@ -31,4 +31,4 @@ export const StorySchema = SchemaFactory.createForClass(Story);
 
 StorySchema.plugin(AutoIncrementID, { startAt: 1 });
 
-StorySchema.plugin(autoSlug());
+StorySchema.plugin(autoSlug);
