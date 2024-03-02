@@ -1,8 +1,8 @@
 export type TQuery = {
   fields: string;
   filter: object;
-  limit: string;
-  page: string;
+  limit: number;
+  page: number;
   meta: string;
 };
 
