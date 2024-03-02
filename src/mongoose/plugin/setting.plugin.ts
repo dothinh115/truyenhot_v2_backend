@@ -4,8 +4,6 @@ import { User } from 'src/user/schema/user.schema';
 
 export default function settingPlugin<T>(schema: Schema<T>) {
   schema.pre('findOneAndUpdate', async function (next) {
-    const modelName = this.model.modelName;
-    if (modelName !== 'Setting') return next();
     const { defaultRole }: any = this.getUpdate();
     if (defaultRole) {
       const setting = await this.model.findOne();

@@ -1,10 +1,13 @@
 import { Schema } from 'mongoose';
 import settings from '../../settings.json';
 import settingPlugin from './setting.plugin';
-import rolePlugin from './role.plugin';
 import userPlugin from './user.plugin';
 import textSearchPlugin from './text-search.plugin';
 import referenceCheckPlugin from './reference-check.plugin';
+import { RoleSchema } from 'src/role/schema/role.schema';
+import autoSlug from './auto-slug.plugin';
+import { SettingSchema } from 'src/setting/schema/setting.schema';
+import { UserSchema } from 'src/user/schema/user.schema';
 
 export default function globalPlugin<T>(schema: Schema) {
   //timestamp
@@ -23,11 +26,11 @@ export default function globalPlugin<T>(schema: Schema) {
   schema.plugin(textSearchPlugin);
 
   //setting plugin
-  schema.plugin(settingPlugin);
+  SettingSchema.plugin(settingPlugin);
 
   //role plugin
-  schema.plugin(rolePlugin);
+  RoleSchema.plugin(autoSlug);
 
   //user plugin
-  schema.plugin(userPlugin);
+  UserSchema.plugin(userPlugin);
 }
