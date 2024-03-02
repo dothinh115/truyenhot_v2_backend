@@ -169,9 +169,10 @@ export class QueryService {
   }
 
   async handleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
-    let { fields, filter, page, limit, meta } = query;
+    let { fields, filter, page, limit, meta, sort } = query;
     if (!page) page = 1;
     if (!limit) limit = 10;
+    if (!sort) sort = '_id';
     let selectObj: any,
       populate: any[] = [],
       result: any[],
@@ -198,6 +199,7 @@ export class QueryService {
       else
         result = await model
           .find({ ...filterObj })
+          .sort(sort)
           .select(selectObj)
           .populate(populate)
           .skip((+page - 1) * +limit)

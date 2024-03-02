@@ -2,7 +2,7 @@ import { Schema } from 'mongoose';
 import { toSlug } from 'src/utils/functions/function';
 
 export default function autoSlug(field: string = 'title') {
-  return function <T>(schema: Schema) {
+  return function <T>(schema: Schema<T>) {
     schema.pre('save', function (next) {
       if (this[field] && typeof this[field] === 'string') {
         this.$set({

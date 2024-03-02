@@ -4,6 +4,7 @@ export type TQuery = {
   limit: number;
   page: number;
   meta: string;
+  sort: string;
 };
 
 export type TPopulate = {
