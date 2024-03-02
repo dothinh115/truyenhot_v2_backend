@@ -12,6 +12,13 @@ export class QueryService {
       selectObj: any,
       fieldSplit: any[] = [];
 
+    const excludeField = (object: object) => {
+      for (const key in object) {
+        if (typeof object[key] === 'string') return '-' + object[key];
+        return excludeField(object[key]);
+      }
+    };
+
     if (fields) {
       const fieldArr = fields.split(',').filter((item: string) => item !== '');
 
@@ -24,15 +31,23 @@ export class QueryService {
             ...selectObj,
             [nestedFieldArr[0]]: 1,
           };
-          const removeLastEl = nestedFieldArr.slice(0, -1).join('.');
-          const lastEl = nestedFieldArr.slice(-1).join();
+          let removeLastEl = nestedFieldArr.slice(0, -1).join('.');
+          let lastEl = nestedFieldArr.slice(-1).join();
+          if (removeLastEl.includes('-')) {
+            removeLastEl = removeLastEl.replace('-', '');
+            lastEl = '-' + lastEl;
+          }
+
           if (!fieldHandle[removeLastEl])
             fieldHandle = {
               ...fieldHandle,
               [removeLastEl]: lastEl,
             };
           else {
-            if (!fieldHandle[removeLastEl].includes('*'))
+            if (
+              !fieldHandle[removeLastEl].includes('*') ||
+              lastEl.includes('-')
+            )
               fieldHandle[removeLastEl] =
                 fieldHandle[removeLastEl] + ' ' + lastEl;
           }
@@ -43,7 +58,7 @@ export class QueryService {
           };
       }
 
-      for (const [key, value] of Object.entries(fieldHandle)) {
+      for (let [key, value] of Object.entries(fieldHandle)) {
         const keySplit = key.split('.').filter((item: string) => item !== '');
         let populateObj: TPopulate;
         if (keySplit.length > 1) {
@@ -53,9 +68,21 @@ export class QueryService {
                 path: cur,
                 ...(index + 1 === keySplit.length
                   ? {
-                      ...(value !== '*' && {
-                        select: value as string,
-                      }),
+                      ...((value as string).includes('-')
+                        ? {
+                            ...((value as string).includes('*')
+                              ? {
+                                  select: (value as string).replace('*', ''),
+                                }
+                              : {
+                                  select: value as string,
+                                }),
+                          }
+                        : {
+                            ...(value !== '*' && {
+                              select: value as string,
+                            }),
+                          }),
                     }
                   : { populate: prev }),
               };
@@ -65,12 +92,24 @@ export class QueryService {
         } else {
           populateObj = {
             path: key,
-            ...(value !== '*' && {
-              select: value as string,
-            }),
+
+            ...((value as string).includes('-')
+              ? {
+                  ...((value as string).includes('*')
+                    ? {
+                        select: (value as string).replace('*', ''),
+                      }
+                    : {
+                        select: value as string,
+                      }),
+                }
+              : {
+                  ...(value !== '*' && {
+                    select: value as string,
+                  }),
+                }),
           };
         }
-
         let exist = false;
         //kiểm tra path đã tồn tại trong mảng chưa, nếu rồi thì phải merge các object cùng path với nhau
         for (let index in fieldSplit) {
@@ -211,8 +250,7 @@ export class QueryService {
           filter_count = await model.find({ ...filterObj }).countDocuments();
           break;
         }
-        if (meta === 'total_count')
-          total_count = await model.find().countDocuments();
+        if (meta === 'total_count') total_count = await model.countDocuments();
         if (meta === 'filter_count')
           filter_count = await model.find({ ...filterObj }).countDocuments();
       }
