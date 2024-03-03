@@ -13,24 +13,27 @@ export class QueryService {
       fieldSplit: any[] = [];
 
     if (fields) {
+      //tách fields ra bằng dấu , để phân tích
       const fieldArr = fields.split(',').filter((item: string) => item !== '');
 
       for (const field of fieldArr) {
+        //chạy qua từng field, nếu field có dấu . tức là đang có field muốn tham chiếu
         if (field.includes('.')) {
           const nestedFieldArr = field
             .split('.')
             .filter((item: string) => item !== '');
-          // selectObj = {
-          //   ...selectObj,
-          //   [nestedFieldArr[0]]: 1,
-          // };
+
+          //lấy value cuối cùng trong chuỗi
           let removeLastEl = nestedFieldArr.slice(0, -1).join('.');
           let lastEl = nestedFieldArr.slice(-1).join();
-          if (removeLastEl.includes('-')) {
+
+          //check nếu có dấu - ở đầu thì phải đưa về value chứ ko dc nằm ở key
+          if (removeLastEl.startsWith('-')) {
             removeLastEl = removeLastEl.replace('-', '');
             lastEl = '-' + lastEl;
           }
 
+          //tách thành dạng {'a.b': c}
           if (!fieldHandle[removeLastEl])
             fieldHandle = {
               ...fieldHandle,
@@ -44,7 +47,9 @@ export class QueryService {
               fieldHandle[removeLastEl] =
                 fieldHandle[removeLastEl] + ' ' + lastEl;
           }
-        } else
+        }
+        //nếu không có tham chiếu thì add vào select chứ ko dùng poppulate
+        else
           selectObj = {
             ...selectObj,
             [field]: 1,
