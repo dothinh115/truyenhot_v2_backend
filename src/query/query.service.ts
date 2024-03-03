@@ -12,13 +12,6 @@ export class QueryService {
       selectObj: any,
       fieldSplit: any[] = [];
 
-    const excludeField = (object: object) => {
-      for (const key in object) {
-        if (typeof object[key] === 'string') return '-' + object[key];
-        return excludeField(object[key]);
-      }
-    };
-
     if (fields) {
       const fieldArr = fields.split(',').filter((item: string) => item !== '');
 
@@ -27,10 +20,10 @@ export class QueryService {
           const nestedFieldArr = field
             .split('.')
             .filter((item: string) => item !== '');
-          selectObj = {
-            ...selectObj,
-            [nestedFieldArr[0]]: 1,
-          };
+          // selectObj = {
+          //   ...selectObj,
+          //   [nestedFieldArr[0]]: 1,
+          // };
           let removeLastEl = nestedFieldArr.slice(0, -1).join('.');
           let lastEl = nestedFieldArr.slice(-1).join();
           if (removeLastEl.includes('-')) {
@@ -92,7 +85,6 @@ export class QueryService {
         } else {
           populateObj = {
             path: key,
-
             ...((value as string).includes('-')
               ? {
                   ...((value as string).includes('*')
