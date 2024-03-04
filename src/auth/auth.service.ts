@@ -46,8 +46,22 @@ export class AuthService {
     const createRefreshToken = {
       user: exists._id,
       refreshToken,
+      ...(settings.AUTH.BROWSER_ID_CHECK && {
+        browserId: body.browserId,
+      }),
     };
-    await this.refreshTokenModel.create(createRefreshToken);
+    const refreshTokenCheck = await this.refreshTokenModel.findOne({
+      user: exists._id,
+      ...(settings.AUTH.BROWSER_ID_CHECK && {
+        browserId: body.browserId,
+      }),
+    });
+    if (refreshTokenCheck) {
+      await this.refreshTokenModel.findByIdAndUpdate(
+        refreshTokenCheck._id,
+        createRefreshToken,
+      );
+    } else await this.refreshTokenModel.create(createRefreshToken);
     return {
       accessToken,
       refreshToken,
