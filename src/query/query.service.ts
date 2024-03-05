@@ -230,8 +230,13 @@ export class QueryService {
       metaSelect = meta.split(',').filter((meta: string) => meta !== '');
 
     try {
-      if (_id)
+      if (_id && typeof _id === 'string')
         result = await model.findById(_id).select(selectObj).populate(populate);
+      else if (_id && Array.isArray(_id))
+        result = await model
+          .find({ _id: { $in: _id } })
+          .select(selectObj)
+          .populate(populate);
       else
         result = await model
           .find({ ...filterObj })
