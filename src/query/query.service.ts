@@ -346,6 +346,79 @@ export class QueryService {
   }
 
   async handleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
+    let { fields, filter, page, limit, meta, sort } = query;
+    if (!page) page = 1;
+    if (!limit) limit = 10;
+    if (!sort) sort = '_id';
+    let selectObj: any,
+      populate: any[] = [],
+      result: any[],
+      filterObj: object = {},
+      total_count: number,
+      filter_count: number,
+      metaSelect: string[] = [];
+
+    if (fields) {
+      populate = this.handleField(fields).populate;
+      selectObj = this.handleField(fields).select;
+    }
+
+    if (filter)
+      filterObj = this.handleFilter(
+        qs.parse(qs.stringify(filter), { depth: 10 }),
+      );
+
+    if (meta)
+      metaSelect = meta.split(',').filter((meta: string) => meta !== '');
+
+    try {
+      if (_id && typeof _id === 'string')
+        result = await model.findById(_id).select(selectObj).populate(populate);
+      else if (_id && Array.isArray(_id))
+        result = await model
+          .find({ _id: { $in: _id } })
+          .select(selectObj)
+          .populate(populate);
+      else
+        result = await model
+          .find({ ...filterObj })
+          .sort(sort)
+          .select(selectObj)
+          .populate(populate)
+          .skip((+page - 1) * +limit)
+          .limit(+limit)
+          .lean();
+      for (const meta of metaSelect) {
+        if (meta === '*') {
+          total_count = await model.find().countDocuments();
+          filter_count = await model.find({ ...filterObj }).countDocuments();
+          break;
+        }
+        if (meta === 'total_count') total_count = await model.countDocuments();
+        if (meta === 'filter_count')
+          filter_count = await model.countDocuments({ ...filterObj });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    const data = {
+      data: result,
+    };
+    for (const meta of metaSelect) {
+      if (meta === '*') {
+        data['meta'] = {
+          total_count,
+          filter_count,
+        };
+        break;
+      }
+      if (meta === 'total_count') data['meta'] = { total_count };
+      if (meta === 'filter_count') data['meta'] = { filter_count };
+    }
+    return data;
+  }
+
+  async testHandleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
     let { filter, limit, page, sort } = query;
     let sortArr = [],
       sortObj: any,
@@ -399,11 +472,12 @@ export class QueryService {
       $limit: +limit,
     });
 
-    aggregateArr[0].$facet.matchedResults.push({
-      $project: {
-        _id: 1,
-      },
-    });
+    // aggregateArr[0].$facet.matchedResults.push({
+    //   $project: {
+    //     _id: 1,
+    //   },
+    // });
+
     if (sort)
       aggregateArr[0].$facet.matchedResults.push({
         $sort: sortObj,
@@ -434,8 +508,9 @@ export class QueryService {
         },
       };
     }
-
+    // return aggregateArr;
     const aggregate = await model.aggregate(aggregateArr);
+
     const result = await this.handleFind(
       model,
       query,
