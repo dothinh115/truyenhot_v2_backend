@@ -6,6 +6,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Chapter } from './schema/chapter.schema';
 import { Model } from 'mongoose';
 import { QueryService } from '../query/query.service';
+import { Story } from 'src/story/schema/story.schema';
 
 @Injectable()
 export class ChapterService {

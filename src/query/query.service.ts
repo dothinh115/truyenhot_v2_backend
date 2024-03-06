@@ -5,6 +5,8 @@ import { TPopulate, TQuery } from 'src/utils/models/query.model';
 import * as qs from 'qs';
 import settings from '../settings.json';
 import { toNonAccented } from 'src/utils/functions/function';
+import * as pluralize from 'pluralize';
+
 @Injectable()
 export class QueryService {
   private handleField(fields: string) {
@@ -85,7 +87,7 @@ export class QueryService {
                   : { populate: prev }),
               };
             },
-            { populate: {} },
+            null,
           );
         } else {
           populateObj = {
@@ -113,7 +115,10 @@ export class QueryService {
           if (fieldSplit[index]['path'] === populateObj['path']) {
             const merge = {
               ...fieldSplit[index],
-              ...populateObj,
+              populate: [
+                fieldSplit[index]['populate'],
+                populateObj['populate'],
+              ],
             };
             fieldSplit[index] = merge;
             exist = true; //nếu đã có path tồn tại thì ko thêm mới vào mảng nữa
@@ -123,7 +128,6 @@ export class QueryService {
         //trong trường hợp có path mới thì thêm vào mảng
         if (!exist) fieldSplit = [...fieldSplit, populateObj];
       }
-
       for (const field of fieldArr) {
         if (field === '*') {
           for (const key in selectObj) {
