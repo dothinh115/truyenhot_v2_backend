@@ -12,12 +12,18 @@ export class QueryService {
     let exists = false;
     for (const key in fieldSplit) {
       if (fieldSplit[key]['path'] === object['path']) {
-        const merge: any = [];
-        if (fieldSplit[key]['populate'])
-          merge.push(fieldSplit[key]['populate']);
-        if (object['populate']) merge.push(object['populate']);
+        if (object['populate']) {
+          let merge: any[] = [];
+          for (const item of object['populate']) {
+            merge.push(item);
+          }
+          if (fieldSplit[key]['populate']) {
+            fieldSplit[key]['populate'].push(...merge);
+          } else {
+            fieldSplit[key]['populate'] = merge;
+          }
+        }
         exists = true;
-        fieldSplit[key]['populate'] = [...merge];
       }
     }
     if (!exists) fieldSplit = [...fieldSplit, object];
@@ -99,7 +105,7 @@ export class QueryService {
                             }),
                           }),
                     }
-                  : { populate: prev }),
+                  : { populate: [prev] }),
               };
             },
             { populate: {} },
@@ -124,7 +130,6 @@ export class QueryService {
                 }),
           };
         }
-        let exist = false;
         //kiểm tra path đã tồn tại trong mảng chưa, nếu rồi thì phải merge các object cùng path với nhau
 
         fieldSplit = this.populateMerge(fieldSplit, populateObj);
@@ -222,6 +227,7 @@ export class QueryService {
       total_count: number,
       filter_count: number,
       metaSelect: string[] = [];
+
     if (fields) {
       populate = this.handleField(fields).populate;
       selectObj = this.handleField(fields).select;
