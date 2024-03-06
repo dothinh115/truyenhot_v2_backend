@@ -390,7 +390,6 @@ export class QueryService {
         $match: filterObj,
       });
     }
-    // return aggregateArr;
 
     aggregateArr[0].$facet.matchedResults.push({
       $skip: (+page - 1) * +limit,
@@ -435,6 +434,7 @@ export class QueryService {
         },
       };
     }
+
     const aggregate = await model.aggregate(aggregateArr);
     const result = await this.handleFind(
       model,
