@@ -9,7 +9,7 @@ import { TQuery } from 'src/utils/models/query.model';
 import { UserService } from 'src/user/user.service';
 import { MailService } from 'src/mail/mail.service';
 import { RefreshTokenAuthDto } from './dto/refresh-token-auth.dto';
-import * as bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcrypt';
 import settings from '../settings.json';
 import { JwtService } from '@nestjs/jwt';
 

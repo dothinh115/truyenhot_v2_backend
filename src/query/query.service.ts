@@ -196,9 +196,20 @@ export class QueryService {
         }
         //
         if (!isTextSearch) {
-          result = {
-            [key]: this.stringToNumberObject(object[key]),
-          };
+          if (key.endsWith('._id')) {
+            //bóc tách lấy phần phía trước _id
+            const keySplitArr = key.split('.').filter((x: string) => x !== '');
+            let removeLastEl = keySplitArr.slice(0, -1).join('.');
+            //lấy compareKey của object
+            for (const k in object[key]) {
+              result = {
+                [removeLastEl]: this.stringToNumberObject(object[key][k]),
+              };
+            }
+          } else
+            result = {
+              [key]: this.stringToNumberObject(object[key]),
+            };
         }
       }
     }
@@ -345,7 +356,7 @@ export class QueryService {
     return result;
   }
 
-  async handleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
+  async testHandleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
     let { fields, filter, page, limit, meta, sort } = query;
     if (!page) page = 1;
     if (!limit) limit = 10;
@@ -418,7 +429,7 @@ export class QueryService {
     return data;
   }
 
-  async testHandleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
+  async handleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
     let { filter, limit, page, sort } = query;
     let sortArr = [],
       sortObj: any,
@@ -509,7 +520,9 @@ export class QueryService {
       };
     }
     // return aggregateArr;
-    const aggregate = await model.aggregate(aggregateArr);
+    const aggregate = await model.aggregate(aggregateArr, {
+      allowDiskUse: true,
+    });
 
     const result = await this.handleFind(
       model,

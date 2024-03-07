@@ -1,5 +1,5 @@
 import { Model, Schema } from 'mongoose';
-import * as bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcrypt';
 
 export default function userPlugin<T>(schema: Schema) {
   //gắn default role nếu có
