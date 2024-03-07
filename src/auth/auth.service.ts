@@ -9,7 +9,7 @@ import { TQuery } from 'src/utils/models/query.model';
 import { UserService } from 'src/user/user.service';
 import { MailService } from 'src/mail/mail.service';
 import { RefreshTokenAuthDto } from './dto/refresh-token-auth.dto';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import settings from '../settings.json';
 import { JwtService } from '@nestjs/jwt';
 
@@ -32,7 +32,7 @@ export class AuthService {
       .select('+password');
     if (!exists)
       throw new BadRequestException('Email hoặc mật khẩu không đúng!');
-    const passwordCheck = bcrypt.compareSync(password, exists.password);
+    const passwordCheck = bcrypt.compare(password, exists.password);
     if (!passwordCheck)
       throw new BadRequestException('Email hoặc mật khẩu không đúng!');
     const accessToken = this.jwtService.sign(

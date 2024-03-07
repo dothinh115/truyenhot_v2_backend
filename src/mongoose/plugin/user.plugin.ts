@@ -1,5 +1,5 @@
 import { Model, Schema } from 'mongoose';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 export default function userPlugin<T>(schema: Schema) {
   //gắn default role nếu có
@@ -29,7 +29,7 @@ export default function userPlugin<T>(schema: Schema) {
   schema.pre('findOneAndUpdate', async function (next) {
     const payload: any = this.getUpdate();
     if (payload.password !== undefined)
-      payload.password = bcrypt.hashSync(
+      payload.password = bcrypt.hash(
         payload.password as string,
         Number(process.env.BCRYPT_LOOPS),
       );

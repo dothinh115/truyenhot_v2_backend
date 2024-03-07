@@ -345,7 +345,7 @@ export class QueryService {
     return result;
   }
 
-  async handleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
+  private async quickHandleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
     let { fields, filter, page, limit, meta, sort } = query;
     if (!page) page = 1;
     if (!limit) limit = 10;
@@ -418,7 +418,7 @@ export class QueryService {
     return data;
   }
 
-  async testHandleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
+  async handleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
     let { filter, limit, page, sort } = query;
     let sortArr = [],
       sortObj: any,
