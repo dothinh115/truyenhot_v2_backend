@@ -1,7 +1,10 @@
 import { Model, Schema } from 'mongoose';
-import * as bcrypt from 'bcryptjs';
+import { BcryptService } from 'src/bcrypt/bcrypt.service';
+import { ConfigService } from '@nestjs/config';
 
 export default function userPlugin<T>(schema: Schema) {
+  const configService = new ConfigService();
+  const bcryptService = new BcryptService(configService);
   //gắn default role nếu có
   schema.pre('save', async function (next) {
     if (!this.role) {
@@ -17,10 +20,7 @@ export default function userPlugin<T>(schema: Schema) {
   //hash password khi lưu
   schema.pre('save', async function (next) {
     if (this.password) {
-      this.password = bcrypt.hashSync(
-        this.password as string,
-        Number(process.env.BCRYPT_LOOPS),
-      );
+      this.password = await bcryptService.hashPassword(this.password as string);
     }
     next();
   });
@@ -29,9 +29,8 @@ export default function userPlugin<T>(schema: Schema) {
   schema.pre('findOneAndUpdate', async function (next) {
     const payload: any = this.getUpdate();
     if (payload.password !== undefined)
-      payload.password = bcrypt.hash(
+      payload.password = await bcryptService.hashPassword(
         payload.password as string,
-        Number(process.env.BCRYPT_LOOPS),
       );
     next();
   });

@@ -9,9 +9,9 @@ import { TQuery } from 'src/utils/models/query.model';
 import { UserService } from 'src/user/user.service';
 import { MailService } from 'src/mail/mail.service';
 import { RefreshTokenAuthDto } from './dto/refresh-token-auth.dto';
-import * as bcrypt from 'bcryptjs';
 import settings from '../settings.json';
 import { JwtService } from '@nestjs/jwt';
+import { BcryptService } from 'src/bcrypt/bcrypt.service';
 
 @Injectable()
 export class AuthService {
@@ -22,9 +22,11 @@ export class AuthService {
     private userService: UserService,
     private mailService: MailService,
     private jwtService: JwtService,
+    private bcryptService: BcryptService,
   ) {}
   async login(body: LoginAuthDto) {
     const { email, password } = body;
+
     const exists = await this.userModel
       .findOne({
         email: email.toLowerCase(),
@@ -32,7 +34,10 @@ export class AuthService {
       .select('+password');
     if (!exists)
       throw new BadRequestException('Email hoặc mật khẩu không đúng!');
-    const passwordCheck = bcrypt.compare(password, exists.password);
+    const passwordCheck = await this.bcryptService.comparePassword(
+      password,
+      exists.password,
+    );
     if (!passwordCheck)
       throw new BadRequestException('Email hoặc mật khẩu không đúng!');
     const accessToken = this.jwtService.sign(
@@ -46,22 +51,8 @@ export class AuthService {
     const createRefreshToken = {
       user: exists._id,
       refreshToken,
-      ...(settings.AUTH.BROWSER_ID_CHECK && {
-        browserId: body.browserId,
-      }),
     };
-    const refreshTokenCheck = await this.refreshTokenModel.findOne({
-      user: exists._id,
-      ...(settings.AUTH.BROWSER_ID_CHECK && {
-        browserId: body.browserId,
-      }),
-    });
-    if (refreshTokenCheck) {
-      await this.refreshTokenModel.findByIdAndUpdate(
-        refreshTokenCheck._id,
-        createRefreshToken,
-      );
-    } else await this.refreshTokenModel.create(createRefreshToken);
+    await this.refreshTokenModel.create(createRefreshToken);
     return {
       accessToken,
       refreshToken,

@@ -26,11 +26,11 @@ export default function globalPlugin<T>(schema: Schema) {
   schema.plugin(textSearchPlugin);
 
   //setting plugin
-  SettingSchema.plugin(settingPlugin);
+  if (schema === SettingSchema) SettingSchema.plugin(settingPlugin);
 
   //role plugin
-  RoleSchema.plugin(autoSlug);
+  if (schema === RoleSchema) RoleSchema.plugin(autoSlug);
 
   //user plugin
-  UserSchema.plugin(userPlugin);
+  if (schema === UserSchema) UserSchema.plugin(userPlugin);
 }

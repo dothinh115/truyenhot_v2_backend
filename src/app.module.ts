@@ -20,6 +20,7 @@ import { AuthorModule } from './author/author.module';
 import { StoryModule } from './story/story.module';
 import { StatusModule } from './status/status.module';
 import { ChapterModule } from './chapter/chapter.module';
+import { BcryptModule } from './bcrypt/bcrypt.module';
 
 @Global()
 @Module({
@@ -40,6 +41,7 @@ import { ChapterModule } from './chapter/chapter.module';
     QueryModule,
     MeModule,
     MailModule,
+    BcryptModule,
     PermisionModule,
     DiscoveryModule,
     BootstrapModule,
