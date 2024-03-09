@@ -10,13 +10,14 @@ import { Role } from './schema/role.schema';
 import { Model } from 'mongoose';
 import { TQuery } from 'src/utils/models/query.model';
 import { QueryService } from 'src/query/query.service';
-import { toSlug } from 'src/utils/functions/function';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
 export class RoleService {
   constructor(
     @InjectModel(Role.name) private roleModel: Model<Role>,
     private queryService: QueryService,
+    private commonService: CommonService,
   ) {}
   async create(payload: CreateRoleDto, query: TQuery) {
     const { title } = payload;
@@ -26,7 +27,7 @@ export class RoleService {
     if (dupCheck) throw new BadRequestException('Đã tồn tại role này');
     const data = {
       title,
-      slug: toSlug(title),
+      slug: this.commonService.toSlug(title),
     };
     const create = await this.roleModel.create(data);
     return await this.queryService.handleQuery(

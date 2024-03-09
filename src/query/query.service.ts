@@ -4,10 +4,11 @@ import { numberRegex } from 'src/utils/models/common.model';
 import { TPopulate, TQuery } from 'src/utils/models/query.model';
 import * as qs from 'qs';
 import settings from '../settings.json';
-import { toNonAccented } from 'src/utils/functions/function';
 import * as pluralize from 'pluralize';
+import { CommonService } from 'src/common/common.service';
 @Injectable()
 export class QueryService {
+  constructor(private commonService: CommonService) {}
   private populateMerge = (fieldSplit: any[], object: any) => {
     let exists = false;
     for (const key in fieldSplit) {
@@ -186,7 +187,9 @@ export class QueryService {
                   removelastKeySplit ? removelastKeySplit + '.' : ''
                 }${field}NonAccented`]: {
                   //compare key sử dụng quy tắc của mongodb, ví dụ như $eq, $in, $regex...
-                  [compareKey]: toNonAccented(object[key][compareKey]),
+                  [compareKey]: this.commonService.toNonAccented(
+                    object[key][compareKey],
+                  ),
                 },
               };
             }
@@ -370,9 +373,8 @@ export class QueryService {
 
     if (meta)
       metaSelect = meta.split(',').filter((meta: string) => meta !== '');
-
     try {
-      if (_id && typeof _id === 'string')
+      if (_id && typeof _id.toString() === 'string')
         result = await model.findById(_id).select(selectObj).populate(populate);
       else if (_id && Array.isArray(_id))
         result = await model
@@ -418,7 +420,7 @@ export class QueryService {
     return data;
   }
 
-  async testHandleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
+  private async testHandleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
     let { filter, limit, page, sort } = query;
     let sortArr = [],
       sortObj: any,

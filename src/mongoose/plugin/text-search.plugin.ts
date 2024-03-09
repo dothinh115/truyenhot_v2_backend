@@ -1,14 +1,17 @@
 import { Schema } from 'mongoose';
-import { toNonAccented } from 'src/utils/functions/function';
 import settings from '../../settings.json';
+import { CommonService } from 'src/common/common.service';
 
 export default function textSearchPlugin<T>(schema: Schema<T>) {
+  const commonService = new CommonService();
   //Thêm trường text search
   schema.pre('save', async function (next) {
     for (const field of settings.TEXT_SEARCH) {
       if (this.schema.obj[field] && this[field]) {
         this.$set({
-          [`${field}NonAccented`]: toNonAccented(this[field] as string),
+          [`${field}NonAccented`]: commonService.toNonAccented(
+            this[field] as string,
+          ),
         });
       }
     }
@@ -21,7 +24,9 @@ export default function textSearchPlugin<T>(schema: Schema<T>) {
     for (const field of settings.TEXT_SEARCH) {
       if (payload[field]) {
         this.set({
-          [`${field}NonAccented`]: toNonAccented(payload[field] as string),
+          [`${field}NonAccented`]: commonService.toNonAccented(
+            payload[field] as string,
+          ),
         });
         this.select(`-${field}NonAccented`);
       }

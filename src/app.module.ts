@@ -21,6 +21,9 @@ import { StoryModule } from './story/story.module';
 import { StatusModule } from './status/status.module';
 import { ChapterModule } from './chapter/chapter.module';
 import { BcryptModule } from './bcrypt/bcrypt.module';
+import { UploadModule } from './upload/upload.module';
+import { CustomMulterModule } from './multer/multer.module';
+import { CommonModule } from './common/common.module';
 
 @Global()
 @Module({
@@ -42,6 +45,9 @@ import { BcryptModule } from './bcrypt/bcrypt.module';
     MeModule,
     MailModule,
     BcryptModule,
+    UploadModule,
+    CustomMulterModule,
+    CommonModule,
     PermisionModule,
     DiscoveryModule,
     BootstrapModule,

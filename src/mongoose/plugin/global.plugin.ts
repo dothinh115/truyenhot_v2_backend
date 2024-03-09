@@ -8,6 +8,7 @@ import { RoleSchema } from 'src/role/schema/role.schema';
 import autoSlug from './auto-slug.plugin';
 import { SettingSchema } from 'src/setting/schema/setting.schema';
 import { UserSchema } from 'src/user/schema/user.schema';
+import { FolderSchema } from 'src/upload/schema/folder.schema';
 
 export default function globalPlugin<T>(schema: Schema) {
   //timestamp
@@ -33,4 +34,7 @@ export default function globalPlugin<T>(schema: Schema) {
 
   //user plugin
   if (schema === UserSchema) UserSchema.plugin(userPlugin);
+
+  //folder
+  if (schema === FolderSchema) FolderSchema.plugin(autoSlug);
 }
