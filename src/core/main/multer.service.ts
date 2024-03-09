@@ -49,25 +49,22 @@ export class MulterConfigService implements MulterOptionsFactory {
         },
       }),
       fileFilter(req, file, cb) {
-        if (file.size > settings.UPLOAD.FILE_SIZE) {
-          return cb(
-            new BadRequestException(
+        try {
+          if (file.size > settings.UPLOAD.FILE_SIZE) {
+            throw new Error(
               `File size tối đa ${settings.UPLOAD.FILE_SIZE} bytes!`,
-            ),
-            false,
-          );
-        }
+            );
+          }
 
-        if (!settings.UPLOAD.FILE_TYPE.includes(file.mimetype)) {
-          return cb(
-            new BadRequestException(
-              `Chỉ chấp nhận file ${settings.UPLOAD.FILE_TYPE}!`,
-            ),
-            false,
-          );
-        }
+          if (!settings.UPLOAD.FILE_TYPE.includes(file.mimetype)) {
+            throw new Error(`Chỉ chấp nhận file ${settings.UPLOAD.FILE_TYPE}!`);
+          }
 
-        cb(null, true);
+          cb(null, true);
+        } catch (error) {
+          const err = new BadRequestException(error.message);
+          cb(err, null);
+        }
       },
     };
   }
