@@ -15,14 +15,12 @@ export default function settingPlugin<T>(schema: Schema<T>) {
       if (exists) {
         //nếu có thì phải tìm tất cả users có role cũ và update thành mới
         const userModel = this.model.db.model(User.name);
-        const usersWithOldRole = await userModel.find({
-          role: oldDefaultRole,
-        });
-        for (const user of usersWithOldRole) {
-          await userModel.findByIdAndUpdate(user._id, {
-            role: defaultRole,
-          });
-        }
+        await userModel.updateMany(
+          {
+            role: oldDefaultRole,
+          },
+          { role: defaultRole },
+        );
       } else {
         //nếu không thì phải set về cái đang có, ko cho update
         this.set({
