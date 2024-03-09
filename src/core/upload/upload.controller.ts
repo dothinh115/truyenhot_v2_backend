@@ -7,14 +7,12 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
-  UploadedFiles,
   Query,
   UseGuards,
   Req,
 } from '@nestjs/common';
 import { UploadService } from './upload.service';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { fileValidator } from 'src/core/middlewares/pipes/file-validator.pipe';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { TQuery } from 'src/core/utils/models/query.model';
 import { RolesGuard } from 'src/core/main/roles.guard';
@@ -29,7 +27,7 @@ export class UploadController {
   @Post('file')
   @UseInterceptors(FileInterceptor('file'))
   uploadSingleFile(
-    @UploadedFile(fileValidator())
+    @UploadedFile()
     file: Express.Multer.File,
     @Req() req: CustomRequest,
     @Query() query: TQuery,
@@ -38,14 +36,20 @@ export class UploadController {
   }
 
   @UseGuards(TokenRequired, RolesGuard)
-  @Post('files')
-  @UseInterceptors(FilesInterceptor('files'))
-  uploadMultiFiles(
-    @UploadedFiles(fileValidator()) files: Express.Multer.File[],
+  @Post('file/:folder')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadSingleFileWithFolder(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('folder') folder: string,
     @Req() req: CustomRequest,
     @Query() query: TQuery,
   ) {
-    return this.uploadService.uploadMultiFiles(files, req, query);
+    return this.uploadService.uploadSingleFileWithFolder(
+      file,
+      folder,
+      req,
+      query,
+    );
   }
 
   @UseGuards(TokenRequired, RolesGuard)

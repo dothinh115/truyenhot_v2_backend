@@ -40,19 +40,29 @@ export class UploadService {
     }
   }
 
-  async uploadMultiFiles(
-    files: Express.Multer.File[],
+  async uploadSingleFileWithFolder(
+    file: Express.Multer.File,
+    folder: string,
     req: CustomRequest,
     query: TQuery,
   ) {
-    if (files && files.length > 0) {
-      let result = [];
-
-      for (const file of files) {
-        const newFile: any = await this.uploadSingleFile(file, req, query);
-        result.push(newFile.data);
-      }
-      return result;
+    const exists = await this.folderModel.findById(folder);
+    if (!exists) throw new BadRequestException('Không có folder này!');
+    if (file) {
+      const result = await this.fileModel.create({
+        _id: (file as any)._id,
+        mimeType: file.mimetype,
+        originalName: file.originalname,
+        user: req.user._id.toString(),
+        size: file.size,
+        extension: (file as any).extension,
+        folder,
+      });
+      return await this.queryService.handleQuery(
+        this.fileModel,
+        query,
+        result._id,
+      );
     }
   }
 
@@ -74,13 +84,6 @@ export class UploadService {
     return {
       message: 'Thành công!',
     };
-  }
-
-  async uploadWithFolder(
-    fileOrFiles: Express.Multer.File | Express.Multer.File[],
-    folder: string,
-  ) {
-    return 'Upload nhiều file';
   }
 
   async folder(query: TQuery) {
