@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { AutoIncrementID } from '@typegoose/auto-increment';
 import { HydratedDocument, PromiseProvider } from 'mongoose';
-import autoSlug from 'src/mongoose/plugin/auto-slug.plugin';
+import autoSlug from 'src/core/mongoose/plugin/auto-slug.plugin';
 
 export type StatusDocument = HydratedDocument<Status>;
 

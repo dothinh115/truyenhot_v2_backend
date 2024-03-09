@@ -12,9 +12,9 @@ import {
 import { StatusService } from './status.service';
 import { CreateStatusDto } from './dto/create-status.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
-import { TQuery } from 'src/utils/models/query.model';
-import { TokenRequired } from '../strategy';
-import { RolesGuard } from '../guard/roles.guard';
+import { TQuery } from 'src/core/utils/models/query.model';
+import { RolesGuard } from '../core/main/roles.guard';
+import { TokenRequired } from 'src/core/main/strategy.service';
 
 @Controller('status')
 export class StatusController {

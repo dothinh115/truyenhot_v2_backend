@@ -4,8 +4,8 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './schema/category.schema';
 import { Model } from 'mongoose';
-import { QueryService } from '../query/query.service';
-import { TQuery } from 'src/utils/models/query.model';
+import { QueryService } from '../core/main/query.service';
+import { TQuery } from 'src/core/utils/models/query.model';
 
 @Injectable()
 export class CategoryService {
