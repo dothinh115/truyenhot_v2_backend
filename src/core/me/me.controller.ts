@@ -12,7 +12,7 @@ import { TQuery } from 'src/core/utils/models/query.model';
 import { CustomRequest } from 'src/core/utils/models/request.model';
 import { UserService } from 'src/core/user/user.service';
 import { UpdateMeDto } from './dto/update-me.dto';
-import { TokenRequired } from '../main/strategy.service';
+import { TokenRequired } from '../main/services/strategy.service';
 
 @Controller('me')
 export class MeController {

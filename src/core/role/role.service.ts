@@ -9,8 +9,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Role } from './schema/role.schema';
 import { Model } from 'mongoose';
 import { TQuery } from 'src/core/utils/models/query.model';
-import { QueryService } from 'src/core/main/query.service';
-import { CommonService } from 'src/core/main/common.service';
+import { QueryService } from 'src/core/main/services/query.service';
+import { CommonService } from 'src/core/main/services/common.service';
 
 @Injectable()
 export class RoleService {

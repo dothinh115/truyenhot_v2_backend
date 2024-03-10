@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { UpdatePermisionDto } from './dto/update-permision.dto';
 import { TQuery } from 'src/core/utils/models/query.model';
-import { QueryService } from 'src/core/main/query.service';
+import { QueryService } from 'src/core/main/services/query.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Permission } from './schema/permission.schema';
 import { Model } from 'mongoose';

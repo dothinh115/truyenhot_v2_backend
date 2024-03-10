@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose';
-import { CommonService } from 'src/core/main/common.service';
+import { CommonService } from 'src/core/main/services/common.service';
 
 export default function autoSlug<T>(
   schema: Schema<T>,

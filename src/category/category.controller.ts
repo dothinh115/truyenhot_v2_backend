@@ -13,8 +13,8 @@ import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { TQuery } from 'src/core/utils/models/query.model';
-import { RolesGuard } from '../core/main/roles.guard';
-import { TokenRequired } from 'src/core/main/strategy.service';
+import { TokenRequired } from 'src/core/main/services/strategy.service';
+import { RolesGuard } from 'src/core/main/services/roles.guard';
 
 @Controller('category')
 export class CategoryController {

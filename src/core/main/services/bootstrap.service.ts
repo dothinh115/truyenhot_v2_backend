@@ -6,7 +6,7 @@ import { Model } from 'mongoose';
 import { Permission } from 'src/core/permission/schema/permission.schema';
 import { User } from 'src/core/user/schema/user.schema';
 import { TRoute } from 'src/core/utils/models/route.model';
-import settings from '../../settings.json';
+import settings from '../../../settings.json';
 import { Route } from 'src/core/route/schema/route.schema';
 import { Setting } from 'src/core/setting/schema/setting.schema';
 

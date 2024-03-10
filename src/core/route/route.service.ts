@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { TQuery } from 'src/core/utils/models/query.model';
 import { Route } from './schema/route.schema';
 import { Model } from 'mongoose';
-import { QueryService } from 'src/core/main/query.service';
+import { QueryService } from 'src/core/main/services/query.service';
 
 @Injectable()
 export class RouteService {

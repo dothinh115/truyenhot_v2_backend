@@ -1,12 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateChapterDto } from './dto/create-chapter.dto';
 import { UpdateChapterDto } from './dto/update-chapter.dto';
-import { TQuery } from 'src/core/utils/models/query.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Chapter } from './schema/chapter.schema';
 import { Model } from 'mongoose';
-import { QueryService } from '../core/main/query.service';
-import { Story } from 'src/story/schema/story.schema';
+import { TQuery } from 'src/core/utils/models/query.model';
+import { QueryService } from 'src/core/main/services/query.service';
 
 @Injectable()
 export class ChapterService {

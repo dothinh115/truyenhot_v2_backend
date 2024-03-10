@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/core/user/schema/user.schema';
 import { Model } from 'mongoose';
-import { QueryService } from 'src/core/main/query.service';
+import { QueryService } from 'src/core/main/services/query.service';
 import { TQuery } from 'src/core/utils/models/query.model';
 
 @Injectable()

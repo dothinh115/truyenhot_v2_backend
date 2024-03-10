@@ -2,8 +2,8 @@ import { Controller, Get, Body, Patch, Query, UseGuards } from '@nestjs/common';
 import { SettingService } from './setting.service';
 import { UpdateSettingDto } from './dto/update-setting.dto';
 import { TQuery } from 'src/core/utils/models/query.model';
-import { RolesGuard } from 'src/core/main/roles.guard';
-import { TokenRequired } from '../main/strategy.service';
+import { RolesGuard } from 'src/core/main/services/roles.guard';
+import { TokenRequired } from '../main/services/strategy.service';
 
 @Controller('setting')
 export class SettingController {

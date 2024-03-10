@@ -9,9 +9,9 @@ import {
 } from '@nestjs/common';
 import { PermisionService } from './permision.service';
 import { UpdatePermisionDto } from './dto/update-permision.dto';
-import { RolesGuard } from 'src/core/main/roles.guard';
+import { RolesGuard } from 'src/core/main/services/roles.guard';
 import { TQuery } from 'src/core/utils/models/query.model';
-import { TokenRequired } from '../main/strategy.service';
+import { TokenRequired } from '../main/services/strategy.service';
 
 @Controller('permission')
 export class PermisionController {

@@ -1,12 +1,15 @@
 import { Global, MiddlewareConsumer, Module } from '@nestjs/common';
-import { CommonService } from './common.service';
-import { BcryptService } from './bcrypt.service';
-import { BoostrapService, OnBootStrapService } from './bootstrap.service';
+import { CommonService } from './services/common.service';
+import { BcryptService } from './services/bcrypt.service';
+import {
+  BoostrapService,
+  OnBootStrapService,
+} from './services/bootstrap.service';
 import { MulterModule } from '@nestjs/platform-express';
-import { MulterConfigService } from './multer.service';
-import { QueryService } from './query.service';
-import { StrategyService } from './strategy.service';
-import { AssetsController } from './assets.controller';
+import { MulterConfigService } from './services/multer.service';
+import { QueryService } from './services/query.service';
+import { StrategyService } from './services/strategy.service';
+import { AssetsController } from './controllers/assets.controller';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
@@ -20,7 +23,7 @@ import { PermisionModule } from '../permission/permision.module';
 import { RouteModule } from '../route/route.module';
 import { SettingModule } from '../setting/setting.module';
 import { UploadModule } from '../upload/upload.module';
-import { RolesGuard } from './roles.guard';
+import { RolesGuard } from './services/roles.guard';
 
 @Global()
 @Module({

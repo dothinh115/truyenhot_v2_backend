@@ -11,7 +11,7 @@ import { MailService } from 'src/core/mail/mail.service';
 import { RefreshTokenAuthDto } from './dto/refresh-token-auth.dto';
 import settings from '../../settings.json';
 import { JwtService } from '@nestjs/jwt';
-import { BcryptService } from 'src/core/main/bcrypt.service';
+import { BcryptService } from 'src/core/main/services/bcrypt.service';
 
 @Injectable()
 export class AuthService {

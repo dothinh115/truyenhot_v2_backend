@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { File } from '../upload/schema/file.schema';
+import { File } from '../../upload/schema/file.schema';
 
 @Controller()
 export class AssetsController {

@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
 import { Model } from 'mongoose';
 import { TQuery } from 'src/core/utils/models/query.model';
-import { QueryService } from 'src/core/main/query.service';
+import { QueryService } from 'src/core/main/services/query.service';
 import { CustomRequest } from 'src/core/utils/models/request.model';
 
 @Injectable()

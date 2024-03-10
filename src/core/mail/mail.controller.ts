@@ -1,8 +1,8 @@
 import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { MailService } from './mail.service';
 import { SendMailDto } from './dto/send-mail.dto';
-import { RolesGuard } from 'src/core/main/roles.guard';
-import { TokenRequired } from '../main/strategy.service';
+import { RolesGuard } from 'src/core/main/services/roles.guard';
+import { TokenRequired } from '../main/services/strategy.service';
 
 @Controller('mail')
 export class MailController {

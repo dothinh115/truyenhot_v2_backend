@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
 import settings from '../../../settings.json';
-import { CommonService } from 'src/core/main/common.service';
+import { CommonService } from 'src/core/main/services/common.service';
 
 export default function textSearchPlugin<T>(schema: Schema<T>) {
   const commonService = new CommonService();
