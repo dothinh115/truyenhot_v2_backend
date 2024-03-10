@@ -101,11 +101,11 @@ export class BoostrapService {
         path: this.getParentRoute(permission.path),
       });
       if (findParentRoute) {
-        let permissionSet = new Set(findParentRoute.permissions);
+        let permissionSet = new Set(findParentRoute.permission);
         permissionSet.add(permission._id.toString());
         const permissionArr = Array.from(permissionSet);
         await this.routeModel.findByIdAndUpdate(findParentRoute._id, {
-          permissions: permissionArr,
+          permission: permissionArr,
         });
       }
     }

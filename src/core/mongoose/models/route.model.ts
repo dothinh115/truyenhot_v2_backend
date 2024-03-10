@@ -4,5 +4,5 @@ export default class DefaultRoute {
   @Prop({ required: true })
   path: string;
   @Prop({ default: [], ref: 'Permission' })
-  permissions: string[];
+  permission: string[];
 }

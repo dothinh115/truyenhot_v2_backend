@@ -207,7 +207,7 @@ export class QueryService {
           //xem xét nếu đang so sánh bằng _id thì phải loại bỏ _id đi để tăng hiệu năng
           let newKey = key;
           const keySplitArr = key.split('.').filter((x) => x !== '');
-          if (keySplitArr.includes('_id'))
+          if (keySplitArr.includes('_id') && keySplitArr.length > 1)
             newKey = keySplitArr.filter((x) => x !== '_id').join('.');
           result = {
             [newKey]: this.stringToNumberObject(object[key]),
@@ -253,9 +253,8 @@ export class QueryService {
       populate = this.handleField(fields).populate;
       selectObj = this.handleField(fields).select;
     }
-
     try {
-      if (_id && typeof _id === 'string')
+      if (_id && typeof _id.toString() === 'string')
         result = await model.findById(_id).select(selectObj).populate(populate);
       else if (_id && Array.isArray(_id))
         result = await model
@@ -494,7 +493,7 @@ export class QueryService {
     const result = await this.handleFind(
       model,
       query,
-      aggregate[0].matchedResults,
+      _id ? _id : aggregate[0].matchedResults,
     );
     const filterCount = await model.find(filterObj).countDocuments();
     const data = {
