@@ -25,12 +25,11 @@ export class CommonService {
   }
 
   removeFileOrFolder(path: string, isFolder = false) {
-    fs.rmSync(
-      path,
-      isFolder && {
+    fs.rmSync(path, {
+      ...(isFolder && {
         recursive: true,
         force: true,
-      },
-    );
+      }),
+    });
   }
 }

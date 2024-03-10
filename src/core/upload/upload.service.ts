@@ -101,19 +101,19 @@ export class UploadService {
   async deleteFile(id: string) {
     try {
       const exists = await this.fileModel.findById(id);
-      if (!exists) throw new Error('Không tồn tại file này!');
+      if (!exists) throw new Error('Không tồn tại file này trong db!');
       let path = `${process.cwd()}/upload`;
       if (exists.folder) path += '/' + exists.folder;
       path += '/' + exists._id.toString() + exists.extension;
       if (fs.existsSync(path)) {
         this.commonService.removeFileOrFolder(path);
-      }
+      } else throw new Error('Không tồn tại file này trong hệ thống!');
       await this.fileModel.findByIdAndDelete(id);
-
       return {
         message: 'Thành công!',
       };
     } catch (error) {
+      //quăng lỗi
       throw new BadRequestException(error.message);
     }
   }

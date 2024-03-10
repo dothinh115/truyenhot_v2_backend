@@ -36,16 +36,21 @@ export class MulterConfigService implements MulterOptionsFactory {
           }
         },
         filename: async (req, file: any, cb) => {
-          let newObjectId = new mongoose.Types.ObjectId();
-          let exists = await this.fileModel.findById(newObjectId);
-          while (exists) {
-            newObjectId = new mongoose.Types.ObjectId();
-            exists = await this.fileModel.findById(newObjectId);
+          try {
+            let newObjectId = new mongoose.Types.ObjectId();
+            let exists = await this.fileModel.findById(newObjectId);
+            while (exists) {
+              newObjectId = new mongoose.Types.ObjectId();
+              exists = await this.fileModel.findById(newObjectId);
+            }
+            const type = path.extname(file.originalname);
+            file._id = newObjectId.toString();
+            file.extension = type;
+            cb(null, `${newObjectId}${type}`);
+          } catch (error) {
+            const err = new BadRequestException(error.message);
+            cb(err, null);
           }
-          const type = path.extname(file.originalname);
-          file._id = newObjectId.toString();
-          file.extension = type;
-          cb(null, `${newObjectId}${type}`);
         },
       }),
       fileFilter(req, file, cb) {
