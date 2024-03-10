@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import fs from 'fs';
 
 @Injectable()
 export class CommonService {
@@ -21,5 +22,15 @@ export class CommonService {
     str = str.replace(/-+/g, '-');
     str = str.replace(/^-+|-+$/g, '');
     return str;
+  }
+
+  removeFileOrFolder(path: string, isFolder = false) {
+    fs.rmSync(
+      path,
+      isFolder && {
+        recursive: true,
+        force: true,
+      },
+    );
   }
 }

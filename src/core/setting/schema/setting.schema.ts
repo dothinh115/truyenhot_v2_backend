@@ -1,6 +1,7 @@
 import { Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { DefaultSetting } from 'src/core/mongoose/models/setting.model';
+
 export type SettingDocument = HydratedDocument<Setting>;
 
 @Schema()

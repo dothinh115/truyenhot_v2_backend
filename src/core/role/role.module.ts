@@ -4,7 +4,6 @@ import { RoleController } from './role.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Role, RoleSchema } from './schema/role.schema';
 
-@Global()
 @Module({
   imports: [
     MongooseModule.forFeature([
