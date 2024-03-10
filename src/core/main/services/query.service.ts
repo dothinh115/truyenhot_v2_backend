@@ -254,13 +254,13 @@ export class QueryService {
       selectObj = this.handleField(fields).select;
     }
     try {
-      if (_id && typeof _id.toString() === 'string')
-        result = await model.findById(_id).select(selectObj).populate(populate);
-      else if (_id && Array.isArray(_id))
+      if (_id && Array.isArray(_id))
         result = await model
           .find({ _id: { $in: _id } })
           .select(selectObj)
           .populate(populate);
+      else if (_id)
+        result = await model.findById(_id).select(selectObj).populate(populate);
       else
         result = await model.find().select(selectObj).populate(populate).lean();
     } catch (error) {
@@ -357,7 +357,7 @@ export class QueryService {
     return result;
   }
 
-  async testHandleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
+  async handleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
     let { fields, filter, page, limit, meta, sort } = query;
     if (!page) page = 1;
     if (!limit) limit = 10;
@@ -429,7 +429,7 @@ export class QueryService {
     return data;
   }
 
-  async handleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
+  private async handleAggregate<T>(model: Model<T>, query: TQuery, _id?: any) {
     let { filter, limit, page, sort } = query;
     let sortArr = [],
       sortObj: any,
