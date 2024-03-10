@@ -24,6 +24,12 @@ export class QueryService {
             fieldSplit[key]['populate'] = merge;
           }
         }
+        if (object['select']) {
+          if (fieldSplit[key]['select']) {
+            fieldSplit[key]['select'] =
+              fieldSplit[key]['select'] + ' ' + object['select'];
+          } else fieldSplit[key]['select'] = object['select'];
+        }
         exists = true;
       }
     }
@@ -79,7 +85,6 @@ export class QueryService {
             [field]: 1,
           };
       }
-
       for (let [key, value] of Object.entries(fieldHandle)) {
         const keySplit = key.split('.').filter((item: string) => item !== '');
         let populateObj: TPopulate;
@@ -199,8 +204,13 @@ export class QueryService {
         }
         //
         if (!isTextSearch) {
+          //xem xét nếu đang so sánh bằng _id thì phải loại bỏ _id đi để tăng hiệu năng
+          let newKey = key;
+          const keySplitArr = key.split('.').filter((x) => x !== '');
+          if (keySplitArr.includes('_id'))
+            newKey = keySplitArr.filter((x) => x !== '_id').join('.');
           result = {
-            [key]: this.stringToNumberObject(object[key]),
+            [newKey]: this.stringToNumberObject(object[key]),
           };
         }
       }
@@ -348,7 +358,7 @@ export class QueryService {
     return result;
   }
 
-  async handleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
+  async testHandleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
     let { fields, filter, page, limit, meta, sort } = query;
     if (!page) page = 1;
     if (!limit) limit = 10;
@@ -420,7 +430,7 @@ export class QueryService {
     return data;
   }
 
-  private async testHandleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
+  async handleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
     let { filter, limit, page, sort } = query;
     let sortArr = [],
       sortObj: any,
@@ -474,42 +484,11 @@ export class QueryService {
       $limit: +limit,
     });
 
-    aggregateArr[0].$facet.matchedResults.push({
-      $project: {
-        _id: 1,
-      },
-    });
-
     if (sort)
       aggregateArr[0].$facet.matchedResults.push({
         $sort: sortObj,
       });
 
-    if (filter) {
-      aggregateArr[0].$facet = {
-        ...aggregateArr[0].$facet,
-        ...{
-          filterCount: [
-            ...lookupList,
-            {
-              $match: filterObj,
-            },
-            {
-              $count: 'count',
-            },
-          ],
-        },
-      };
-      aggregateArr[1] = {
-        ...aggregateArr[1],
-        ...{
-          $project: {
-            ...aggregateArr[1].$project,
-            filterCount: { $arrayElemAt: ['$filterCount.count', 0] },
-          },
-        },
-      };
-    }
     const aggregate = await model.aggregate(aggregateArr);
 
     const result = await this.handleFind(
@@ -517,10 +496,11 @@ export class QueryService {
       query,
       aggregate[0].matchedResults,
     );
+    const filterCount = await model.find(filterObj).countDocuments();
     const data = {
       data: result,
       ...(filter && {
-        filterCount: aggregate[0].filterCount,
+        filterCount,
       }),
     };
     return data;
