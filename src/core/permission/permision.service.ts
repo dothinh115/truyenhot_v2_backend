@@ -24,7 +24,7 @@ export class PermisionService {
   async update(id: string, body: UpdatePermisionDto, query: TQuery) {
     try {
       const exists = await this.permissionService.findById(id);
-      if (!exists) throw new BadRequestException('Không tồn tại route này!');
+      if (!exists) throw new Error('Không tồn tại route này!');
       await this.permissionService.findByIdAndUpdate(id, body);
       return await this.queryService.handleQuery(
         this.permissionService,
@@ -32,7 +32,7 @@ export class PermisionService {
         id,
       );
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 }

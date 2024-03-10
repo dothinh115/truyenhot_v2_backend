@@ -20,21 +20,25 @@ export class RoleService {
     private commonService: CommonService,
   ) {}
   async create(payload: CreateRoleDto, query: TQuery) {
-    const { title } = payload;
-    const dupCheck = await this.roleModel.findOne({
-      title,
-    });
-    if (dupCheck) throw new BadRequestException('Đã tồn tại role này');
-    const data = {
-      title,
-      slug: this.commonService.toSlug(title),
-    };
-    const create = await this.roleModel.create(data);
-    return await this.queryService.handleQuery(
-      this.roleModel,
-      query,
-      create._id,
-    );
+    try {
+      const { title } = payload;
+      const dupCheck = await this.roleModel.findOne({
+        title,
+      });
+      if (dupCheck) throw new Error('Đã tồn tại role này');
+      const data = {
+        title,
+        slug: this.commonService.toSlug(title),
+      };
+      const create = await this.roleModel.create(data);
+      return await this.queryService.handleQuery(
+        this.roleModel,
+        query,
+        create._id,
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async find(query: TQuery) {
@@ -42,19 +46,23 @@ export class RoleService {
   }
 
   async update(id: string, body: UpdateRoleDto, query: TQuery) {
-    const existCheck = await this.roleModel.findById(id);
-    if (!existCheck) throw new BadRequestException('Không tồn tại role này!');
-    await this.roleModel.findByIdAndUpdate(id, body);
-    return await this.queryService.handleQuery(this.roleModel, query, id);
+    try {
+      const existCheck = await this.roleModel.findById(id);
+      if (!existCheck) throw new Error('Không tồn tại role này!');
+      await this.roleModel.findByIdAndUpdate(id, body);
+      return await this.queryService.handleQuery(this.roleModel, query, id);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async remove(id: string) {
-    const existCheck = await this.roleModel.findById(id);
-    if (!existCheck) throw new BadRequestException('Không tồn tại role này!');
     try {
+      const existCheck = await this.roleModel.findById(id);
+      if (!existCheck) throw new Error('Không tồn tại role này!');
       return await this.roleModel.findByIdAndDelete(id);
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 }

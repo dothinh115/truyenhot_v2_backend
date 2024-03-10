@@ -14,16 +14,20 @@ export class UserService {
     private queryService: QueryService,
   ) {}
   async create(body: CreateUserDto, query: TQuery) {
-    const exists = await this.userModel.exists({
-      email: body.email,
-    });
-    if (exists) throw new BadRequestException('Email đã được dùng!');
-    const newUser = await this.userModel.create(body);
-    return await this.queryService.handleQuery(
-      this.userModel,
-      query,
-      newUser._id,
-    );
+    try {
+      const exists = await this.userModel.exists({
+        email: body.email,
+      });
+      if (exists) throw new Error('Email đã được dùng!');
+      const newUser = await this.userModel.create(body);
+      return await this.queryService.handleQuery(
+        this.userModel,
+        query,
+        newUser._id,
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async find(query: TQuery) {
@@ -31,20 +35,27 @@ export class UserService {
   }
 
   async update(id: string, body: any, query: TQuery, req: CustomRequest) {
-    const exists = await this.userModel.findById(id).select('+rootUser');
-    if (!exists) throw new BadRequestException('Không tồn tại user này!');
-    const { _id } = req.user;
-    if (exists.rootUser && exists._id !== _id)
-      throw new BadRequestException('Không thể update rootUser');
-    await this.userModel.findByIdAndUpdate(id, body, { _id });
-    return await this.queryService.handleQuery(this.userModel, query, id);
+    try {
+      const exists = await this.userModel.findById(id).select('+rootUser');
+      if (!exists) throw new Error('Không tồn tại user này!');
+      const { _id } = req.user;
+      if (exists.rootUser && exists._id !== _id)
+        throw new Error('Không thể update rootUser');
+      await this.userModel.findByIdAndUpdate(id, body, { _id });
+      return await this.queryService.handleQuery(this.userModel, query, id);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async remove(id: string) {
-    const exists = await this.userModel.findById(id).select('+rootUser');
-    if (!exists) throw new BadRequestException('Không tồn tại user này!');
-    if (exists.rootUser)
-      throw new BadRequestException('Không thể xoá root user');
-    return await this.userModel.findByIdAndDelete(id);
+    try {
+      const exists = await this.userModel.findById(id).select('+rootUser');
+      if (!exists) throw new Error('Không tồn tại user này!');
+      if (exists.rootUser) throw new Error('Không thể xoá root user');
+      return await this.userModel.findByIdAndDelete(id);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }
