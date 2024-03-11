@@ -1,15 +1,16 @@
 import { Model, Schema } from 'mongoose';
 import { BcryptService } from 'src/core/main/services/bcrypt.service';
 import { ConfigService } from '@nestjs/config';
+import { Setting } from 'src/core/setting/schema/setting.schema';
 
-export default function userPlugin<T>(schema: Schema) {
+export default function userPlugin(schema: Schema) {
   const configService = new ConfigService();
   const bcryptService = new BcryptService(configService);
   //gắn default role nếu có
   schema.pre('save', async function (next) {
     if (!this.role) {
-      const settingModel = this.model('Setting') as Model<T>;
-      const setting: any = await settingModel.findOne();
+      const settingModel = this.model('Setting') as Model<Setting>;
+      const setting = await settingModel.findOne();
       if (setting && setting.defaultRole) {
         this.role = setting.defaultRole.toString();
       }

@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
 
-export default function referenceCheckPlugin<T>(schema: Schema<T>) {
+export default function referenceCheckPlugin(schema: Schema) {
   schema.pre(['save'], async function (next) {
     //tìm những field nào đang có ref
     const refFields: {

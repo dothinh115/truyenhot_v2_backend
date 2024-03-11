@@ -1,14 +1,14 @@
 import { Schema } from 'mongoose';
 import { CommonService } from 'src/core/main/services/common.service';
 
-export default function autoSlug<T>(
-  schema: Schema<T>,
+export default function autoSlug(
+  schema: Schema,
   options: { field: string } | undefined = { field: 'title' },
 ) {
   let { field } = options;
   const commonService = new CommonService();
-  if (!schema.path('slug')) {
-    (schema as any).add({
+  if (!schema.path('slug') && schema.path(field)) {
+    schema.add({
       slug: String,
     });
   }

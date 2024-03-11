@@ -2,7 +2,7 @@ import { Schema } from 'mongoose';
 import { Role } from 'src/core/role/schema/role.schema';
 import { User } from 'src/core/user/schema/user.schema';
 
-export default function settingPlugin<T>(schema: Schema<T>) {
+export default function settingPlugin(schema: Schema) {
   schema.pre('findOneAndUpdate', async function (next) {
     const { defaultRole }: any = this.getUpdate();
     if (defaultRole) {

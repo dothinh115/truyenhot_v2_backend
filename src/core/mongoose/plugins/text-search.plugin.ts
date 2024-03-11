@@ -2,11 +2,11 @@ import { Schema } from 'mongoose';
 import settings from '../../../settings.json';
 import { CommonService } from 'src/core/main/services/common.service';
 
-export default function textSearchPlugin<T>(schema: Schema<T>) {
+export default function textSearchPlugin(schema: Schema) {
   const commonService = new CommonService();
   for (const field of settings.TEXT_SEARCH) {
     if (!schema.path(`${field}NonAccented`) && schema.path(field)) {
-      (schema as any).add({
+      schema.add({
         [`${field}NonAccented`]: String,
       });
     }
@@ -27,7 +27,7 @@ export default function textSearchPlugin<T>(schema: Schema<T>) {
 
   //khi update lại trường dc đặt thì cũng phải thay đổi các trường text search
   schema.pre('findOneAndUpdate', async function (next) {
-    const payload: any = this.getUpdate();
+    const payload = this.getUpdate();
     for (const field of settings.TEXT_SEARCH) {
       if (payload[field]) {
         this.set({
