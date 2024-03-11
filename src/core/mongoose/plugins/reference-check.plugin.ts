@@ -122,7 +122,7 @@ export default function referenceCheckPlugin(schema: Schema) {
         const exists = await model.findOne({ [field]: deletingItem._id });
         if (exists)
           throw new Error(
-            `Record này đang được tham chiếu đến tại _id ${exists._id} của model ${refModel.modelName}`,
+            `Record ${deletingItem._id} đang được tham chiếu đến tại _id ${exists._id} của model ${refModel.modelName}`,
           );
       }
     }
