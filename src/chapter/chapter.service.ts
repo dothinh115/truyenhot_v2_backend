@@ -14,17 +14,21 @@ export class ChapterService {
     private queryService: QueryService,
   ) {}
   async create(body: CreateChapterDto, query: TQuery) {
-    const exists = await this.chapterModel.findOne({
-      story: body.story,
-      name: body.name,
-    });
-    if (exists) throw new BadRequestException('Đã tồn tại chapter này!');
-    const result = await this.chapterModel.create(body);
-    return await this.queryService.handleQuery(
-      this.chapterModel,
-      query,
-      result._id,
-    );
+    try {
+      const exists = await this.chapterModel.findOne({
+        story: body.story,
+        name: body.name,
+      });
+      if (exists) throw new Error('Đã tồn tại chapter này!');
+      const result = await this.chapterModel.create(body);
+      return await this.queryService.handleQuery(
+        this.chapterModel,
+        query,
+        result._id,
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async find(query: TQuery) {
@@ -32,22 +36,30 @@ export class ChapterService {
   }
 
   async update(id: number, body: UpdateChapterDto, query: TQuery) {
-    const exists = await this.chapterModel.findById(id);
-    if (!exists) throw new BadRequestException('Không tồn tại chapter này!');
-    const result = await this.chapterModel.findByIdAndUpdate(id, body);
-    return await this.queryService.handleQuery(
-      this.chapterModel,
-      query,
-      result._id,
-    );
+    try {
+      const exists = await this.chapterModel.findById(id);
+      if (!exists) throw new Error('Không tồn tại chapter này!');
+      const result = await this.chapterModel.findByIdAndUpdate(id, body);
+      return await this.queryService.handleQuery(
+        this.chapterModel,
+        query,
+        result._id,
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async remove(id: number) {
-    const exists = await this.chapterModel.findById(id);
-    if (!exists) throw new BadRequestException('Không tồn tại chapter này!');
-    await this.chapterModel.findByIdAndDelete(id);
-    return {
-      message: 'Thành công!',
-    };
+    try {
+      const exists = await this.chapterModel.findById(id);
+      if (!exists) throw new Error('Không tồn tại chapter này!');
+      await this.chapterModel.findByIdAndDelete(id);
+      return {
+        message: 'Thành công!',
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

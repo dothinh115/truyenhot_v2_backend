@@ -14,12 +14,16 @@ export class CategoryService {
     @InjectModel(Category.name) private categoryModel: Model<Category>,
   ) {}
   async create(createCategoryDto: CreateCategoryDto, query: TQuery) {
-    const result = await this.categoryModel.create(createCategoryDto);
-    return await this.queryService.handleQuery(
-      this.categoryModel,
-      query,
-      result._id,
-    );
+    try {
+      const result = await this.categoryModel.create(createCategoryDto);
+      return await this.queryService.handleQuery(
+        this.categoryModel,
+        query,
+        result._id,
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async find(query: TQuery) {
@@ -27,19 +31,27 @@ export class CategoryService {
   }
 
   async update(id: number, body: UpdateCategoryDto, query: TQuery) {
-    const exists = await this.categoryModel.findById(id);
-    if (!exists) throw new BadRequestException('Không có thể loại này!');
-    const result = await this.categoryModel.findByIdAndUpdate(id, body);
-    return await this.queryService.handleQuery(
-      this.categoryModel,
-      query,
-      result._id,
-    );
+    try {
+      const exists = await this.categoryModel.findById(id);
+      if (!exists) throw new Error('Không có thể loại này!');
+      const result = await this.categoryModel.findByIdAndUpdate(id, body);
+      return await this.queryService.handleQuery(
+        this.categoryModel,
+        query,
+        result._id,
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async remove(id: number) {
-    const exists = await this.categoryModel.findById(id);
-    if (!exists) throw new BadRequestException('Không có thể loại này!');
-    return await this.categoryModel.findByIdAndDelete(id);
+    try {
+      const exists = await this.categoryModel.findById(id);
+      if (!exists) throw new Error('Không có thể loại này!');
+      return await this.categoryModel.findByIdAndDelete(id);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

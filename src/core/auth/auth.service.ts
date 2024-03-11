@@ -105,7 +105,7 @@ export class AuthService {
   async refreshToken(body: RefreshTokenAuthDto) {
     try {
       const exists = await this.refreshTokenModel.findOne({
-        refresh_token: body.refreshToken,
+        refreshToken: body.refreshToken,
         ...(settings.AUTH.BROWSER_ID_CHECK && {
           browserId: body.browserId,
         }),

@@ -14,17 +14,21 @@ export class StoryService {
     private queryService: QueryService,
   ) {}
   async create(body: CreateStoryDto, query: TQuery) {
-    const exists = await this.storyModel.findOne({
-      title: body.title,
-      author: body.author,
-    });
-    if (exists) throw new BadRequestException('Đã tồn tại truyện này!');
-    const result = await this.storyModel.create(body);
-    return await this.queryService.handleQuery(
-      this.storyModel,
-      query,
-      result._id,
-    );
+    try {
+      const exists = await this.storyModel.findOne({
+        title: body.title,
+        author: body.author,
+      });
+      if (exists) throw new Error('Đã tồn tại truyện này!');
+      const result = await this.storyModel.create(body);
+      return await this.queryService.handleQuery(
+        this.storyModel,
+        query,
+        result._id,
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async find(query: TQuery) {
@@ -32,22 +36,30 @@ export class StoryService {
   }
 
   async update(id: number, body: UpdateStoryDto, query: TQuery) {
-    const exists = await this.storyModel.findById(id);
-    if (!exists) throw new BadRequestException('Truyện này không tồn tại!');
-    const result = await this.storyModel.findByIdAndUpdate(id, body);
-    return await this.queryService.handleQuery(
-      this.storyModel,
-      query,
-      result._id,
-    );
+    try {
+      const exists = await this.storyModel.findById(id);
+      if (!exists) throw new Error('Truyện này không tồn tại!');
+      const result = await this.storyModel.findByIdAndUpdate(id, body);
+      return await this.queryService.handleQuery(
+        this.storyModel,
+        query,
+        result._id,
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async remove(id: number) {
-    const exists = await this.storyModel.findById(id);
-    if (!exists) throw new BadRequestException('Truyện này không tồn tại!');
-    await this.storyModel.findByIdAndDelete(id);
-    return {
-      message: 'Thành công',
-    };
+    try {
+      const exists = await this.storyModel.findById(id);
+      if (!exists) throw new Error('Truyện này không tồn tại!');
+      await this.storyModel.findByIdAndDelete(id);
+      return {
+        message: 'Thành công',
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

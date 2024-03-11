@@ -8,6 +8,7 @@ import autoSlug from './auto-slug.plugin';
 import { SettingSchema } from 'src/core/setting/schema/setting.schema';
 import { UserSchema } from 'src/core/user/schema/user.schema';
 import { FolderSchema } from 'src/core/upload/schema/folder.schema';
+import referenceCheckPlugin from './reference-check.plugin';
 
 export default function globalPlugin<T>(schema: Schema) {
   //text search plugin
@@ -24,6 +25,9 @@ export default function globalPlugin<T>(schema: Schema) {
 
   //folder
   if (schema === FolderSchema) FolderSchema.plugin(autoSlug);
+
+  //ref check
+  schema.plugin(referenceCheckPlugin);
 
   //timestamp
   if (settings.TIMESTAMP) schema.set('timestamps', true);

@@ -14,16 +14,20 @@ export class StatusService {
     private queryService: QueryService,
   ) {}
   async create(body: CreateStatusDto, query: TQuery) {
-    const exists = await this.statusModel.findOne({
-      title: body.title,
-    });
-    if (exists) throw new BadRequestException('Đã tồn tại status này!');
-    const result = await this.statusModel.create({ title: body.title });
-    return await this.queryService.handleQuery(
-      this.statusModel,
-      query,
-      result._id,
-    );
+    try {
+      const exists = await this.statusModel.findOne({
+        title: body.title,
+      });
+      if (exists) throw new Error('Đã tồn tại status này!');
+      const result = await this.statusModel.create({ title: body.title });
+      return await this.queryService.handleQuery(
+        this.statusModel,
+        query,
+        result._id,
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async find(query: TQuery) {
@@ -31,22 +35,30 @@ export class StatusService {
   }
 
   async update(id: number, body: UpdateStatusDto, query: TQuery) {
-    const exists = await this.statusModel.findById(id);
-    if (!exists) throw new BadRequestException('Status này không tồn tại!');
-    const result = await this.statusModel.findByIdAndUpdate(id, body);
-    return await this.queryService.handleQuery(
-      this.statusModel,
-      query,
-      result._id,
-    );
+    try {
+      const exists = await this.statusModel.findById(id);
+      if (!exists) throw new Error('Status này không tồn tại!');
+      const result = await this.statusModel.findByIdAndUpdate(id, body);
+      return await this.queryService.handleQuery(
+        this.statusModel,
+        query,
+        result._id,
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async remove(id: number) {
-    const exists = await this.statusModel.findById(id);
-    if (!exists) throw new BadRequestException('Status này không tồn tại!');
-    await this.statusModel.findByIdAndDelete(id);
-    return {
-      message: 'Thành công!',
-    };
+    try {
+      const exists = await this.statusModel.findById(id);
+      if (!exists) throw new Error('Status này không tồn tại!');
+      await this.statusModel.findByIdAndDelete(id);
+      return {
+        message: 'Thành công!',
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

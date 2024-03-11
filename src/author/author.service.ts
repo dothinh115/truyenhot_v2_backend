@@ -14,16 +14,20 @@ export class AuthorService {
     private queryService: QueryService,
   ) {}
   async create(body: CreateAuthorDto, query: TQuery) {
-    const exists = await this.authorModel.findOne({
-      name: body.name,
-    });
-    if (exists) throw new BadRequestException('Tác giả đã tồn tại!');
-    const result = await this.authorModel.create(body);
-    return await this.queryService.handleQuery(
-      this.authorModel,
-      query,
-      result._id,
-    );
+    try {
+      const exists = await this.authorModel.findOne({
+        name: body.name,
+      });
+      if (exists) throw new Error('Tác giả đã tồn tại!');
+      const result = await this.authorModel.create(body);
+      return await this.queryService.handleQuery(
+        this.authorModel,
+        query,
+        result._id,
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async find(query: TQuery) {
@@ -31,22 +35,30 @@ export class AuthorService {
   }
 
   async update(id: number, body: UpdateAuthorDto, query: TQuery) {
-    const exists = await this.authorModel.findById(id);
-    if (!exists) throw new BadRequestException('Không có tác giả này!');
-    const result = await this.authorModel.findByIdAndUpdate(id, body);
-    return await this.queryService.handleQuery(
-      this.authorModel,
-      query,
-      result._id,
-    );
+    try {
+      const exists = await this.authorModel.findById(id);
+      if (!exists) throw new Error('Không có tác giả này!');
+      const result = await this.authorModel.findByIdAndUpdate(id, body);
+      return await this.queryService.handleQuery(
+        this.authorModel,
+        query,
+        result._id,
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async remove(id: number) {
-    const exists = await this.authorModel.findById(id);
-    if (!exists) throw new BadRequestException('Không có tác giả này!');
-    await this.authorModel.findByIdAndDelete(id);
-    return {
-      message: 'Thành công!',
-    };
+    try {
+      const exists = await this.authorModel.findById(id);
+      if (!exists) throw new Error('Không có tác giả này!');
+      await this.authorModel.findByIdAndDelete(id);
+      return {
+        message: 'Thành công!',
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }
