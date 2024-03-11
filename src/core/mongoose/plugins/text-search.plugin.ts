@@ -4,6 +4,13 @@ import { CommonService } from 'src/core/main/services/common.service';
 
 export default function textSearchPlugin<T>(schema: Schema<T>) {
   const commonService = new CommonService();
+  for (const field of settings.TEXT_SEARCH) {
+    if (!schema.path(`${field}NonAccented`) && schema.path(field)) {
+      (schema as any).add({
+        [`${field}NonAccented`]: String,
+      });
+    }
+  }
   //Thêm trường text search
   schema.pre('save', async function (next) {
     for (const field of settings.TEXT_SEARCH) {

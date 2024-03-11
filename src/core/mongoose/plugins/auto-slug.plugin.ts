@@ -7,6 +7,12 @@ export default function autoSlug<T>(
 ) {
   let { field } = options;
   const commonService = new CommonService();
+  if (!schema.path('slug')) {
+    (schema as any).add({
+      slug: String,
+    });
+  }
+
   schema.pre('save', function (next) {
     if (this[field] && typeof this[field] === 'string') {
       this.$set({
@@ -18,7 +24,11 @@ export default function autoSlug<T>(
 
   schema.pre('findOneAndUpdate', function (next) {
     const payload = this.getUpdate();
-    if (payload[field] && typeof payload[field] === 'string') {
+    if (
+      payload[field] &&
+      typeof payload[field] === 'string' &&
+      !payload['slug']
+    ) {
       this.set({
         slug: commonService.toSlug(payload[field] as string),
       });

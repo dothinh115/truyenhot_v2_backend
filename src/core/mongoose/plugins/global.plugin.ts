@@ -3,7 +3,6 @@ import settings from '../../../settings.json';
 import settingPlugin from './setting.plugin';
 import userPlugin from './user.plugin';
 import textSearchPlugin from './text-search.plugin';
-import referenceCheckPlugin from './reference-check.plugin';
 import { RoleSchema } from 'src/core/role/schema/role.schema';
 import autoSlug from './auto-slug.plugin';
 import { SettingSchema } from 'src/core/setting/schema/setting.schema';
@@ -11,18 +10,6 @@ import { UserSchema } from 'src/core/user/schema/user.schema';
 import { FolderSchema } from 'src/core/upload/schema/folder.schema';
 
 export default function globalPlugin<T>(schema: Schema) {
-  //timestamp
-  if (settings.TIMESTAMP) schema.set('timestamps', true);
-
-  //versionKey
-  if (!settings.VERSION_KEY) schema.set('versionKey', false);
-
-  //tắt strict mode khi có text search
-  if (settings.TEXT_SEARCH.length !== 0) schema.set('strict', false);
-
-  //reference check
-  schema.plugin(referenceCheckPlugin);
-
   //text search plugin
   schema.plugin(textSearchPlugin);
 
@@ -37,4 +24,10 @@ export default function globalPlugin<T>(schema: Schema) {
 
   //folder
   if (schema === FolderSchema) FolderSchema.plugin(autoSlug);
+
+  //timestamp
+  if (settings.TIMESTAMP) schema.set('timestamps', true);
+
+  //versionKey
+  if (!settings.VERSION_KEY) schema.set('versionKey', false);
 }
