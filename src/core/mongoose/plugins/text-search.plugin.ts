@@ -7,7 +7,10 @@ export default function textSearchPlugin(schema: Schema) {
   for (const field of settings.TEXT_SEARCH) {
     if (!schema.path(`${field}NonAccented`) && schema.path(field)) {
       schema.add({
-        [`${field}NonAccented`]: String,
+        [`${field}NonAccented`]: {
+          type: String,
+          select: false,
+        },
       });
     }
   }
@@ -37,13 +40,6 @@ export default function textSearchPlugin(schema: Schema) {
         });
         this.select(`-${field}NonAccented`);
       }
-    }
-    next();
-  });
-
-  schema.pre(['find', 'findOne'], async function (next) {
-    for (const field of settings.TEXT_SEARCH) {
-      this.select(`-${field}NonAccented`);
     }
     next();
   });
