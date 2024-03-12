@@ -94,7 +94,7 @@ export default function referenceCheckPlugin(schema: Schema) {
     for (const refModel of refModels) {
       const model = this.model.db.model(refModel.modelName);
       for (const field of refModel.fields) {
-        const exists = await model.findOne({ [field]: deletingItem._id });
+        const exists = await model.findOne({ [field]: deletingItem?._id });
         if (exists)
           throw new Error(
             `Record ${deletingItem._id} đang được tham chiếu đến tại _id ${exists._id} của model ${refModel.modelName}`,
