@@ -13,7 +13,11 @@ export class SettingService {
     private queryService: QueryService,
   ) {}
   async find(query: TQuery) {
-    return await this.queryService.handleQuery(this.settingService, query);
+    try {
+      return await this.queryService.handleQuery(this.settingService, query);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async update(body: UpdateSettingDto, query: TQuery) {

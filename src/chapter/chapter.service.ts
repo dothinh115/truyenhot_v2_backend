@@ -35,7 +35,11 @@ export class ChapterService {
   }
 
   async find(query: TQuery) {
-    return await this.queryService.handleQuery(this.chapterModel, query);
+    try {
+      return await this.queryService.handleQuery(this.chapterModel, query);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @UseGuards(TokenRequired, RolesGuard)

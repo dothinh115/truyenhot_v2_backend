@@ -42,7 +42,11 @@ export class RoleService {
   }
 
   async find(query: TQuery) {
-    return await this.queryService.handleQuery(this.roleModel, query);
+    try {
+      return await this.queryService.handleQuery(this.roleModel, query);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async update(id: string, body: UpdateRoleDto, query: TQuery) {

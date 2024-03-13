@@ -18,7 +18,11 @@ export class PermisionService {
   ) {}
 
   async find(query: TQuery) {
-    return await this.queryService.handleQuery(this.permissionService, query);
+    try {
+      return await this.queryService.handleQuery(this.permissionService, query);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async update(id: string, body: UpdatePermisionDto, query: TQuery) {

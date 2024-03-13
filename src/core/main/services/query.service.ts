@@ -361,6 +361,8 @@ export class QueryService {
     let { fields, filter, page, limit, meta, sort } = query;
     if (!page) page = 1;
     if (!limit) limit = 10;
+    if (limit > settings.QUERY.LIMIT)
+      throw new Error('Limit không được vượt quá 100');
     if (!sort) sort = '_id';
     let selectObj: any,
       populate: any[] = [],

@@ -95,7 +95,11 @@ export class UploadService {
   }
 
   async file(query: TQuery) {
-    return await this.queryService.handleQuery(this.fileModel, query);
+    try {
+      return await this.queryService.handleQuery(this.fileModel, query);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async deleteFile(id: string) {
@@ -119,7 +123,11 @@ export class UploadService {
   }
 
   async folder(query: TQuery) {
-    return await this.queryService.handleQuery(this.folderModel, query);
+    try {
+      return await this.queryService.handleQuery(this.folderModel, query);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async createFolder(body: CreateFolderDto, query: TQuery) {

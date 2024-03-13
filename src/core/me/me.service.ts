@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadGatewayException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/core/user/schema/user.schema';
 import { Model } from 'mongoose';
@@ -13,6 +13,10 @@ export class MeService {
   ) {}
 
   async find(_id: string, query: TQuery) {
-    return await this.queryService.handleQuery(this.userModel, query, _id);
+    try {
+      return await this.queryService.handleQuery(this.userModel, query, _id);
+    } catch (error) {
+      throw new BadGatewayException(error.message);
+    }
   }
 }

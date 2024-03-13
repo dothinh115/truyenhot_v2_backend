@@ -31,7 +31,11 @@ export class UserService {
   }
 
   async find(query: TQuery) {
-    return await this.queryService.handleQuery(this.userModel, query);
+    try {
+      return await this.queryService.handleQuery(this.userModel, query);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async update(id: string, body: any, query: TQuery, req: CustomRequest) {
