@@ -1,6 +1,6 @@
 import { Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { DefaultFolder } from 'src/core/mongoose/models/folder.model';
+import { DefaultFolder } from '@/core/mongoose/models/folder.model';
 
 export type FolderDocument = HydratedDocument<Folder>;
 

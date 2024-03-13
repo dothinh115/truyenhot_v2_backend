@@ -3,11 +3,11 @@ import { CreateFolderDto } from './dto/create-folder.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Folder } from './schema/folder.schema';
 import { Model } from 'mongoose';
-import { QueryService } from 'src/core/main/services/query.service';
-import { TQuery } from 'src/core/utils/models/query.model';
+import { QueryService } from '@/core/main/services/query.service';
+import { TQuery } from '@/core/utils/models/query.model';
 import * as fs from 'fs';
-import { CommonService } from 'src/core/main/services/common.service';
-import { CustomRequest } from 'src/core/utils/models/request.model';
+import { CommonService } from '@/core/main/services/common.service';
+import { CustomRequest } from '@/core/utils/models/request.model';
 import { File } from './schema/file.schema';
 
 @Injectable()

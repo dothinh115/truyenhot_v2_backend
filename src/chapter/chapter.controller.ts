@@ -12,9 +12,9 @@ import {
 import { ChapterService } from './chapter.service';
 import { CreateChapterDto } from './dto/create-chapter.dto';
 import { UpdateChapterDto } from './dto/update-chapter.dto';
-import { TQuery } from 'src/core/utils/models/query.model';
-import { TokenRequired } from 'src/core/main/services/strategy.service';
-import { RolesGuard } from 'src/core/main/services/roles.guard';
+import { TQuery } from '@/core/utils/models/query.model';
+import { TokenRequired } from '@/core/main/services/strategy.service';
+import { RolesGuard } from '@/core/main/services/roles.guard';
 
 @Controller('chapter')
 export class ChapterController {

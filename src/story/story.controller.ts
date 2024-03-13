@@ -12,9 +12,9 @@ import {
 import { StoryService } from './story.service';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
-import { TQuery } from 'src/core/utils/models/query.model';
-import { TokenRequired } from 'src/core/main/services/strategy.service';
-import { RolesGuard } from 'src/core/main/services/roles.guard';
+import { TQuery } from '@/core/utils/models/query.model';
+import { TokenRequired } from '@/core/main/services/strategy.service';
+import { RolesGuard } from '@/core/main/services/roles.guard';
 
 @Controller('story')
 export class StoryController {

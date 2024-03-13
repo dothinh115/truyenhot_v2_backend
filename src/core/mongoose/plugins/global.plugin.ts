@@ -1,13 +1,13 @@
 import { Schema } from 'mongoose';
-import settings from '../../../settings.json';
+import settings from '@/settings.json';
 import settingPlugin from './setting.plugin';
 import userPlugin from './user.plugin';
 import textSearchPlugin from './text-search.plugin';
-import { RoleSchema } from 'src/core/role/schema/role.schema';
+import { RoleSchema } from '@/core/role/schema/role.schema';
 import autoSlug from './auto-slug.plugin';
-import { SettingSchema } from 'src/core/setting/schema/setting.schema';
-import { UserSchema } from 'src/core/user/schema/user.schema';
-import { FolderSchema } from 'src/core/upload/schema/folder.schema';
+import { SettingSchema } from '@/core/setting/schema/setting.schema';
+import { UserSchema } from '@/core/user/schema/user.schema';
+import { FolderSchema } from '@/core/upload/schema/folder.schema';
 import referenceCheckPlugin from './reference-check.plugin';
 
 export default function globalPlugin<T>(schema: Schema) {

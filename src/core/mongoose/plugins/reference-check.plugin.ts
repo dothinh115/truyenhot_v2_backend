@@ -88,7 +88,6 @@ export default function referenceCheckPlugin(schema: Schema) {
         refModels.push(refModel);
       }
     }
-
     const query = this.getQuery();
     const deletingItem: any = await this.model.findOne(query);
     for (const refModel of refModels) {

@@ -4,10 +4,10 @@ import { UpdateChapterDto } from './dto/update-chapter.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Chapter } from './schema/chapter.schema';
 import { Model } from 'mongoose';
-import { TQuery } from 'src/core/utils/models/query.model';
-import { QueryService } from 'src/core/main/services/query.service';
-import { TokenRequired } from 'src/core/main/services/strategy.service';
-import { RolesGuard } from 'src/core/main/services/roles.guard';
+import { TQuery } from '@/core/utils/models/query.model';
+import { QueryService } from '@/core/main/services/query.service';
+import { TokenRequired } from '@/core/main/services/strategy.service';
+import { RolesGuard } from '@/core/main/services/roles.guard';
 
 @Injectable()
 export class ChapterService {

@@ -1,18 +1,17 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from 'src/core/user/schema/user.schema';
+import { User } from '@/core/user/schema/user.schema';
 import { LoginAuthDto } from './dto/login-auth.dto';
-import { RefreshToken } from 'src/core/auth/schema/refresh-token.schema';
+import { RefreshToken } from '@/core/auth/schema/refresh-token.schema';
 import { RegisterAuthDto } from './dto/register-auth.dto';
-import { TQuery } from 'src/core/utils/models/query.model';
-import { UserService } from 'src/core/user/user.service';
-import { MailService } from 'src/core/mail/mail.service';
+import { TQuery } from '@/core/utils/models/query.model';
+import { UserService } from '@/core/user/user.service';
 import { RefreshTokenAuthDto } from './dto/refresh-token-auth.dto';
-import settings from '../../settings.json';
 import { JwtService } from '@nestjs/jwt';
-import { BcryptService } from 'src/core/main/services/bcrypt.service';
-
+import { MailService } from '../mail/mail.service';
+import { BcryptService } from '../main/services/bcrypt.service';
+import settings from '@/settings.json';
 @Injectable()
 export class AuthService {
   constructor(

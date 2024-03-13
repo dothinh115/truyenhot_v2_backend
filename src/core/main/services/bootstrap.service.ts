@@ -3,13 +3,13 @@ import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Permission } from 'src/core/permission/schema/permission.schema';
-import { User } from 'src/core/user/schema/user.schema';
-import { TRoute } from 'src/core/utils/models/route.model';
-import settings from '../../../settings.json';
-import { Route } from 'src/core/route/schema/route.schema';
-import { Setting } from 'src/core/setting/schema/setting.schema';
+import settings from '@/settings.json';
 import fs from 'fs';
+import { Route } from '@/core/route/schema/route.schema';
+import { Setting } from '@/core/setting/schema/setting.schema';
+import { Permission } from '@/core/permission/schema/permission.schema';
+import { User } from '@/core/user/schema/user.schema';
+import { TRoute } from '@/core/utils/models/route.model';
 
 export class BoostrapService {
   constructor(

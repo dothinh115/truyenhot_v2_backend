@@ -1,16 +1,12 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Role } from './schema/role.schema';
 import { Model } from 'mongoose';
-import { TQuery } from 'src/core/utils/models/query.model';
-import { QueryService } from 'src/core/main/services/query.service';
-import { CommonService } from 'src/core/main/services/common.service';
+import { TQuery } from '@/core/utils/models/query.model';
+import { QueryService } from '@/core/main/services/query.service';
+import { CommonService } from '@/core/main/services/common.service';
 
 @Injectable()
 export class RoleService {

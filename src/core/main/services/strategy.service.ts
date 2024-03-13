@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { AuthGuard, PassportStrategy } from '@nestjs/passport';
 import { Model } from 'mongoose';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { User } from 'src/core/user/schema/user.schema';
+import { User } from '@/core/user/schema/user.schema';
 
 export class TokenRequired extends AuthGuard('jwt') {}
 

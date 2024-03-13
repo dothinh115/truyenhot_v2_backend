@@ -1,6 +1,6 @@
 import { Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { DefaultFile } from 'src/core/mongoose/models/file.model';
+import { DefaultFile } from '@/core/mongoose/models/file.model';
 
 export type FileDocument = HydratedDocument<File>;
 

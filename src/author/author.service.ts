@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
-import { TQuery } from 'src/core/utils/models/query.model';
+import { TQuery } from '@/core/utils/models/query.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Author } from './schema/author.schema';
 import { Model } from 'mongoose';
-import { QueryService } from 'src/core/main/services/query.service';
+import { QueryService } from '@/core/main/services/query.service';
 
 @Injectable()
 export class AuthorService {

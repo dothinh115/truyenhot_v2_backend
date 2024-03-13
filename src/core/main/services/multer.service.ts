@@ -6,10 +6,10 @@ import {
 } from '@nestjs/platform-express';
 import mongoose, { Model } from 'mongoose';
 import { diskStorage } from 'multer';
-import { File } from 'src/core/upload/schema/file.schema';
-import { Folder } from 'src/core/upload/schema/folder.schema';
+import { File } from '@/core/upload/schema/file.schema';
+import { Folder } from '@/core/upload/schema/folder.schema';
 import * as path from 'path';
-import settings from '../../../settings.json';
+import settings from '@/settings.json';
 
 @Injectable()
 export class MulterConfigService implements MulterOptionsFactory {

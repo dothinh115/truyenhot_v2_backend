@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 import { IsEmail, IsNotEmpty, ValidateIf } from 'class-validator';
-import settings from '../../../settings.json';
+import settings from '@/settings.json';
 export class LoginAuthDto {
   @Expose()
   @IsNotEmpty({ message: 'Email không được để trống!' })

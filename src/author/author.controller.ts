@@ -12,9 +12,9 @@ import {
 import { AuthorService } from './author.service';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
-import { TQuery } from 'src/core/utils/models/query.model';
-import { TokenRequired } from 'src/core/main/services/strategy.service';
-import { RolesGuard } from 'src/core/main/services/roles.guard';
+import { TQuery } from '@/core/utils/models/query.model';
+import { TokenRequired } from '@/core/main/services/strategy.service';
+import { RolesGuard } from '@/core/main/services/roles.guard';
 
 @Controller('author')
 export class AuthorController {

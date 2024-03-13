@@ -14,10 +14,10 @@ import {
 import { UploadService } from './upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateFolderDto } from './dto/create-folder.dto';
-import { TQuery } from 'src/core/utils/models/query.model';
-import { RolesGuard } from 'src/core/main/services/roles.guard';
-import { CustomRequest } from 'src/core/utils/models/request.model';
-import { TokenRequired } from 'src/core/main/services/strategy.service';
+import { TQuery } from '@/core/utils/models/query.model';
+import { RolesGuard } from '@/core/main/services/roles.guard';
+import { CustomRequest } from '@/core/utils/models/request.model';
+import { TokenRequired } from '@/core/main/services/strategy.service';
 
 @Controller('upload')
 export class UploadController {

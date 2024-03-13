@@ -1,6 +1,6 @@
 import { Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import DefaultRole from 'src/core/mongoose/models/role.model';
+import DefaultRole from '@/core/mongoose/models/role.model';
 
 export type RoleDocument = HydratedDocument<Role>;
 

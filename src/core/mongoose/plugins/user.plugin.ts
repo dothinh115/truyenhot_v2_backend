@@ -1,7 +1,7 @@
 import { Model, Schema } from 'mongoose';
-import { BcryptService } from 'src/core/main/services/bcrypt.service';
+import { BcryptService } from '@/core/main/services/bcrypt.service';
 import { ConfigService } from '@nestjs/config';
-import { Setting } from 'src/core/setting/schema/setting.schema';
+import { Setting } from '@/core/setting/schema/setting.schema';
 
 export default function userPlugin(schema: Schema) {
   const configService = new ConfigService();

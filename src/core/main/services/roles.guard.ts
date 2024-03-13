@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Permission } from 'src/core/permission/schema/permission.schema';
+import { Permission } from '@/core/permission/schema/permission.schema';
 
 @Injectable()
 export class RolesGuard implements CanActivate {

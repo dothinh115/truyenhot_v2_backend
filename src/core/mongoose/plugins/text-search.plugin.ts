@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
-import settings from '../../../settings.json';
-import { CommonService } from 'src/core/main/services/common.service';
+import settings from '@/settings.json';
+import { CommonService } from '@/core/main/services/common.service';
 
 export default function textSearchPlugin(schema: Schema) {
   const commonService = new CommonService();
@@ -27,6 +27,7 @@ export default function textSearchPlugin(schema: Schema) {
     }
     next();
   });
+
   //khi update lại trường dc đặt thì cũng phải thay đổi các trường text search
   schema.pre('findOneAndUpdate', async function (next) {
     const payload = this.getUpdate();

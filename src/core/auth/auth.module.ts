@@ -6,7 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import {
   RefreshToken,
   RefreshTokenSchema,
-} from 'src/core/auth/schema/refresh-token.schema';
+} from '@/core/auth/schema/refresh-token.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 

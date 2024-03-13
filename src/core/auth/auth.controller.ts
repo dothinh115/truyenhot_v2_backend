@@ -2,7 +2,7 @@ import { Body, Controller, Post, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RegisterAuthDto } from './dto/register-auth.dto';
-import { TQuery } from 'src/core/utils/models/query.model';
+import { TQuery } from '@/core/utils/models/query.model';
 import { RefreshTokenAuthDto } from './dto/refresh-token-auth.dto';
 
 @Controller('auth')

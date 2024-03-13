@@ -4,8 +4,8 @@ import { UpdateStatusDto } from './dto/update-status.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Status } from './schema/status.schema';
 import { Model } from 'mongoose';
-import { TQuery } from 'src/core/utils/models/query.model';
-import { QueryService } from 'src/core/main/services/query.service';
+import { TQuery } from '@/core/utils/models/query.model';
+import { QueryService } from '@/core/main/services/query.service';
 
 @Injectable()
 export class StatusService {

@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose';
-import { User } from 'src/core/user/schema/user.schema';
+import { User } from '@/core/user/schema/user.schema';
 
 export default function settingPlugin(schema: Schema) {
   schema.pre('findOneAndUpdate', async function (next) {

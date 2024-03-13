@@ -8,9 +8,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { MeService } from './me.service';
-import { TQuery } from 'src/core/utils/models/query.model';
-import { CustomRequest } from 'src/core/utils/models/request.model';
-import { UserService } from 'src/core/user/user.service';
+import { TQuery } from '@/core/utils/models/query.model';
+import { CustomRequest } from '@/core/utils/models/request.model';
+import { UserService } from '@/core/user/user.service';
 import { UpdateMeDto } from './dto/update-me.dto';
 import { TokenRequired } from '../main/services/strategy.service';
 

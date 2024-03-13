@@ -12,8 +12,8 @@ import {
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { TQuery } from 'src/core/utils/models/query.model';
-import { RolesGuard } from 'src/core/main/services/roles.guard';
+import { TQuery } from '@/core/utils/models/query.model';
+import { RolesGuard } from '@/core/main/services/roles.guard';
 import { TokenRequired } from '../main/services/strategy.service';
 
 @Controller('role')

@@ -1,6 +1,6 @@
+import DefaultRefreshToken from '@/core/mongoose/models/refresh-token.model';
 import { Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import DefaultRefreshToken from 'src/core/mongoose/models/refresh-token.model';
 
 export type RefreshTokenDocument = HydratedDocument<RefreshToken>;
 

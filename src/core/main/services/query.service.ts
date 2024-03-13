@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { numberRegex } from 'src/core/utils/models/common.model';
-import { TPopulate, TQuery } from 'src/core/utils/models/query.model';
+import { numberRegex } from '@/core/utils/models/common.model';
+import { TPopulate, TQuery } from '@/core/utils/models/query.model';
 import * as qs from 'qs';
-import settings from '../../../settings.json';
+import settings from '@/settings.json';
 import * as pluralize from 'pluralize';
-import { CommonService } from 'src/core/main/services/common.service';
+import { CommonService } from '@/core/main/services/common.service';
 @Injectable()
 export class QueryService {
   constructor(private commonService: CommonService) {}

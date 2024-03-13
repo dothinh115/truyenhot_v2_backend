@@ -4,8 +4,8 @@ import { UpdateStoryDto } from './dto/update-story.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Story } from './schema/story.schema';
 import { Model } from 'mongoose';
-import { TQuery } from 'src/core/utils/models/query.model';
-import { QueryService } from 'src/core/main/services/query.service';
+import { TQuery } from '@/core/utils/models/query.model';
+import { QueryService } from '@/core/main/services/query.service';
 
 @Injectable()
 export class StoryService {

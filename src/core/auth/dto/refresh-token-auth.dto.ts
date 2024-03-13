@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 import { IsNotEmpty, ValidateIf } from 'class-validator';
-import settings from '../../../settings.json';
+import settings from '@/settings.json';
 
 export class RefreshTokenAuthDto {
   @Expose()
