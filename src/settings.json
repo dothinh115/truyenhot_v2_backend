@@ -8,7 +8,7 @@
     },
     "REFERENCE_CHECK": true, 
     "UPLOAD": {
-        "FILE_SIZE": 1000000, // bytes
+        "FILE_SIZE": 2000000, // bytes
         "FILE_TYPE": ["image/png", "image/jpg", "image/jpeg", "image/webp", "video/mp4"]
     },
     "QUERY": {
