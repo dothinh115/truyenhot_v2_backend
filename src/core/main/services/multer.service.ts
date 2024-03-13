@@ -55,12 +55,6 @@ export class MulterConfigService implements MulterOptionsFactory {
       }),
       fileFilter(req, file, cb) {
         try {
-          if (file.size > settings.UPLOAD.FILE_SIZE) {
-            throw new Error(
-              `File size tối đa ${settings.UPLOAD.FILE_SIZE} bytes!`,
-            );
-          }
-
           if (!settings.UPLOAD.FILE_TYPE.includes(file.mimetype)) {
             throw new Error(`Chỉ chấp nhận file ${settings.UPLOAD.FILE_TYPE}!`);
           }
@@ -70,6 +64,9 @@ export class MulterConfigService implements MulterOptionsFactory {
           const err = new BadRequestException(error.message);
           cb(err, null);
         }
+      },
+      limits: {
+        fileSize: settings.UPLOAD.FILE_SIZE,
       },
     };
   }
