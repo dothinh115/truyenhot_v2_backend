@@ -27,7 +27,6 @@ export default function textSearchPlugin(schema: Schema) {
     }
     next();
   });
-
   //khi update lại trường dc đặt thì cũng phải thay đổi các trường text search
   schema.pre('findOneAndUpdate', async function (next) {
     const payload = this.getUpdate();
