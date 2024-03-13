@@ -9,6 +9,7 @@ import { TRoute } from 'src/core/utils/models/route.model';
 import settings from '../../../settings.json';
 import { Route } from 'src/core/route/schema/route.schema';
 import { Setting } from 'src/core/setting/schema/setting.schema';
+import fs from 'fs';
 
 export class BoostrapService {
   constructor(
@@ -33,6 +34,11 @@ export class BoostrapService {
       await this.settingModel.create({});
       console.log('Tạo thành công setting');
     }
+  }
+
+  async createUploadFolder() {
+    const path = process.cwd() + '/upload';
+    if (!fs.existsSync(path)) fs.mkdirSync(path);
   }
 
   //Hàm check và lưu toàn bộ path trong dự án
@@ -152,6 +158,7 @@ export class BoostrapService {
 export class OnBootStrapService implements OnApplicationBootstrap {
   constructor(private bootstrapService: BoostrapService) {}
   async onApplicationBootstrap() {
+    await this.bootstrapService.createUploadFolder();
     await this.bootstrapService.createSetting();
     await this.bootstrapService.handlePath();
     console.log('Tạo thành công các permissions');
