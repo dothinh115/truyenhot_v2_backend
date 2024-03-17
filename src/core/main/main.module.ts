@@ -1,4 +1,4 @@
-import { Global, MiddlewareConsumer, Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { CommonService } from './services/common.service';
 import { BcryptService } from './services/bcrypt.service';
 import {

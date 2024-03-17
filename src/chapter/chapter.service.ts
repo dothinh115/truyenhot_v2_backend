@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UseGuards } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateChapterDto } from './dto/create-chapter.dto';
 import { UpdateChapterDto } from './dto/update-chapter.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -6,8 +6,6 @@ import { Chapter } from './schema/chapter.schema';
 import { Model } from 'mongoose';
 import { TQuery } from '@/core/utils/models/query.model';
 import { QueryService } from '@/core/main/services/query.service';
-import { TokenRequired } from '@/core/main/services/strategy.service';
-import { RolesGuard } from '@/core/main/services/roles.guard';
 
 @Injectable()
 export class ChapterService {
@@ -15,7 +13,6 @@ export class ChapterService {
     @InjectModel(Chapter.name) private chapterModel: Model<Chapter>,
     private queryService: QueryService,
   ) {}
-  @UseGuards(TokenRequired, RolesGuard)
   async create(body: CreateChapterDto, query: TQuery) {
     try {
       const exists = await this.chapterModel.findOne({
@@ -42,7 +39,6 @@ export class ChapterService {
     }
   }
 
-  @UseGuards(TokenRequired, RolesGuard)
   async update(id: number, body: UpdateChapterDto, query: TQuery) {
     try {
       const exists = await this.chapterModel.findById(id);
@@ -58,7 +54,6 @@ export class ChapterService {
     }
   }
 
-  @UseGuards(TokenRequired, RolesGuard)
   async remove(id: number) {
     try {
       const exists = await this.chapterModel.findById(id);

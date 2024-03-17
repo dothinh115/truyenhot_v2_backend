@@ -218,6 +218,17 @@ export class QueryService {
     return result;
   }
 
+  private toArray = (string: string) => {
+    let result = [];
+    const stringSplitArr = string.split(',').filter((x) => x !== '');
+    for (const stringSplit of stringSplitArr) {
+      if (numberRegex.test(stringSplit)) {
+        result.push(+stringSplit);
+      } else result.push(stringSplit);
+    }
+    return result;
+  };
+
   //hàm đưa giá trị cuối cùng của object về thành number nếu nó thực sự là number
   private stringToNumberObject(object: object | string) {
     if (typeof object === 'string') {
@@ -228,7 +239,9 @@ export class QueryService {
         return {
           [key]:
             key === '$in'
-              ? [numberRegex.test(object[key]) ? +object[key] : object[key]]
+              ? numberRegex.test(object[key])
+                ? +object[key]
+                : this.toArray(object[key])
               : numberRegex.test(object[key])
               ? +object[key]
               : object[key],
@@ -237,7 +250,7 @@ export class QueryService {
       return {
         [key]:
           key === '$in'
-            ? [this.stringToNumberObject(object[key])]
+            ? this.toArray(this.stringToNumberObject(object[key]))
             : this.stringToNumberObject(object[key]),
       };
     }
@@ -384,6 +397,7 @@ export class QueryService {
 
     if (meta)
       metaSelect = meta.split(',').filter((meta: string) => meta !== '');
+
     try {
       if (_id && Array.isArray(_id))
         result = await model
