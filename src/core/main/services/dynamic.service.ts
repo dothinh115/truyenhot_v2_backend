@@ -31,9 +31,9 @@ export class DynamicService {
         await handler.handleBefore(method, model, body, undefined, req);
 
       const result = await model.create(body);
-      await handler.handleAfter(method, model, body, undefined, req);
       if (handler)
-        return await this.queryService.handleQuery(model, query, result._id);
+        await handler.handleAfter(method, model, body, undefined, req);
+      return await this.queryService.handleQuery(model, query, result._id);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
