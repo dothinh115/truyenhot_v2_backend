@@ -27,11 +27,13 @@ export class DynamicService {
       const handler: DynamicRouteHandler = this.handlerOptions.find(
         (x) => x.route === name,
       )?.provider;
-      await handler.handleBefore(method, model, body, undefined, req);
+      if (handler)
+        await handler.handleBefore(method, model, body, undefined, req);
 
       const result = await model.create(body);
       await handler.handleAfter(method, model, body, undefined, req);
-      return await this.queryService.handleQuery(model, query, result._id);
+      if (handler)
+        return await this.queryService.handleQuery(model, query, result._id);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -44,9 +46,9 @@ export class DynamicService {
       let handler: DynamicRouteHandler = this.handlerOptions.find(
         (x) => x.route === name,
       )?.provider;
-      await handler.handleBefore(method, model);
+      if (handler) await handler.handleBefore(method, model);
       const result = await this.queryService.handleQuery(model, query);
-      await handler.handleAfter(method, model);
+      if (handler) await handler.handleAfter(method, model);
       return result;
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -66,11 +68,11 @@ export class DynamicService {
       const handler: DynamicRouteHandler = this.handlerOptions.find(
         (x) => x.route === name,
       )?.provider;
-      await handler.handleBefore(method, model, body, id, req);
+      if (handler) await handler.handleBefore(method, model, body, id, req);
       const exists = await model.exists({ _id: id });
       if (!exists) throw new Error('Không có record này trong hệ thống!');
       const result = await model.findByIdAndUpdate(id, body);
-      handler.handleAfter(method, model, body, id, req);
+      if (handler) handler.handleAfter(method, model, body, id, req);
       return await this.queryService.handleQuery(model, query, result._id);
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -84,12 +86,12 @@ export class DynamicService {
       const handler: DynamicRouteHandler = this.handlerOptions.find(
         (x) => x.route === name,
       )?.provider;
-
-      await handler.handleBefore(method, model, undefined, id, req);
+      if (handler)
+        await handler.handleBefore(method, model, undefined, id, req);
       const exists = await model.exists({ _id: id });
       if (!exists) throw new Error('Không có record này trong hệ thống!');
       await model.findByIdAndDelete(id);
-      await handler.handleAfter(method, model, undefined, id, req);
+      if (handler) await handler.handleAfter(method, model, undefined, id, req);
 
       return {
         message: 'Thành công xoá record có id ' + id,
