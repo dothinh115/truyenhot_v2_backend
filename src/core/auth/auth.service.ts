@@ -6,22 +6,22 @@ import { LoginAuthDto } from './dto/login-auth.dto';
 import { RefreshToken } from '@/core/auth/schema/refresh-token.schema';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { TQuery } from '@/core/utils/models/query.model';
-import { UserService } from '@/core/user/user.service';
 import { RefreshTokenAuthDto } from './dto/refresh-token-auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { MailService } from '../mail/mail.service';
 import { BcryptService } from '../main/services/bcrypt.service';
 import settings from '@/settings.json';
+import { QueryService } from '../main/services/query.service';
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(RefreshToken.name)
     private refreshTokenModel: Model<RefreshToken>,
-    private userService: UserService,
     private mailService: MailService,
     private jwtService: JwtService,
     private bcryptService: BcryptService,
+    private queryService: QueryService,
   ) {}
   async login(body: LoginAuthDto) {
     try {
@@ -79,7 +79,12 @@ export class AuthService {
         email: body.email,
       });
       if (exists) throw new Error('Email đã được dùng!');
-      return await this.userService.create(body, query);
+      const result = await this.userModel.create(body);
+      return await this.queryService.handleQuery(
+        this.userModel,
+        query,
+        result._id,
+      );
     } catch (error) {
       throw new BadRequestException(error.message);
     }

@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { StoryService } from './story.service';
-import { StoryController } from './story.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Story, StorySchema } from './schema/story.schema';
 
@@ -13,7 +11,5 @@ import { Story, StorySchema } from './schema/story.schema';
       },
     ]),
   ],
-  controllers: [StoryController],
-  providers: [StoryService],
 })
 export class StoryModule {}

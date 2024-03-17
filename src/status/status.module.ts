@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { StatusService } from './status.service';
-import { StatusController } from './status.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Status, StatusSchema } from './schema/status.schema';
 
@@ -13,7 +11,5 @@ import { Status, StatusSchema } from './schema/status.schema';
       },
     ]),
   ],
-  controllers: [StatusController],
-  providers: [StatusService],
 })
 export class StatusModule {}

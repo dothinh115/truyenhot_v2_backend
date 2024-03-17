@@ -1,8 +1,0 @@
-import { Expose } from 'class-transformer';
-import { IsNotEmpty } from 'class-validator';
-
-export class CreateRoleDto {
-  @Expose()
-  @IsNotEmpty({ message: 'Title không được để trống!' })
-  title: string;
-}

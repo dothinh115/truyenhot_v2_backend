@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateFolderDto } from './dto/create-folder.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Folder } from './schema/folder.schema';
 import { Model } from 'mongoose';
@@ -9,6 +8,7 @@ import * as fs from 'fs';
 import { CommonService } from '@/core/main/services/common.service';
 import { CustomRequest } from '@/core/utils/models/request.model';
 import { File } from './schema/file.schema';
+import { CreateFolderDto } from './dto/create-folder.dto';
 
 @Injectable()
 export class UploadService {
@@ -94,42 +94,6 @@ export class UploadService {
     }
   }
 
-  async file(query: TQuery) {
-    try {
-      return await this.queryService.handleQuery(this.fileModel, query);
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  async deleteFile(id: string) {
-    try {
-      const exists = await this.fileModel.findById(id);
-      if (!exists) throw new Error('Không tồn tại file này trong db!');
-      let path = `${process.cwd()}/upload`;
-      if (exists.folder) path += '/' + exists.folder;
-      path += '/' + exists._id.toString() + exists.extension;
-      if (fs.existsSync(path)) {
-        this.commonService.removeFileOrFolder(path);
-      } else throw new Error('Không tồn tại file này trong hệ thống!');
-      await this.fileModel.findByIdAndDelete(id);
-      return {
-        message: 'Thành công!',
-      };
-    } catch (error) {
-      //quăng lỗi
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  async folder(query: TQuery) {
-    try {
-      return await this.queryService.handleQuery(this.folderModel, query);
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
   async createFolder(body: CreateFolderDto, query: TQuery) {
     try {
       const exists = await this.folderModel.findOne({
@@ -148,25 +112,6 @@ export class UploadService {
         query,
         result._id,
       );
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  async deleteFolder(id: string) {
-    try {
-      const exists: any = await this.folderModel.findById(id);
-      if (!exists) throw new Error('Folder không tồn tại!');
-      const path = `${process.cwd()}/upload/${exists.slug}`;
-      //xoá thư mục đồng nghĩa với xoá toàn bộ files trong thư mục đó
-      if (fs.existsSync(path)) {
-        this.commonService.removeFileOrFolder(path, true);
-      }
-
-      await this.folderModel.findByIdAndDelete(id);
-      return {
-        message: 'Thành công!',
-      };
     } catch (error) {
       throw new BadRequestException(error.message);
     }

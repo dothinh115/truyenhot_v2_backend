@@ -5,7 +5,7 @@ import { RegisterAuthDto } from './dto/register-auth.dto';
 import { TQuery } from '@/core/utils/models/query.model';
 import { RefreshTokenAuthDto } from './dto/refresh-token-auth.dto';
 
-@Controller('auth')
+@Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @Post('login')

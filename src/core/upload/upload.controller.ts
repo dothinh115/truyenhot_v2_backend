@@ -1,10 +1,8 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Param,
-  Delete,
   UseInterceptors,
   UploadedFile,
   Query,
@@ -13,17 +11,16 @@ import {
 } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CreateFolderDto } from './dto/create-folder.dto';
 import { TQuery } from '@/core/utils/models/query.model';
-import { RolesGuard } from '@/core/main/services/roles.guard';
+import { RolesGuard } from '@/core/main/guards/roles.guard';
 import { CustomRequest } from '@/core/utils/models/request.model';
-import { TokenRequired } from '@/core/main/services/strategy.service';
+import { CreateFolderDto } from './dto/create-folder.dto';
 
 @Controller('upload')
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
-  @UseGuards(TokenRequired, RolesGuard)
+  @UseGuards(RolesGuard)
   @Post('file')
   @UseInterceptors(FileInterceptor('file'))
   uploadSingleFile(
@@ -35,7 +32,7 @@ export class UploadController {
     return this.uploadService.uploadSingleFile(file, req, query);
   }
 
-  @UseGuards(TokenRequired, RolesGuard)
+  @UseGuards(RolesGuard)
   @Post('file/:folder')
   @UseInterceptors(FileInterceptor('file'))
   uploadSingleFileWithFolder(
@@ -52,33 +49,9 @@ export class UploadController {
     );
   }
 
-  @UseGuards(TokenRequired, RolesGuard)
-  @Get('file')
-  file(@Query() query: TQuery) {
-    return this.uploadService.file(query);
-  }
-
-  @UseGuards(TokenRequired, RolesGuard)
-  @Delete('file/:id')
-  deleteFile(@Param('id') id: string) {
-    return this.uploadService.deleteFile(id);
-  }
-
-  @UseGuards(TokenRequired, RolesGuard)
-  @Get('folder')
-  folder(@Query() query: TQuery) {
-    return this.uploadService.folder(query);
-  }
-
-  @UseGuards(TokenRequired, RolesGuard)
+  @UseGuards(RolesGuard)
   @Post('folder')
   createFolder(@Body() body: CreateFolderDto, @Query() query: TQuery) {
     return this.uploadService.createFolder(body, query);
-  }
-
-  @UseGuards(TokenRequired, RolesGuard)
-  @Delete('folder/:id')
-  deleteFolder(@Param('id') id: string) {
-    return this.uploadService.deleteFolder(id);
   }
 }

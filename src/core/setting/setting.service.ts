@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { UpdateSettingDto } from './dto/update-setting.dto';
 import { TQuery } from '@/core/utils/models/query.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Setting } from './schema/setting.schema';
@@ -20,7 +19,7 @@ export class SettingService {
     }
   }
 
-  async update(body: UpdateSettingDto, query: TQuery) {
+  async update(body: any, query: TQuery) {
     try {
       await this.settingService.findOneAndUpdate(body);
       return await this.queryService.handleQuery(this.settingService, query);

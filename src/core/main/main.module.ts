@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { Global, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { CommonService } from './services/common.service';
 import { BcryptService } from './services/bcrypt.service';
 import {
@@ -8,9 +8,8 @@ import {
 import { MulterModule } from '@nestjs/platform-express';
 import { MulterConfigService } from './services/multer.service';
 import { QueryService } from './services/query.service';
-import { StrategyService } from './services/strategy.service';
 import { AssetsController } from './controllers/assets.controller';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 import globalPlugin from '../mongoose/plugins/global.plugin';
@@ -23,7 +22,11 @@ import { PermisionModule } from '../permission/permision.module';
 import { RouteModule } from '../route/route.module';
 import { SettingModule } from '../setting/setting.module';
 import { UploadModule } from '../upload/upload.module';
-import { RolesGuard } from './services/roles.guard';
+import { RolesGuard } from './guards/roles.guard';
+import { DynamicController } from './controllers/dynamic.controller';
+import { DynamicService } from './services/dynamic.service';
+import { JwtModule } from '@nestjs/jwt';
+import { DynamicRouteHandlerService } from './services/dynamic-handler.service';
 
 @Global()
 @Module({
@@ -41,6 +44,13 @@ import { RolesGuard } from './services/roles.guard';
         return connection;
       },
     }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get('SECRET_KEY'),
+      }),
+      inject: [ConfigService],
+    }),
     AuthModule,
     UserModule,
     RoleModule,
@@ -51,15 +61,16 @@ import { RolesGuard } from './services/roles.guard';
     SettingModule,
     UploadModule,
   ],
-  controllers: [AssetsController],
+  controllers: [AssetsController, DynamicController],
   providers: [
+    DynamicService,
     CommonService,
     BcryptService,
     OnBootStrapService,
     BoostrapService,
     QueryService,
-    StrategyService,
     RolesGuard,
+    DynamicRouteHandlerService,
   ],
   exports: [
     CommonService,
@@ -67,7 +78,6 @@ import { RolesGuard } from './services/roles.guard';
     OnBootStrapService,
     MulterModule,
     QueryService,
-    StrategyService,
     ConfigModule,
     MongooseModule,
     AuthModule,
@@ -80,6 +90,8 @@ import { RolesGuard } from './services/roles.guard';
     SettingModule,
     UploadModule,
     RolesGuard,
+    DynamicRouteHandlerService,
+    JwtModule,
   ],
 })
 export class MainModule {}

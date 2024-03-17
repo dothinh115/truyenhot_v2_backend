@@ -10,8 +10,10 @@ import { Setting } from '@/core/setting/schema/setting.schema';
 import { Permission } from '@/core/permission/schema/permission.schema';
 import { User } from '@/core/user/schema/user.schema';
 import { TRoute } from '@/core/utils/models/route.model';
+import { models } from '@/core/mongoose/plugins/global.plugin';
 
 export class BoostrapService {
+  models: { name: string; model: Model<any> }[];
   constructor(
     private adapterHost: HttpAdapterHost,
     private configService: ConfigService,
@@ -19,13 +21,11 @@ export class BoostrapService {
     @InjectModel(Permission.name) private permissionModel: Model<Permission>,
     @InjectModel(Route.name) private routeModel: Model<Route>,
     @InjectModel(Setting.name) private settingModel: Model<Setting>,
-  ) {}
+  ) {
+    this.models = models;
+  }
   private getParentRoute = (route: string) => {
-    return route
-      .split('/api/')
-      .filter((x: string) => x !== '')
-      .toString()
-      .split('/')[0];
+    return route.split('/').filter((x) => x !== '')[0];
   };
   //Tạo setting object
   async createSetting() {
@@ -51,10 +51,16 @@ export class BoostrapService {
     const existingRoutes: { path: string; method: string }[] = router.stack
       .map((routeObj: TRoute) => {
         if (routeObj.route) {
+          if (routeObj.route.path.includes(':name')) return;
+          for (const item of settings.EXCLUDED_ROUTE) {
+            if (this.getParentRoute(routeObj.route.path) === item) return;
+          }
           const route = this.getParentRoute(routeObj.route.path);
           parentRoutes.add(route);
           return {
-            path: routeObj.route.path,
+            path: routeObj.route.path.includes(':')
+              ? routeObj.route.path.split('/:').filter((x) => x !== '')[0]
+              : routeObj.route.path,
             method: routeObj.route.stack[0].method,
           };
         }
@@ -63,12 +69,11 @@ export class BoostrapService {
     parentRoutes = Array.from(parentRoutes);
 
     //Tạo route cha
-    await this.routeModel.deleteMany();
     for (const parentRoute of parentRoutes) {
-      const exist = await this.routeModel.exists({
+      const exists = await this.routeModel.findOne({
         path: parentRoute,
       });
-      if (exist) continue;
+      if (exists) continue;
       let isContinue = true;
       for (const excluded of settings.EXCLUDED_ROUTE) {
         if (this.getParentRoute(parentRoute) === excluded) {
@@ -80,6 +85,14 @@ export class BoostrapService {
       await this.routeModel.create({
         path: parentRoute,
       });
+    }
+
+    //xoá các route cha dư thừa
+    const routes = await this.routeModel.find();
+    for (const route of routes) {
+      if (route.path.includes('/api')) continue;
+      const find = parentRoutes.find((x) => x === route.path);
+      if (!find) await this.routeModel.findByIdAndDelete(route._id);
     }
 
     //Tạo permission
@@ -120,14 +133,90 @@ export class BoostrapService {
     const savedRoutes = await this.permissionModel.find();
     //xoá lần 1, so với các route đang tồn tại
     for (const savedRoute of savedRoutes) {
-      const find = existingRoutes.find((route) => {
-        return (
-          route.path === savedRoute.path && route.method === savedRoute.method
-        );
-      });
+      const find = existingRoutes.find(
+        (route) =>
+          route.path === savedRoute.path && route.method === savedRoute.method,
+      );
       for (const excludedRoute of settings.EXCLUDED_ROUTE) {
-        if (this.getParentRoute(savedRoute.path) === excludedRoute || !find)
+        if (
+          (this.getParentRoute(savedRoute.path) === excludedRoute || !find) &&
+          !savedRoute.path.includes('/api')
+        )
           await this.permissionModel.findByIdAndDelete(savedRoute._id);
+      }
+    }
+  }
+
+  async createDynamicRouteAndPermission() {
+    const routes = await this.routeModel.find();
+    // tạo các dynamic route cha
+    for (const model of this.models) {
+      const find = routes.find((x) => x.path === model.name);
+      if (find) continue;
+      const path = '/api/' + model.name;
+      const exists = routes.find((x) => x.path === path);
+      if (exists) continue;
+      await this.routeModel.create({
+        path,
+      });
+    }
+
+    //xoá các dynamic route cha dư thừa
+    for (const route of routes) {
+      if (route.path.includes('/api')) {
+        const find = this.models.find((x) => '/api/' + x.name === route.path);
+        if (!find) await this.routeModel.findByIdAndDelete(route._id);
+      }
+    }
+
+    let permissions = await this.permissionModel.find();
+
+    //tạo permistion cho dynamic route
+    for (const model of this.models) {
+      const find = permissions.find(
+        (x) => this.getParentRoute(x.path) === model.name,
+      );
+      if (find) continue;
+      const methods = ['post', 'get', 'patch', 'delete'];
+      for (const method of methods) {
+        const exists = await this.permissionModel.findOne({
+          path: '/api/' + model.name,
+          method,
+        });
+        if (exists) continue;
+        await this.permissionModel.create({
+          path: '/api/' + model.name,
+          method,
+        });
+      }
+    }
+
+    //xoá các dynamic permission dư thừa
+    for (const permission of permissions) {
+      if (permission.path.includes('/api')) {
+        const name = permission.path
+          .split('/')
+          .filter((x) => x !== '')
+          .slice(-1)[0];
+        const exists = this.models.find((x) => x.name === name);
+        if (!exists)
+          await this.permissionModel.findByIdAndDelete(permission._id);
+      }
+    }
+
+    permissions = await this.permissionModel.find();
+    //add dynamic permission vào dynamic route
+    for (const permission of permissions) {
+      if (permission.path.includes('/api')) {
+        const route = await this.routeModel.findOne({
+          path: permission.path,
+        });
+        if (!route) continue;
+        const permissionSet = new Set(route.permission);
+        permissionSet.add(permission._id.toString());
+        await this.routeModel.findByIdAndUpdate(route._id, {
+          permission: Array.from(permissionSet),
+        });
       }
     }
   }
@@ -161,7 +250,7 @@ export class OnBootStrapService implements OnApplicationBootstrap {
     await this.bootstrapService.createUploadFolder();
     await this.bootstrapService.createSetting();
     await this.bootstrapService.handlePath();
-    console.log('Tạo thành công các permissions');
+    await this.bootstrapService.createDynamicRouteAndPermission();
     await this.bootstrapService.rootUserCheck();
   }
 }
