@@ -1,7 +1,7 @@
 import { Controller, Get, Body, Patch, Query, UseGuards } from '@nestjs/common';
 import { SettingService } from './setting.service';
 import { TQuery } from '@/core/utils/models/query.model';
-import { RolesGuard } from '@/core/main/guards/roles.guard';
+import { RolesGuard } from '@/core/guards/roles.guard';
 
 @Controller('setting')
 export class SettingController {

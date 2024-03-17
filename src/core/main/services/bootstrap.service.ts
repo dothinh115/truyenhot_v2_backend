@@ -10,7 +10,7 @@ import { Setting } from '@/core/setting/schema/setting.schema';
 import { Permission } from '@/core/permission/schema/permission.schema';
 import { User } from '@/core/user/schema/user.schema';
 import { TRoute } from '@/core/utils/models/route.model';
-import { models } from '@/core/mongoose/plugins/global.plugin';
+import { models } from '@/core/mongoose/plugins/init.plugin';
 
 export class BoostrapService {
   models: { name: string; model: Model<any> }[];

@@ -1,4 +1,4 @@
-import { Global, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { CommonService } from './services/common.service';
 import { BcryptService } from './services/bcrypt.service';
 import {
@@ -22,11 +22,11 @@ import { PermisionModule } from '../permission/permision.module';
 import { RouteModule } from '../route/route.module';
 import { SettingModule } from '../setting/setting.module';
 import { UploadModule } from '../upload/upload.module';
-import { RolesGuard } from './guards/roles.guard';
+import { RolesGuard } from '../guards/roles.guard';
 import { DynamicController } from './controllers/dynamic.controller';
 import { DynamicService } from './services/dynamic.service';
 import { JwtModule } from '@nestjs/jwt';
-import { DynamicRouteHandlerService } from './services/dynamic-handler.service';
+import { HandlerModule } from '../handler/handler.module';
 
 @Global()
 @Module({
@@ -60,6 +60,7 @@ import { DynamicRouteHandlerService } from './services/dynamic-handler.service';
     RouteModule,
     SettingModule,
     UploadModule,
+    HandlerModule,
   ],
   controllers: [AssetsController, DynamicController],
   providers: [
@@ -70,7 +71,6 @@ import { DynamicRouteHandlerService } from './services/dynamic-handler.service';
     BoostrapService,
     QueryService,
     RolesGuard,
-    DynamicRouteHandlerService,
   ],
   exports: [
     CommonService,
@@ -90,7 +90,6 @@ import { DynamicRouteHandlerService } from './services/dynamic-handler.service';
     SettingModule,
     UploadModule,
     RolesGuard,
-    DynamicRouteHandlerService,
     JwtModule,
   ],
 })

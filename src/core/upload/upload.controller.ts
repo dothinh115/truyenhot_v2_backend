@@ -12,7 +12,7 @@ import {
 import { UploadService } from './upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { TQuery } from '@/core/utils/models/query.model';
-import { RolesGuard } from '@/core/main/guards/roles.guard';
+import { RolesGuard } from '@/core/guards/roles.guard';
 import { CustomRequest } from '@/core/utils/models/request.model';
 import { CreateFolderDto } from './dto/create-folder.dto';
 

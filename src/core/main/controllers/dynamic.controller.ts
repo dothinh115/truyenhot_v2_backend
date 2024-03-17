@@ -13,10 +13,10 @@ import {
 } from '@nestjs/common';
 import { DynamicService } from '../services/dynamic.service';
 import { Model } from 'mongoose';
-import { models } from '@/core/mongoose/plugins/global.plugin';
 import { TQuery } from '@/core/utils/models/query.model';
 import { CustomRequest } from '@/core/utils/models/request.model';
-import { RolesGuard } from '../guards/roles.guard';
+import { RolesGuard } from '../../guards/roles.guard';
+import { models } from '@/core/mongoose/plugins/init.plugin';
 
 @Controller('api/:name')
 export class DynamicController {

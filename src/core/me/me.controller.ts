@@ -2,7 +2,7 @@ import { Controller, Get, UseGuards, Req, Query } from '@nestjs/common';
 import { MeService } from './me.service';
 import { TQuery } from '@/core/utils/models/query.model';
 import { CustomRequest } from '@/core/utils/models/request.model';
-import { RolesGuard } from '../main/guards/roles.guard';
+import { RolesGuard } from '../guards/roles.guard';
 
 @Controller('me')
 export class MeController {

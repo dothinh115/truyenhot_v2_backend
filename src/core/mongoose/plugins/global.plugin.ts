@@ -9,23 +9,13 @@ import { SettingSchema } from '@/core/setting/schema/setting.schema';
 import { UserSchema } from '@/core/user/schema/user.schema';
 import { FolderSchema } from '@/core/upload/schema/folder.schema';
 import referenceCheckPlugin from './reference-check.plugin';
-export let models: { name: string; model: Model<any> }[] = [];
+import initPlugin from './init.plugin';
 
 export default function globalPlugin(schema: Schema) {
   //text search plugin
   schema.plugin(textSearchPlugin);
 
-  schema.post('init', function () {
-    if (models.length > 0) return;
-    const modelNames = this.db.modelNames();
-    for (const modelName of modelNames) {
-      const model = {
-        name: modelName.toLowerCase(),
-        model: this.model(modelName),
-      };
-      models.push(model);
-    }
-  });
+  schema.plugin(initPlugin);
 
   //setting plugin
   if (schema === SettingSchema) SettingSchema.plugin(settingPlugin);
