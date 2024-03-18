@@ -1,18 +1,27 @@
 import { TQuery } from '@/core/utils/models/query.model';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { QueryService } from './query.service';
-import { TMethod, DynamicRouteHandler } from '../../handler/handler.interface';
+import { QueryService } from '../query/query.service';
+import { TMethod, DynamicRouteHandler } from '../handler/handler.interface';
 import { CustomRequest } from '@/core/utils/models/request.model';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
 
 @Injectable()
 export class DynamicService {
   private handlerOptions: {
     route: string;
+    provider: DynamicRouteHandler;
+  }[] = [];
+
+  private validateOptions: {
+    route: string;
     provider: any;
   }[] = [];
   constructor(private queryService: QueryService) {
     this.handlerOptions = global.handlerOptions;
+    this.validateOptions = global.validateOptions;
   }
   async create(
     body: any,
@@ -26,6 +35,18 @@ export class DynamicService {
       const handler: DynamicRouteHandler = this.handlerOptions.find(
         (x) => x.route === name,
       )?.provider;
+      const dto = this.validateOptions.find((x) => x.route === name)?.provider;
+      const toInstance = plainToInstance(dto, body);
+      const errors = await validate(toInstance);
+      if (errors.length > 0) {
+        const errorArr: string[] = [];
+        for (const error of errors) {
+          for (const key in error.constraints) {
+            errorArr.push(error.constraints[key]);
+          }
+        }
+        throw new Error(errorArr.join(', '));
+      }
       if (handler)
         await handler.handleBefore(method, model, body, undefined, req);
 
@@ -67,6 +88,18 @@ export class DynamicService {
       const handler: DynamicRouteHandler = this.handlerOptions.find(
         (x) => x.route === name,
       )?.provider;
+      const dto = this.validateOptions.find((x) => x.route === name)?.provider;
+      const toInstance = plainToInstance(PartialType(dto), body);
+      const errors = await validate(toInstance);
+      if (errors.length > 0) {
+        const errorArr: string[] = [];
+        for (const error of errors) {
+          for (const key in error.constraints) {
+            errorArr.push(error.constraints[key]);
+          }
+        }
+        throw new Error(errorArr.join(', '));
+      }
       if (handler) await handler.handleBefore(method, model, body, id, req);
       const exists = await model.exists({ _id: id });
       if (!exists) throw new Error('Không có record này trong hệ thống!');

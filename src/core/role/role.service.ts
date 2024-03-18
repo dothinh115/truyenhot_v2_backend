@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { CustomRequest } from '../utils/models/request.model';
 import { DynamicRouteHandler, TMethod } from '../handler/handler.interface';
-import { CommonService } from '../main/services/common.service';
+import { CommonService } from '../common/common.service';
 
 @Injectable()
 export class RoleService implements DynamicRouteHandler {

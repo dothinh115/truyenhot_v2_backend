@@ -5,7 +5,7 @@ import { TPopulate, TQuery } from '@/core/utils/models/query.model';
 import * as qs from 'qs';
 import settings from '@/settings.json';
 import * as pluralize from 'pluralize';
-import { CommonService } from '@/core/main/services/common.service';
+import { CommonService } from '@/core/common/common.service';
 @Injectable()
 export class QueryService {
   constructor(private commonService: CommonService) {}

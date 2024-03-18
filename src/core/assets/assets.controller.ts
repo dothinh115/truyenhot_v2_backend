@@ -10,6 +10,7 @@ import { Model } from 'mongoose';
 import fs from 'fs';
 import { Response } from 'express';
 import { File } from '@/core/upload/schema/file.schema';
+
 @Controller()
 export class AssetsController {
   constructor(@InjectModel(File.name) private fileModel: Model<File>) {}

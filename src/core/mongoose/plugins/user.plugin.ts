@@ -1,5 +1,5 @@
 import { Model, Schema } from 'mongoose';
-import { BcryptService } from '@/core/main/services/bcrypt.service';
+import { BcryptService } from '@/core/common/bcrypt.service';
 import { ConfigService } from '@nestjs/config';
 import { Setting } from '@/core/setting/schema/setting.schema';
 

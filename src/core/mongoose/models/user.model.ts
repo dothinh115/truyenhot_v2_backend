@@ -2,7 +2,7 @@ import { Prop } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 
 export default class DefaultUser {
-  @Prop({ required: true, lowercase: true })
+  @Prop({ required: true, lowercase: true, unique: true, trim: true })
   email: string;
   @Prop({ required: true, select: false })
   password: string;

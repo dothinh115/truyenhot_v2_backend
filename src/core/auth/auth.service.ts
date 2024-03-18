@@ -9,9 +9,9 @@ import { TQuery } from '@/core/utils/models/query.model';
 import { RefreshTokenAuthDto } from './dto/refresh-token-auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { MailService } from '../mail/mail.service';
-import { BcryptService } from '../main/services/bcrypt.service';
+import { BcryptService } from '../common/bcrypt.service';
 import settings from '@/settings.json';
-import { QueryService } from '../main/services/query.service';
+import { QueryService } from '../query/query.service';
 
 @Injectable()
 export class AuthService {

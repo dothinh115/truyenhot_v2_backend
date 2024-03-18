@@ -3,7 +3,7 @@ import { TQuery } from '@/core/utils/models/query.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Setting } from './schema/setting.schema';
 import { Model } from 'mongoose';
-import { QueryService } from '@/core/main/services/query.service';
+import { QueryService } from '@/core/query/query.service';
 
 @Injectable()
 export class SettingService {
