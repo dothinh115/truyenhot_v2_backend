@@ -1,5 +1,5 @@
 import { Module, Type } from '@nestjs/common';
-export let handlerOptions = [];
+global.handlerOptions = [];
 type IOptions<T> = {
   route: string;
   provider: Type<T>;
@@ -7,12 +7,13 @@ type IOptions<T> = {
 
 @Module({})
 export class HandlerModule {
-  static register<T>(options: IOptions<T>[]) {
+  static register<T>(options?: IOptions<T>[]) {
     for (const option of options) {
-      handlerOptions.push({
+      global.handlerOptions.push({
         route: option.route,
         provider: new option.provider(),
       });
+
       const provider = {
         provide: option.route,
         useClass: option.provider,

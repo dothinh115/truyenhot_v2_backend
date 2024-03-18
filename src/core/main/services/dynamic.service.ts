@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import { QueryService } from './query.service';
 import { TMethod, DynamicRouteHandler } from '../../handler/handler.interface';
 import { CustomRequest } from '@/core/utils/models/request.model';
-import { handlerOptions } from '@/core/handler/handler.module';
 
 @Injectable()
 export class DynamicService {
@@ -13,7 +12,7 @@ export class DynamicService {
     provider: any;
   }[] = [];
   constructor(private queryService: QueryService) {
-    this.handlerOptions = handlerOptions;
+    this.handlerOptions = global.handlerOptions;
   }
   async create(
     body: any,

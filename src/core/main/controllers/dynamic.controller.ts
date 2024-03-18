@@ -16,13 +16,12 @@ import { Model } from 'mongoose';
 import { TQuery } from '@/core/utils/models/query.model';
 import { CustomRequest } from '@/core/utils/models/request.model';
 import { RolesGuard } from '../../guards/roles.guard';
-import { models } from '@/core/mongoose/plugins/init.plugin';
 
 @Controller('api/:name')
 export class DynamicController {
   models: { name: string; model: Model<any> }[];
   constructor(private dynamicService: DynamicService) {
-    this.models = models;
+    this.models = global.models;
   }
 
   @UseGuards(RolesGuard)

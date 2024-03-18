@@ -26,7 +26,6 @@ import { RolesGuard } from '../guards/roles.guard';
 import { DynamicController } from './controllers/dynamic.controller';
 import { DynamicService } from './services/dynamic.service';
 import { JwtModule } from '@nestjs/jwt';
-import { HandlerModule } from '../handler/handler.module';
 
 @Global()
 @Module({
@@ -60,7 +59,6 @@ import { HandlerModule } from '../handler/handler.module';
     RouteModule,
     SettingModule,
     UploadModule,
-    HandlerModule,
   ],
   controllers: [AssetsController, DynamicController],
   providers: [

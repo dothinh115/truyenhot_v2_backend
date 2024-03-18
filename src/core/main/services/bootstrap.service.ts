@@ -10,7 +10,6 @@ import { Setting } from '@/core/setting/schema/setting.schema';
 import { Permission } from '@/core/permission/schema/permission.schema';
 import { User } from '@/core/user/schema/user.schema';
 import { TRoute } from '@/core/utils/models/route.model';
-import { models } from '@/core/mongoose/plugins/init.plugin';
 
 export class BoostrapService {
   models: { name: string; model: Model<any> }[];
@@ -22,7 +21,7 @@ export class BoostrapService {
     @InjectModel(Route.name) private routeModel: Model<Route>,
     @InjectModel(Setting.name) private settingModel: Model<Setting>,
   ) {
-    this.models = models;
+    this.models = global.models;
   }
   private getParentRoute = (route: string) => {
     return route.split('/').filter((x) => x !== '')[0];
