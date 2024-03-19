@@ -42,6 +42,7 @@ export class AuthService {
         { _id: exists._id },
         { expiresIn: '15m' },
       );
+      console.log(exists._id);
       const refreshToken = this.jwtService.sign(
         { _id: exists._id },
         { expiresIn: '7d' },
@@ -117,19 +118,19 @@ export class AuthService {
       });
       if (!exists) throw new Error('Token không hợp lệ!');
       const accessToken = this.jwtService.sign(
-        { _id: exists._id },
+        { _id: exists.user },
         { expiresIn: '15m' },
       );
-      // const refreshToken = this.jwtService.sign(
-      //   { _id: exists._id },
-      //   { expiresIn: '7d' },
-      // );
-      // await this.refreshTokenModel.findByIdAndUpdate(exists._id, {
-      //   refreshToken,
-      // });
+      const refreshToken = this.jwtService.sign(
+        { _id: exists._id },
+        { expiresIn: '7d' },
+      );
+      await this.refreshTokenModel.findByIdAndUpdate(exists._id, {
+        refreshToken,
+      });
       return {
         accessToken,
-        refreshToken: body.refreshToken,
+        refreshToken,
       };
     } catch (error) {
       throw new BadRequestException(error.message);
