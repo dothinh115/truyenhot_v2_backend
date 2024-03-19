@@ -3,6 +3,7 @@ import { User } from '@/core/user/schema/user.schema';
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -55,6 +56,7 @@ export class RolesGuard implements CanActivate {
     const token = req.headers?.authorization
       .split('Bearer ')
       .filter((x) => x !== '')[0];
+    if (!token) throw new UnauthorizedException();
     try {
       const decoded = await this.jwtService.verifyAsync(token);
       if (!decoded) throw new Error();
@@ -62,7 +64,7 @@ export class RolesGuard implements CanActivate {
       const findUser = await this.userModel.findById(_id).select('+rootUser');
       user = findUser;
     } catch (error) {
-      throw new UnauthorizedException();
+      throw new ForbiddenException();
     }
     return user;
   }
