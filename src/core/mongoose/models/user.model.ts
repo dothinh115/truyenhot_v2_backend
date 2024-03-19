@@ -14,6 +14,6 @@ export default class DefaultUser {
     default: null,
   })
   role: string;
-  @Prop({ default: false, immutable: true, select: false })
+  @Prop({ default: false, immutable: true })
   rootUser: boolean;
 }
