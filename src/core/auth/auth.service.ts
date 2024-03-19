@@ -120,16 +120,16 @@ export class AuthService {
         { _id: exists._id },
         { expiresIn: '15m' },
       );
-      const refreshToken = this.jwtService.sign(
-        { _id: exists._id },
-        { expiresIn: '7d' },
-      );
-      await this.refreshTokenModel.findByIdAndUpdate(exists._id, {
-        refreshToken,
-      });
+      // const refreshToken = this.jwtService.sign(
+      //   { _id: exists._id },
+      //   { expiresIn: '7d' },
+      // );
+      // await this.refreshTokenModel.findByIdAndUpdate(exists._id, {
+      //   refreshToken,
+      // });
       return {
         accessToken,
-        refreshToken,
+        refreshToken: body.refreshToken,
       };
     } catch (error) {
       throw new BadRequestException(error.message);
