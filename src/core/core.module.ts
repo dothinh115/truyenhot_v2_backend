@@ -20,6 +20,7 @@ import { AssetsModule } from './assets/assets.module';
 import { DynamicModule } from './dynamic/dynamic.module';
 import { CommonModule } from './common/common.module';
 import { QueryModule } from './query/query.module';
+import { SchemaModule } from './schema/schema.module';
 
 @Global()
 @Module({
@@ -58,6 +59,7 @@ import { QueryModule } from './query/query.module';
     DynamicModule,
     CommonModule,
     QueryModule,
+    SchemaModule,
   ],
   exports: [JwtModule, MulterModule],
 })

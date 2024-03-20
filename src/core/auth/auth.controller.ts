@@ -18,7 +18,7 @@ export class AuthController {
     return this.authService.register(body, query);
   }
 
-  @Post('refresh-token')
+  @Post('refreshtoken')
   refreshToken(@Body() body: RefreshTokenAuthDto) {
     return this.authService.refreshToken(body);
   }

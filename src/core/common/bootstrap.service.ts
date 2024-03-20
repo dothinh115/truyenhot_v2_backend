@@ -155,6 +155,7 @@ export class BoostrapService {
     // tạo các dynamic route cha
     for (const model of this.models) {
       const find = routes.find((x) => x.path === model.name);
+
       if (find) continue;
       const path = 'api/' + model.name;
       const exists = routes.find((x) => x.path === path);
@@ -173,12 +174,12 @@ export class BoostrapService {
     }
 
     let permissions = await this.permissionModel.find();
-
     //tạo permistion cho dynamic route
     for (const model of this.models) {
       const find = permissions.find(
         (x) => this.getParentRoute(x.path) === model.name,
       );
+
       if (find) continue;
       const methods = ['post', 'get', 'patch', 'delete'];
       for (const method of methods) {
@@ -202,6 +203,9 @@ export class BoostrapService {
           .filter((x) => x !== '')
           .slice(-1)[0];
         const exists = this.models.find((x) => x.name === name);
+        const existsInRoute = this.permissionModel.findOne({
+          path: name,
+        });
         if (!exists)
           await this.permissionModel.findByIdAndDelete(permission._id);
       }
