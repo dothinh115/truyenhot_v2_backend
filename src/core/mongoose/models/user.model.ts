@@ -2,7 +2,7 @@ import { Prop } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 
 export default class DefaultUser {
-  @Prop()
+  @Prop({ auto: true })
   _id: mongoose.Schema.Types.ObjectId;
   @Prop({ required: true, lowercase: true, unique: true, trim: true })
   email: string;
