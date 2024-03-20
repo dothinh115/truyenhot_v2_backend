@@ -414,19 +414,42 @@ export class QueryService {
           .skip((+page - 1) * +limit)
           .limit(+limit)
           .lean();
+
+      const promises = [];
+
       for (const meta of metaSelect) {
         if (meta === '*') {
-          total_count = await model.find().countDocuments();
-          filter_count = await model.find({ ...filterObj }).countDocuments();
+          promises.push(
+            model
+              .estimatedDocumentCount()
+              .then((count) => (total_count = count)),
+          );
+          filter_count = promises.push(
+            model
+              .estimatedDocumentCount({ ...filterObj })
+              .then((count) => (filter_count = count)),
+          );
           break;
         }
-        if (meta === 'total_count') total_count = await model.countDocuments();
+        if (meta === 'total_count')
+          promises.push(
+            model
+              .estimatedDocumentCount()
+              .then((count) => (total_count = count)),
+          );
         if (meta === 'filter_count')
-          filter_count = await model.countDocuments({ ...filterObj });
+          filter_count = promises.push(
+            model
+              .estimatedDocumentCount({ ...filterObj })
+              .then((count) => (filter_count = count)),
+          );
       }
+
+      if (promises.length > 0) await Promise.all(promises);
     } catch (error) {
       console.log(error);
     }
+
     const data = {
       data: result,
     };
@@ -438,8 +461,10 @@ export class QueryService {
         };
         break;
       }
-      if (meta === 'total_count') data['meta'] = { total_count };
-      if (meta === 'filter_count') data['meta'] = { filter_count };
+      if (meta === 'total_count')
+        data['meta'] = { ...data['meta'], total_count };
+      if (meta === 'filter_count')
+        data['meta'] = { ...data['meta'], filter_count };
     }
     return data;
   }
