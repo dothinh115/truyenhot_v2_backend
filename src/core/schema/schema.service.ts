@@ -14,10 +14,11 @@ export class SchemaService {
       for (const key in result) {
         result[key] = {
           ...result[key],
-          type: result[key].type.schemaName,
+          type: result[key].type?.schemaName,
         };
       }
-      return result;
+
+      return { data: result };
     } catch (error) {
       throw new BadRequestException(error.message);
     }
