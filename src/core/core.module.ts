@@ -35,6 +35,7 @@ import { SchemaModule } from './schema/schema.module';
       dbName: process.env.DB_NAME,
       connectionFactory: async (connection: Connection) => {
         connection.plugin(globalPlugin);
+        connection.set('maxTimeMS', 10000);
         return connection;
       },
     }),
