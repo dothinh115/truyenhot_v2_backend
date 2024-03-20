@@ -24,9 +24,9 @@ export class RolesGuard implements CanActivate {
     const { originalUrl, method } = req;
     let url: string;
     if (originalUrl.startsWith('/api/')) {
-      url = originalUrl.match(/\/api\/[^\/|?]+/)[0];
+      url = originalUrl.match(/api\/[^\/?]+/)[0];
     } else {
-      url = originalUrl.match(/^\/([^\/|?]+[\/]?)+/)[0];
+      url = originalUrl.match(/^\/[^\/?]+/)[0].split('/')[1];
     }
     const currentRoutePermission = await this.permissionModel.findOne({
       path: url,
