@@ -28,7 +28,6 @@ export class RolesGuard implements CanActivate {
     } else {
       url = originalUrl.match(/^\/[^\/?]+/)[0].split('/')[1];
     }
-
     const currentRoutePermission = await this.permissionModel.findOne({
       path: url,
       method: method.toLowerCase(),
