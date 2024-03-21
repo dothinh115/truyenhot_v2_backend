@@ -14,7 +14,6 @@ export class Story {
     trim: true,
     type: mongoose.Schema.Types.String,
     input: 'text',
-    disabled: true,
   })
   title: string;
   @Prop({
