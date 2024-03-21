@@ -10,8 +10,8 @@ import { RefreshTokenAuthDto } from './dto/refresh-token-auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { MailService } from '../mail/mail.service';
 import { BcryptService } from '../common/bcrypt.service';
-import settings from '@/settings.json';
 import { QueryService } from '../query/query.service';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +24,7 @@ export class AuthService {
     private bcryptService: BcryptService,
     private queryService: QueryService,
   ) {}
-  async login(body: LoginAuthDto) {
+  async login(body: LoginAuthDto, req: Request) {
     try {
       const { email, password } = body;
       const exists = await this.userModel
@@ -38,34 +38,33 @@ export class AuthService {
         exists.password,
       );
       if (!passwordCheck) throw new Error('Email hoặc mật khẩu không đúng!');
+
       const accessToken = this.jwtService.sign(
         { _id: exists._id },
         { expiresIn: '15m' },
       );
-      console.log(exists._id);
       const refreshToken = this.jwtService.sign(
         { _id: exists._id },
         { expiresIn: '7d' },
       );
+
       const newRefreshToken = {
         user: exists._id,
         refreshToken,
-        ...(settings.AUTH.BROWSER_ID_CHECK && {
-          browserId: body.browserId,
-        }),
+        accessToken,
       };
+
       const find = await this.refreshTokenModel.findOne({
         user: exists._id,
-        ...(settings.AUTH.BROWSER_ID_CHECK && {
-          browserId: body.browserId,
-        }),
       });
+      //phải lưu cả accessToken lẫn refreshToken vào db
       if (find) {
         await this.refreshTokenModel.findByIdAndUpdate(
           find._id,
           newRefreshToken,
         );
       } else await this.refreshTokenModel.create(newRefreshToken);
+
       return {
         accessToken,
         refreshToken,
@@ -110,30 +109,52 @@ export class AuthService {
 
   async refreshToken(body: RefreshTokenAuthDto) {
     try {
+      //kiểm tra refresh token
       const exists = await this.refreshTokenModel.findOne({
         refreshToken: body.refreshToken,
-        ...(settings.AUTH.BROWSER_ID_CHECK && {
-          browserId: body.browserId,
-        }),
       });
       if (!exists) throw new Error('Token không hợp lệ!');
-      const accessToken = this.jwtService.sign(
-        { _id: exists.user },
-        { expiresIn: '15m' },
-      );
-      const refreshToken = this.jwtService.sign(
-        { _id: exists._id },
-        { expiresIn: '7d' },
-      );
-      await this.refreshTokenModel.findByIdAndUpdate(exists._id, {
-        refreshToken,
-      });
-      return {
-        accessToken,
-        refreshToken,
-      };
+      // Kiểm tra access token xem đã hết hạn hay chưa
+      try {
+        const decoded = await this.jwtService.verifyAsync(exists.accessToken);
+        if (decoded)
+          return {
+            accessToken: exists.accessToken,
+            refreshToken: exists.refreshToken,
+          };
+      } catch (error) {
+        const accessToken = this.jwtService.sign(
+          { _id: exists.user },
+          { expiresIn: '15m' },
+        );
+        const refreshToken = this.jwtService.sign(
+          { _id: exists._id },
+          { expiresIn: '7d' },
+        );
+        await this.refreshTokenModel.findByIdAndUpdate(exists._id, {
+          refreshToken,
+          accessToken,
+        });
+        return {
+          accessToken,
+          refreshToken,
+        };
+      }
     } catch (error) {
       throw new BadRequestException(error.message);
     }
+  }
+
+  async logout(_id: string) {
+    //tìm xem người này có đang login hay ko
+    const loggingIn = await this.refreshTokenModel.findOne({
+      user: _id,
+    });
+    //nếu đang login thì phải xoá
+    if (loggingIn)
+      await this.refreshTokenModel.findByIdAndDelete(loggingIn._id);
+    return {
+      message: 'Logout thành công!',
+    };
   }
 }

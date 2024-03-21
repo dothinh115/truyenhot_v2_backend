@@ -1,16 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { AutoIncrementID } from '@typegoose/auto-increment';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import autoSlug from '@/core/mongoose/plugins/auto-slug.plugin';
 
 export type AuthorDocument = HydratedDocument<Author>;
 
 @Schema()
 export class Author {
-  @Prop()
+  @Prop({ input: 'number', disabled: true, type: mongoose.Schema.Types.Number })
   _id: number;
-  @Prop({ required: true })
+  @Prop({ required: true, input: 'text', type: mongoose.Schema.Types.String })
   name: string;
+  @Prop({ input: 'text', disabled: true, type: mongoose.Schema.Types.String })
+  slug: string;
 }
 
 export const AuthorSchema = SchemaFactory.createForClass(Author);

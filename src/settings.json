@@ -3,9 +3,6 @@
     "TEXT_SEARCH": ["title", "name"], //điền vào các route muốn tìm kiếm bằng tiếng Việt
     "TIMESTAMP": true,
     "VERSION_KEY": false,
-    "AUTH": {
-        "BROWSER_ID_CHECK": false // true nếu muốn check cả browserId, bắt buộc phải truyền thêm browserId khi login và refreshToken
-    },
     "REFERENCE_CHECK": true, 
     "UPLOAD": {
         "FILE_SIZE": 2000000, // bytes

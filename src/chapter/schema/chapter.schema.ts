@@ -1,21 +1,41 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { AutoIncrementID } from '@typegoose/auto-increment';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import autoSlug from '@/core/mongoose/plugins/auto-slug.plugin';
 
 export type ChapterDocument = HydratedDocument<Chapter>;
 
 @Schema()
 export class Chapter {
-  @Prop()
+  @Prop({ type: mongoose.Schema.Types.Number, input: 'number', disabled: true })
   _id: number;
-  @Prop({ required: true, ref: 'Story' })
+  @Prop({
+    required: true,
+    ref: 'Story',
+    type: mongoose.Schema.Types.Number,
+    input: 'number',
+  })
   story: number;
-  @Prop({ required: true, trim: true })
+  @Prop({
+    required: true,
+    trim: true,
+    type: mongoose.Schema.Types.String,
+    input: 'text',
+  })
   name: string;
-  @Prop({ default: null, trim: true })
+  @Prop({
+    default: null,
+    trim: true,
+    type: mongoose.Schema.Types.String,
+    input: 'text',
+  })
   title: string;
-  @Prop({ required: true, trim: true })
+  @Prop({
+    default: null,
+    trim: true,
+    type: mongoose.Schema.Types.String,
+    input: 'richText',
+  })
   content: string;
 }
 

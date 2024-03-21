@@ -2,12 +2,28 @@ import { Prop } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 
 export default class DefaultRefreshToken {
-  @Prop({ auto: true })
+  @Prop({ auto: true, input: 'text', changeAble: false })
   _id: mongoose.Schema.Types.ObjectId;
-  @Prop({ required: true, type: mongoose.Schema.Types.String, ref: 'User' })
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.String,
+    ref: 'User',
+    input: 'text',
+    disabled: true,
+  })
   user: string;
-  @Prop({ required: true, type: mongoose.Schema.Types.String })
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.String,
+    input: 'text',
+    disabled: true,
+  })
   refreshToken: string;
-  @Prop({ default: null, type: mongoose.Schema.Types.String })
-  browserId?: string;
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.String,
+    input: 'text',
+    disabled: true,
+  })
+  accessToken: string;
 }
