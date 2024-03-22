@@ -1,5 +1,5 @@
 {
-    "EXCLUDED_ROUTE": ["auth", "route", "login", "register"], //điền vào các route không muốn tạo ra permissions
+    "EXCLUDED_ROUTE": ["auth", "route", "login", "register", "logout"], //điền vào các route không muốn tạo ra permissions
     "TEXT_SEARCH": ["title", "name"], //điền vào các route muốn tìm kiếm bằng tiếng Việt
     "TIMESTAMP": true,
     "VERSION_KEY": false,

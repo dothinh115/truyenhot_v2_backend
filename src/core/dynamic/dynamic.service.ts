@@ -82,33 +82,33 @@ export class DynamicService {
     model: Model<any>,
     req: CustomRequest,
   ) {
-    try {
-      const name = req.params.name;
-      const method = req.method as TMethod;
-      const handler: DynamicRouteHandler = this.handlerOptions.find(
-        (x) => x.route === name,
-      )?.provider;
-      const dto = this.validateOptions.find((x) => x.route === name)?.provider;
-      const toInstance = plainToInstance(PartialType(dto), body);
-      const errors = await validate(toInstance);
-      if (errors.length > 0) {
-        const errorArr: string[] = [];
-        for (const error of errors) {
-          for (const key in error.constraints) {
-            errorArr.push(error.constraints[key]);
-          }
-        }
-        throw new Error(errorArr.join(', '));
-      }
-      if (handler) await handler.handleBefore(method, model, body, id, req);
-      const exists = await model.exists({ _id: id });
-      if (!exists) throw new Error('Không có record này trong hệ thống!');
-      const result = await model.findByIdAndUpdate(id, body);
-      if (handler) handler.handleAfter(method, model, body, id, req);
-      return await this.queryService.handleQuery(model, query, result._id);
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
+    // try {
+    const name = req.params.name;
+    const method = req.method as TMethod;
+    const handler: DynamicRouteHandler = this.handlerOptions.find(
+      (x) => x.route === name,
+    )?.provider;
+    // const dto = this.validateOptions.find((x) => x.route === name)?.provider;
+    // const toInstance = plainToInstance(PartialType(dto), body);
+    // const errors = await validate(toInstance);
+    // if (errors.length > 0) {
+    //   const errorArr: string[] = [];
+    //   for (const error of errors) {
+    //     for (const key in error.constraints) {
+    //       errorArr.push(error.constraints[key]);
+    //     }
+    //   }
+    //   throw new Error(errorArr.join(', '));
+    // }
+    if (handler) await handler.handleBefore(method, model, body, id, req);
+    const exists = await model.exists({ _id: id });
+    if (!exists) throw new Error('Không có record này trong hệ thống!');
+    const result = await model.findByIdAndUpdate(id, body);
+    if (handler) handler.handleAfter(method, model, body, id, req);
+    return await this.queryService.handleQuery(model, query, result._id);
+    // } catch (error) {
+    //   throw new BadRequestException(error.message);
+    // }
   }
 
   async remove(id: string | number, model: Model<any>, req: CustomRequest) {
