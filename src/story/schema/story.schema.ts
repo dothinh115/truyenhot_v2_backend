@@ -17,7 +17,7 @@ export class Story {
   })
   title: string;
   @Prop({
-    required: 'true',
+    required: true,
     ref: 'Category',
     type: mongoose.Schema.Types.Array,
     input: 'array',
