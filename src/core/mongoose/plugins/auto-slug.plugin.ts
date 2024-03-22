@@ -24,11 +24,7 @@ export default function autoSlug(
 
   schema.pre('findOneAndUpdate', function (next) {
     const payload = this.getUpdate();
-    if (
-      payload[field] &&
-      typeof payload[field] === 'string' &&
-      !payload['slug']
-    ) {
+    if (payload[field] && typeof payload[field] === 'string') {
       this.set({
         slug: commonService.toSlug(payload[field] as string),
       });

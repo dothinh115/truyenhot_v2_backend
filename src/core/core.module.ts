@@ -21,6 +21,7 @@ import { DynamicModule } from './dynamic/dynamic.module';
 import { CommonModule } from './common/common.module';
 import { QueryModule } from './query/query.module';
 import { SchemaModule } from './schema/schema.module';
+import { CommonService } from './common/common.service';
 
 @Global()
 @Module({
@@ -62,6 +63,7 @@ import { SchemaModule } from './schema/schema.module';
     QueryModule,
     SchemaModule,
   ],
+  providers: [CommonService],
   exports: [JwtModule, MulterModule],
 })
 export class CoreModule {}
