@@ -24,7 +24,7 @@ export class UserService implements DynamicRouteHandler {
     if (method === 'PATCH') {
       const updatingUser = await model.findById(id).select('+rootUser');
       if (updatingUser.rootUser) {
-        if (updatingUser._id !== req.user._id)
+        if (updatingUser._id.toString() !== req.user._id.toString())
           throw new Error('Không có quyền update root user');
       }
     }
