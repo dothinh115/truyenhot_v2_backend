@@ -31,6 +31,7 @@ export class Story {
   })
   author: number;
   @Prop({
+    required: true,
     default: 2,
     ref: 'Status',
     type: mongoose.Schema.Types.Number,
