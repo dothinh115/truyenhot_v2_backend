@@ -15,13 +15,6 @@ export class AuthController {
     return this.authService.login(body, req);
   }
 
-  @UseGuards(RolesGuard)
-  @Post('logout')
-  logout(@Req() req: CustomRequest) {
-    const _id = req.user._id;
-    return this.authService.logout(_id);
-  }
-
   @Post('register')
   register(@Body() body: RegisterAuthDto, @Query() query: TQuery) {
     return this.authService.register(body, query);
