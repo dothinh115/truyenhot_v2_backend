@@ -238,7 +238,7 @@ export class QueryService {
       if (typeof object[key] !== 'object') {
         return {
           [key]:
-            key === '$in'
+            key === '$in' || key === '$nin'
               ? numberRegex.test(object[key])
                 ? +object[key]
                 : this.toArray(object[key])
