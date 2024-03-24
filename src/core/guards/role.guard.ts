@@ -28,7 +28,6 @@ export class RolesGuard implements CanActivate {
     } else {
       url = originalUrl.match(/^\/[^\/?]+/)[0].split('/')[1];
     }
-
     const currentRoutePermission = await this.permissionModel.findOne({
       path: url,
       method: method.toLowerCase(),
@@ -62,7 +61,7 @@ export class RolesGuard implements CanActivate {
       const decoded = await this.jwtService.verifyAsync(token);
       if (!decoded) throw new Error();
       const { _id } = decoded;
-      const findUser = await this.userModel.findById(_id).select('+rootUser');
+      const findUser = await this.userModel.findById(_id);
       user = findUser;
     } catch (error) {
       throw new ForbiddenException();
