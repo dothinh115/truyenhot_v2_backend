@@ -10,7 +10,7 @@ export default class DefaultUser {
     unique: true,
     trim: true,
     type: mongoose.Schema.Types.String,
-    input: 'text',
+    input: 'email',
     disabled: true,
   })
   email: string;
