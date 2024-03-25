@@ -17,7 +17,6 @@ export class SchemaService {
           type: result[key].type?.schemaName,
         };
       }
-
       return { data: result };
     } catch (error) {
       throw new BadRequestException(error.message);
