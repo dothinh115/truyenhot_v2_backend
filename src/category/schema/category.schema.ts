@@ -7,16 +7,15 @@ export type CategoryDocument = HydratedDocument<Category>;
 
 @Schema()
 export class Category {
-  @Prop({ type: mongoose.Schema.Types.Number, input: 'number', disabled: true })
+  @Prop({ type: mongoose.Schema.Types.Number, disabled: true })
   _id: number;
   @Prop({
     required: true,
     trim: true,
     type: mongoose.Schema.Types.String,
-    input: 'text',
   })
   title: string;
-  @Prop({ type: mongoose.Schema.Types.String, input: 'text', disabled: true })
+  @Prop({ type: mongoose.Schema.Types.String, disabled: true })
   slug: string;
 }
 

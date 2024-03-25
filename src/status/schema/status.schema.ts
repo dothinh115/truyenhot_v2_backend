@@ -7,9 +7,9 @@ export type StatusDocument = HydratedDocument<Status>;
 
 @Schema()
 export class Status {
-  @Prop({ type: mongoose.Schema.Types.Number, input: 'number', disabled: true })
+  @Prop({ type: mongoose.Schema.Types.Number, disabled: true })
   _id: number;
-  @Prop({ required: true, type: mongoose.Schema.Types.String, input: 'text' })
+  @Prop({ required: true, type: mongoose.Schema.Types.String })
   title: string;
 }
 

@@ -7,34 +7,30 @@ export type ChapterDocument = HydratedDocument<Chapter>;
 
 @Schema()
 export class Chapter {
-  @Prop({ type: mongoose.Schema.Types.Number, input: 'number', disabled: true })
+  @Prop({ type: mongoose.Schema.Types.Number, disabled: true })
   _id: number;
   @Prop({
     required: true,
     ref: 'Story',
     type: mongoose.Schema.Types.Number,
-    input: 'number',
   })
   story: number;
   @Prop({
     required: true,
     trim: true,
     type: mongoose.Schema.Types.String,
-    input: 'text',
   })
   name: string;
   @Prop({
     default: null,
     trim: true,
     type: mongoose.Schema.Types.String,
-    input: 'text',
   })
   title: string;
   @Prop({
     default: null,
     trim: true,
     type: mongoose.Schema.Types.String,
-    input: 'richText',
   })
   content: string;
 }

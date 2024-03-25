@@ -7,11 +7,11 @@ export type AuthorDocument = HydratedDocument<Author>;
 
 @Schema()
 export class Author {
-  @Prop({ input: 'number', disabled: true, type: mongoose.Schema.Types.Number })
+  @Prop({ disabled: true, type: mongoose.Schema.Types.Number })
   _id: number;
-  @Prop({ required: true, input: 'text', type: mongoose.Schema.Types.String })
+  @Prop({ required: true, type: mongoose.Schema.Types.String })
   name: string;
-  @Prop({ input: 'text', disabled: true, type: mongoose.Schema.Types.String })
+  @Prop({ disabled: true, type: mongoose.Schema.Types.String })
   slug: string;
 }
 
