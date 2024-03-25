@@ -14,7 +14,7 @@ export class SchemaService {
       for (const key in result) {
         result[key] = {
           ...result[key],
-          type: result[key].type?.schemaName,
+          type: find.schema?.paths[key]?.instance,
         };
       }
       return { data: result };
