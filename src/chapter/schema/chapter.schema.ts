@@ -31,6 +31,7 @@ export class Chapter {
     default: null,
     trim: true,
     type: mongoose.Schema.Types.String,
+    richText: true,
   })
   content: string;
 }

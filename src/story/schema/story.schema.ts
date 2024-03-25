@@ -38,6 +38,7 @@ export class Story {
     default: null,
     trim: true,
     type: mongoose.Schema.Types.String,
+    richText: true,
   })
   description: string;
   @Prop({
