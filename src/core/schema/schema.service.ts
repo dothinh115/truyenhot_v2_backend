@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, NotImplementedException } from '@nestjs/common';
 
 @Injectable()
 export class SchemaService {
@@ -19,7 +19,7 @@ export class SchemaService {
       }
       return { data: result };
     } catch (error) {
-      throw new BadRequestException(error.message);
+      throw new NotImplementedException(error.message);
     }
   }
 }
