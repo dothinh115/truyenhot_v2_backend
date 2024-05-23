@@ -23,7 +23,6 @@ export class StatusService {
       });
       if (exist) throw new Error('Đã tồn tại status này trong hệ thống!');
       const result = await this.statusModel.create(body);
-
       return await this.queryService.handleQuery(
         this.statusModel,
         query,
