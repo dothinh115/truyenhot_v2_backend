@@ -9,6 +9,8 @@ export type ChapterDocument = HydratedDocument<Chapter>;
 export class Chapter {
   @Prop({ type: mongoose.Schema.Types.Number, disabled: true })
   _id: number;
+  @Prop({ type: mongoose.Schema.Types.String, disabled: true })
+  slug: string;
   @Prop({
     required: true,
     ref: 'Story',
