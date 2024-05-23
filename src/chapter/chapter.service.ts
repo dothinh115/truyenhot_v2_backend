@@ -24,6 +24,7 @@ export class ChapterService {
       });
       if (exist) throw new Error('Đã tồn tại chapter này trong hệ thống!');
       const result = await this.chapterModel.create(body);
+
       return await this.queryService.handleQuery(
         this.chapterModel,
         query,
