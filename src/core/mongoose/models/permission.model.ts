@@ -18,9 +18,6 @@ export default class DefaultPermission {
   method: string;
   @Prop({ type: mongoose.Schema.Types.Array, ref: 'Role' })
   roles: string[];
-  @Prop({
-    default: false,
-    type: mongoose.Schema.Types.Boolean,
-  })
+  @Prop({ type: mongoose.Schema.Types.Boolean, default: false })
   public: boolean;
 }

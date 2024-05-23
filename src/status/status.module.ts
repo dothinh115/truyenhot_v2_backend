@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Status, StatusSchema } from './schema/status.schema';
+import { StatusController } from './status.controller';
+import { StatusService } from './status.service';
 
 @Module({
   imports: [
@@ -11,5 +13,7 @@ import { Status, StatusSchema } from './schema/status.schema';
       },
     ]),
   ],
+  controllers: [StatusController],
+  providers: [StatusService],
 })
 export class StatusModule {}

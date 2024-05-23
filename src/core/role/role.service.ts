@@ -1,32 +1,64 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { CreateRoleDto } from './dto/create-role.dto';
+import { UpdateRoleDto } from './dto/update-role.dto';
+import { TQuery } from '../utils/models/query.model';
+import { InjectModel } from '@nestjs/mongoose';
+import { Role } from './schema/role.schema';
 import { Model } from 'mongoose';
-import { CustomRequest } from '../utils/models/request.model';
-import { DynamicRouteHandler, TMethod } from '../handler/handler.interface';
-import { CommonService } from '../common/common.service';
-import { toSlug } from '../utils/function';
+import { QueryService } from '../query/query.service';
 
 @Injectable()
-export class RoleService implements DynamicRouteHandler {
-  async handleBefore(
-    method: TMethod,
-    model: Model<any, {}, {}, {}, any, any>,
-    body?: any,
-    id?: string | number,
-    req?: CustomRequest,
-  ): Promise<void> {
-    if (method === 'POST') {
-      const exists = await model.exists({
-        slug: toSlug(body?.title),
+export class RoleService {
+  constructor(
+    @InjectModel(Role.name) private roleModel: Model<Role>,
+    private queryService: QueryService,
+  ) {}
+  async create(body: CreateRoleDto, query: TQuery) {
+    try {
+      const exist = await this.roleModel.findOne({
+        title: body.title,
       });
-      if (exists) throw new Error('Đã tồn tại role này!');
+      if (exist) throw new Error('Role này đã tồn tại trong hệ thống!');
+      const result = await this.roleModel.create(body);
+      return await this.queryService.handleQuery(
+        this.roleModel,
+        query,
+        result._id,
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
   }
 
-  async handleAfter(
-    method: TMethod,
-    model: Model<any, {}, {}, {}, any, any>,
-    body?: any,
-    id?: string | number,
-    req?: CustomRequest,
-  ): Promise<void> {}
+  async find(query: TQuery) {
+    return await this.queryService.handleQuery(this.roleModel, query);
+  }
+
+  async update(id: string, body: UpdateRoleDto, query: TQuery) {
+    try {
+      const exist = await this.roleModel.findById(id);
+      if (!exist) throw new Error('Không có role này trong hệ thống!');
+      const result = await this.roleModel.findByIdAndUpdate(id, body);
+      return await this.queryService.handleQuery(
+        this.roleModel,
+        query,
+        result._id,
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async remove(id: string) {
+    try {
+      const exist = await this.roleModel.findById(id);
+      if (!exist) throw new Error('Không có role này trong hệ thống!');
+      await this.roleModel.findByIdAndDelete(id);
+      return {
+        message: 'Thành công!',
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 }

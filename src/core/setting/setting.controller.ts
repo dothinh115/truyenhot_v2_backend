@@ -3,17 +3,16 @@ import { SettingService } from './setting.service';
 import { TQuery } from '@/core/utils/models/query.model';
 import { RolesGuard } from '@/core/guards/role.guard';
 
+@UseGuards(RolesGuard)
 @Controller('setting')
 export class SettingController {
   constructor(private readonly settingService: SettingService) {}
 
-  @UseGuards(RolesGuard)
   @Get()
   find(@Query() query: TQuery) {
     return this.settingService.find(query);
   }
 
-  @UseGuards(RolesGuard)
   @Patch()
   update(@Body() body: any, @Query() query: TQuery) {
     return this.settingService.update(body, query);

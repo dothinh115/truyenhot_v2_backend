@@ -8,6 +8,7 @@ import {
   Query,
   UseGuards,
   Req,
+  Delete,
 } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -16,11 +17,11 @@ import { RolesGuard } from '@/core/guards/role.guard';
 import { CustomRequest } from '@/core/utils/models/request.model';
 import { CreateFolderDto } from './dto/create-folder.dto';
 
+@UseGuards(RolesGuard)
 @Controller('upload')
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
-  @UseGuards(RolesGuard)
   @Post('file')
   @UseInterceptors(FileInterceptor('file'))
   uploadSingleFile(
@@ -32,7 +33,6 @@ export class UploadController {
     return this.uploadService.uploadSingleFile(file, req, query);
   }
 
-  @UseGuards(RolesGuard)
   @Post('file/:folder')
   @UseInterceptors(FileInterceptor('file'))
   uploadSingleFileWithFolder(
@@ -49,9 +49,13 @@ export class UploadController {
     );
   }
 
-  @UseGuards(RolesGuard)
   @Post('folder')
   createFolder(@Body() body: CreateFolderDto, @Query() query: TQuery) {
     return this.uploadService.createFolder(body, query);
+  }
+
+  @Delete('folder/:id')
+  deleteFolder(@Param('id') id: string) {
+    return this.uploadService.deleteFolder(id);
   }
 }

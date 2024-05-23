@@ -7,21 +7,19 @@ import { Connection } from 'mongoose';
 import globalPlugin from './mongoose/plugins/global.plugin';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { RoleModule } from './role/role.module';
 import { MeModule } from './me/me.module';
 import { MailModule } from './mail/mail.module';
-import { PermisionModule } from './permission/permision.module';
-import { RouteModule } from './route/route.module';
 import { SettingModule } from './setting/setting.module';
 import { UploadModule } from './upload/upload.module';
 import { JwtModule } from '@nestjs/jwt';
 import { RoleGuardModule } from './guards/role.module';
 import { AssetsModule } from './assets/assets.module';
-import { DynamicModule } from './dynamic/dynamic.module';
 import { CommonModule } from './common/common.module';
 import { QueryModule } from './query/query.module';
 import { SchemaModule } from './schema/schema.module';
 import { CommonService } from './common/common.service';
+import { PermissionModule } from './permission/permission.module';
+import { RoleModule } from './role/role.module';
 
 @Global()
 @Module({
@@ -42,6 +40,7 @@ import { CommonService } from './common/common.service';
     }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
+
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('SECRET_KEY'),
       }),
@@ -52,13 +51,11 @@ import { CommonService } from './common/common.service';
     RoleModule,
     MeModule,
     MailModule,
-    PermisionModule,
-    RouteModule,
+    PermissionModule,
     SettingModule,
     UploadModule,
     RoleGuardModule,
     AssetsModule,
-    DynamicModule,
     CommonModule,
     QueryModule,
     SchemaModule,

@@ -116,4 +116,21 @@ export class UploadService {
       throw new BadRequestException(error.message);
     }
   }
+
+  async deleteFolder(id: string) {
+    try {
+      const exists = await this.folderModel.findById(id);
+      if (!exists) throw new Error('Không tồn tại folder này trong hệ thống!');
+      const dir = `${process.cwd()}/upload/${exists.slug}`;
+      if (fs.existsSync(dir)) {
+        fs.rmdirSync(dir);
+      }
+      await this.folderModel.findByIdAndDelete(id);
+      return {
+        message: 'Thành công!',
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 }

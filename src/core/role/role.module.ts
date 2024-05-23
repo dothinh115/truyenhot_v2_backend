@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
+import { RoleService } from './role.service';
+import { RoleController } from './role.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Role, RoleSchema } from './schema/role.schema';
-import { HandlerModule } from '../handler/handler.module';
-import { RoleService } from './role.service';
 
+@Global()
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -12,8 +13,9 @@ import { RoleService } from './role.service';
         schema: RoleSchema,
       },
     ]),
-    HandlerModule.register([{ route: 'role', provider: RoleService }]),
   ],
+  controllers: [RoleController],
+  providers: [RoleService],
   exports: [MongooseModule],
 })
 export class RoleModule {}

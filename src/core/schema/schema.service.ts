@@ -1,4 +1,4 @@
-import { Injectable, NotImplementedException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class SchemaService {
@@ -14,12 +14,13 @@ export class SchemaService {
       for (const key in result) {
         result[key] = {
           ...result[key],
-          type: find.schema?.paths[key]?.instance,
+          type: result[key].type?.schemaName,
         };
       }
+
       return { data: result };
     } catch (error) {
-      throw new NotImplementedException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 }

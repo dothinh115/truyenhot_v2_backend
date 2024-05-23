@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as express from 'express';
 import { ValidationPipe } from '@nestjs/common';
+import { ClusterService } from './core/common/cluster.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,4 +15,5 @@ async function bootstrap() {
   );
   await app.listen(4567);
 }
-bootstrap();
+ClusterService.clusterize(bootstrap);
+// bootstrap();

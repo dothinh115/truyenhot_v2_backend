@@ -1,4 +1,4 @@
-import { Model, Schema, modelNames } from 'mongoose';
+import { Schema } from 'mongoose';
 import settings from '@/settings.json';
 import settingPlugin from './setting.plugin';
 import userPlugin from './user.plugin';
@@ -12,10 +12,11 @@ import referenceCheckPlugin from './reference-check.plugin';
 import initPlugin from './init.plugin';
 
 export default function globalPlugin(schema: Schema) {
+  //init
+  schema.plugin(initPlugin);
+
   //text search plugin
   schema.plugin(textSearchPlugin);
-
-  schema.plugin(initPlugin);
 
   //setting plugin
   if (schema === SettingSchema) SettingSchema.plugin(settingPlugin);

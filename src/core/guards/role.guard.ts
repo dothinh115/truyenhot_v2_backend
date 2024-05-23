@@ -1,4 +1,3 @@
-import { Permission } from '@/core/permission/schema/permission.schema';
 import { User } from '@/core/user/schema/user.schema';
 import {
   CanActivate,
@@ -11,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Request } from 'express';
 import { Model } from 'mongoose';
+import { Permission } from '../permission/schema/permission.schema';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -21,14 +21,12 @@ export class RolesGuard implements CanActivate {
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
-    const { originalUrl, method } = req;
-    let url: string;
-    if (originalUrl.startsWith('/api/')) {
-      url = originalUrl.match(/api\/[^\/?]+/)[0];
-    } else {
-      url = originalUrl.match(/^\/[^\/?]+/)[0].split('/')[1];
-    }
-    const currentRoutePermission = await this.permissionModel.findOne({
+    const { method, route } = req;
+    let url: string = route.path
+      .split('/')
+      .filter((x: string) => x !== '')
+      .join('/');
+    const currentRoutePermission: any = await this.permissionModel.findOne({
       path: url,
       method: method.toLowerCase(),
     });

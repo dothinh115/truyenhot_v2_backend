@@ -12,3 +12,9 @@ export type TPopulate = {
   populate?: any;
   select?: string;
 };
+
+export type TImageQuery = {
+  width: string;
+  height: string;
+  format: 'jpeg' | 'webp' | 'png';
+};

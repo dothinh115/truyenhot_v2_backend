@@ -1,4 +1,6 @@
 import { Global, Module } from '@nestjs/common';
+import { PermissionService } from './permission.service';
+import { PermissionController } from './permission.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Permission, PermissionSchema } from './schema/permission.schema';
 
@@ -12,6 +14,8 @@ import { Permission, PermissionSchema } from './schema/permission.schema';
       },
     ]),
   ],
+  controllers: [PermissionController],
+  providers: [PermissionService],
   exports: [MongooseModule],
 })
-export class PermisionModule {}
+export class PermissionModule {}
