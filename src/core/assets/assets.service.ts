@@ -30,10 +30,13 @@ export class AssetsService {
           switch (format) {
             case 'jpeg':
               resizedImg.jpeg();
+              break;
             case 'png':
               resizedImg.png();
+              break;
             default:
               resizedImg.webp();
+              break;
           }
         } else resizedImg.webp();
         res.setHeader('Content-Type', exists.mimeType);
