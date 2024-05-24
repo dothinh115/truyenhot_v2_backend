@@ -10,6 +10,7 @@ export default function initPlugin(schema: Schema) {
       for (const key in this.model(modelName).schema.obj) {
         typeObj[key] = this.model(modelName).schema.obj[key].type?.schemaName;
       }
+
       const model = {
         name: modelName.toLowerCase(),
         model: this.model(modelName),
