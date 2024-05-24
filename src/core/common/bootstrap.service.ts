@@ -61,7 +61,6 @@ export class BoostrapService {
       })
       .filter((item: any) => item !== undefined);
     parentRoutes = Array.from(parentRoutes);
-    console.log(existingRoutes);
 
     // //Tạo route cha
     // for (const parentRoute of parentRoutes) {

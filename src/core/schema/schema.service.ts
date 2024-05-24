@@ -8,13 +8,13 @@ export class SchemaService {
   }
   async find(model: string) {
     try {
-      const find = this.models.find((x) => x.name === model)?.model;
+      const find = this.models.find((x) => x.name === model);
       if (!find) throw new Error('Không có schema này!');
-      const result = find.schema.obj;
+      const result = find.model.schema.obj;
       for (const key in result) {
         result[key] = {
           ...result[key],
-          type: await result[key].type?.schemaName,
+          type: find.typeObj[key],
         };
       }
       return { data: result };
