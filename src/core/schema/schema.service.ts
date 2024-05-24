@@ -14,10 +14,9 @@ export class SchemaService {
       for (const key in result) {
         result[key] = {
           ...result[key],
-          type: result[key].type?.schemaName,
+          type: await result[key].type?.schemaName,
         };
       }
-
       return { data: result };
     } catch (error) {
       throw new BadRequestException(error.message);
