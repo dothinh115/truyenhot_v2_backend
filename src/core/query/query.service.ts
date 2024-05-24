@@ -451,7 +451,7 @@ export class QueryService {
     }
 
     const data = {
-      data: result,
+      data: result ? result : [],
     };
     for (const meta of metaSelect) {
       if (meta === '*') {
