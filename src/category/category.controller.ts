@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Patch,
   Post,
@@ -22,6 +23,11 @@ export class CategoryController {
   @Post()
   create(@Body() body: CreateCategoryDto, @Query() query: TQuery) {
     return this.categoryService.create(body, query);
+  }
+
+  @Get()
+  find(@Query() query: TQuery) {
+    return this.categoryService.find(query);
   }
 
   @Patch(':id')
