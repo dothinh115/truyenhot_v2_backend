@@ -26,10 +26,12 @@ export class RolesGuard implements CanActivate {
       .split('/')
       .filter((x: string) => x !== '')
       .join('/');
+
     const currentRoutePermission: any = await this.permissionModel.findOne({
       path: url,
       method: method.toLowerCase(),
     });
+
     if (!currentRoutePermission || currentRoutePermission.public) {
       if (req.headers.authorization) {
         const user = await this.extractUser(req);
