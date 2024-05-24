@@ -34,7 +34,7 @@ import { RoleModule } from './role/role.module';
       dbName: process.env.DB_NAME,
       connectionFactory: async (connection: Connection) => {
         connection.plugin(globalPlugin);
-        connection.set('maxTimeMS', 10000);
+        connection.set('maxTimeMS', 20000);
         return connection;
       },
     }),
