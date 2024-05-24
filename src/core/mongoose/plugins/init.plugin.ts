@@ -15,7 +15,6 @@ export default function initPlugin(schema: Schema) {
         model: this.model(modelName),
         typeObj,
       };
-      console.log(model);
       global.models.push(model);
     }
   });

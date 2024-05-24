@@ -440,7 +440,7 @@ export class QueryService {
         if (meta === 'filter_count')
           filter_count = promises.push(
             model
-              .estimatedDocumentCount({ ...filterObj })
+              .countDocuments({ ...filterObj })
               .then((count) => (filter_count = count)),
           );
       }
