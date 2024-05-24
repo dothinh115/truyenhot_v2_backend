@@ -37,10 +37,12 @@ export class AssetsService {
           }
         } else resizedImg.webp();
         res.setHeader('Content-Type', exists.mimeType);
+        res.setHeader('Cache-Control', `public, max-age=3600`); // Set max-age
         res.setHeader('Content-Disposition', 'inline');
         resizedImg.pipe(res);
       } else {
         res.setHeader('Content-Type', exists.mimeType);
+        res.setHeader('Cache-Control', `public, max-age=3600`); // Set max-age
         res.setHeader('Content-Disposition', 'inline');
         fs.createReadStream(path).pipe(res);
       }
