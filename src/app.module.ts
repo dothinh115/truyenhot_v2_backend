@@ -6,10 +6,6 @@ import { StatusModule } from './status/status.module';
 import { ChapterModule } from './chapter/chapter.module';
 
 import { CoreModule } from './core/core.module';
-import {
-  BoostrapService,
-  OnBootStrapService,
-} from './core/common/bootstrap.service';
 
 @Global()
 @Module({
@@ -21,6 +17,5 @@ import {
     StatusModule,
     ChapterModule,
   ],
-  providers: [BoostrapService, OnBootStrapService],
 })
 export class AppModule {}

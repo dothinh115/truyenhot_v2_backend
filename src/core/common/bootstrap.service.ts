@@ -62,33 +62,6 @@ export class BoostrapService {
       .filter((item: any) => item !== undefined);
     parentRoutes = Array.from(parentRoutes);
     console.log(existingRoutes);
-    // //Tạo route cha
-    // for (const parentRoute of parentRoutes) {
-    //   const exists = await this.routeModel.findOne({
-    //     path: parentRoute,
-    //   });
-    //   if (exists) continue;
-    //   let isContinue = true;
-    //   for (const excluded of settings.EXCLUDED_ROUTE) {
-    //     if (this.getParentRoute(parentRoute) === excluded) {
-    //       isContinue = false;
-    //       break;
-    //     }
-    //   }
-    //   if (!isContinue) continue;
-    //   await this.routeModel.create({
-    //     path: parentRoute,
-    //   });
-    // }
-
-    // //xoá các route cha dư thừa
-    // const routes = await this.routeModel.find();
-    // for (const route of routes) {
-    //   if (route.path.includes('api')) continue;
-    //   const find = parentRoutes.find((x) => x === route.path);
-    //   if (!find) await this.routeModel.findByIdAndDelete(route._id);
-    // }
-
     //Tạo permission
     for (const route of existingRoutes) {
       const existCheck = await this.permissionModel.findOne({
@@ -108,23 +81,8 @@ export class BoostrapService {
         path: route.path.slice(1),
         method: route.method,
       });
+      console.log('Tạo thành công route ' + route.path.slice(1));
     }
-
-    // //add permissions vào route
-    // const permissions = await this.permissionModel.find();
-    // for (const permission of permissions) {
-    //   const findParentRoute = await this.routeModel.findOne({
-    //     path: this.getParentRoute(permission.path),
-    //   });
-    //   if (findParentRoute) {
-    //     let permissionSet = new Set(findParentRoute.permission);
-    //     permissionSet.add(permission._id.toString());
-    //     const permissionArr = Array.from(permissionSet);
-    //     await this.routeModel.findByIdAndUpdate(findParentRoute._id, {
-    //       permission: permissionArr,
-    //     });
-    //   }
-    // }
 
     //Xoá các route đã cũ
     const savedRoutes = await this.permissionModel.find();
