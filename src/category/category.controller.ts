@@ -33,7 +33,6 @@ export class CategoryController {
   @Patch(':id')
   update(
     @Body() body: UpdateCategoryDto,
-
     @Query() query: TQuery,
     @Param('id') id: number,
   ) {
