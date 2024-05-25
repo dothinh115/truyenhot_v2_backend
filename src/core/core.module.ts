@@ -32,12 +32,12 @@ import { redisStore } from 'cache-manager-redis-yet';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    CacheModule.register({
-      store: redisStore,
-      isGlobal: true,
-      // Store-specific configuration:
-      host: '127.0.0.1',
-      port: 6379,
+    CacheModule.registerAsync({
+      useFactory: async () => ({
+        store: redisStore,
+        host: '127.0.0.1',
+        port: 6379,
+      }),
     }),
     MongooseModule.forRoot(process.env.DB_URI, {
       dbName: process.env.DB_NAME,
