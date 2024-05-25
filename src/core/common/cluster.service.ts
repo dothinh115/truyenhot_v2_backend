@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import cluster, { Address, Worker } from 'cluster'; // Import Worker từ cluster
 import * as os from 'os';
-const numCPUs = 3;
+const numCPUs = 5;
 @Injectable()
 export class ClusterService {
   static clusterize(callback: Function) {
