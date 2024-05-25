@@ -3,6 +3,7 @@
 /node_modules
 .env
 /upload/*
+autoDeploy.sh
 
 # Logs
 logs
