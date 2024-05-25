@@ -11,6 +11,6 @@ import { BoostrapService, OnBootStrapService } from './bootstrap.service';
     OnBootStrapService,
     BoostrapService,
   ],
-  exports: [CommonService, BcryptService, OnBootStrapService],
+  exports: [CommonService, BcryptService],
 })
 export class CommonModule {}
