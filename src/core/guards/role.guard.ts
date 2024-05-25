@@ -3,6 +3,7 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
+  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -11,6 +12,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Request } from 'express';
 import { Model } from 'mongoose';
 import { Permission } from '../permission/schema/permission.schema';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -18,6 +21,7 @@ export class RolesGuard implements CanActivate {
     @InjectModel(Permission.name) private permissionModel: Model<Permission>,
     @InjectModel(User.name) private userModel: Model<User>,
     private jwtService: JwtService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
@@ -27,10 +31,19 @@ export class RolesGuard implements CanActivate {
       .filter((x: string) => x !== '')
       .join('/');
 
-    const currentRoutePermission: any = await this.permissionModel.findOne({
-      path: url,
-      method: method.toLowerCase(),
-    });
+    const cacheKey = `${url}:${method.toLowerCase()}`;
+    let currentRoutePermission: any = await this.cacheManager.get(cacheKey);
+    if (!currentRoutePermission) {
+      currentRoutePermission = await this.permissionModel.findOne({
+        path: url,
+        method: method.toLowerCase(),
+      });
+      await this.cacheManager.set(
+        cacheKey,
+        currentRoutePermission || '',
+        60000,
+      );
+    }
 
     if (!currentRoutePermission || currentRoutePermission.public) {
       if (req.headers.authorization) {
@@ -52,17 +65,20 @@ export class RolesGuard implements CanActivate {
   }
 
   async extractUser(req: Request) {
-    let user;
     const token = req.headers?.authorization
       .split('Bearer ')
       .filter((x) => x !== '')[0];
+
     if (!token) throw new UnauthorizedException();
+    let user: any = await this.cacheManager.get(token);
+    if (user) return user;
     try {
       const decoded = await this.jwtService.verifyAsync(token);
       if (!decoded) throw new Error();
       const { _id } = decoded;
       const findUser = await this.userModel.findById(_id);
       user = findUser;
+      await this.cacheManager.set(token, user || '', 60000);
     } catch (error) {
       throw new ForbiddenException();
     }

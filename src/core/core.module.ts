@@ -20,6 +20,8 @@ import { SchemaModule } from './schema/schema.module';
 import { CommonService } from './common/common.service';
 import { PermissionModule } from './permission/permission.module';
 import { RoleModule } from './role/role.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { redisStore } from 'cache-manager-redis-yet';
 
 @Global()
 @Module({
@@ -29,6 +31,13 @@ import { RoleModule } from './role/role.module';
     }),
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    CacheModule.register({
+      store: redisStore,
+      isGlobal: true,
+      // Store-specific configuration:
+      host: 'localhost',
+      port: 6379,
     }),
     MongooseModule.forRoot(process.env.DB_URI, {
       dbName: process.env.DB_NAME,
@@ -61,6 +70,6 @@ import { RoleModule } from './role/role.module';
     SchemaModule,
   ],
   providers: [CommonService],
-  exports: [JwtModule, MulterModule],
+  exports: [JwtModule, MulterModule, CacheModule],
 })
 export class CoreModule {}
