@@ -416,7 +416,6 @@ export class QueryService {
           .lean();
 
       const promises = [];
-
       for (const meta of metaSelect) {
         if (meta === '*') {
           promises.push(
@@ -424,11 +423,18 @@ export class QueryService {
               .estimatedDocumentCount()
               .then((count) => (total_count = count)),
           );
-          promises.push(
-            model
-              .countDocuments({ ...filterObj })
-              .then((count) => (filter_count = count)),
-          );
+          if (Object.keys(filterObj).length === 0)
+            promises.push(
+              model
+                .estimatedDocumentCount()
+                .then((count) => (filter_count = count)),
+            );
+          else
+            promises.push(
+              model
+                .countDocuments({ ...filterObj })
+                .then((count) => (filter_count = count)),
+            );
           break;
         }
         if (meta === 'total_count')
@@ -437,12 +443,20 @@ export class QueryService {
               .estimatedDocumentCount()
               .then((count) => (total_count = count)),
           );
-        if (meta === 'filter_count')
-          filter_count = promises.push(
-            model
-              .countDocuments({ ...filterObj })
-              .then((count) => (filter_count = count)),
-          );
+        if (meta === 'filter_count') {
+          if (Object.keys(filterObj).length === 0)
+            promises.push(
+              model
+                .estimatedDocumentCount()
+                .then((count) => (filter_count = count)),
+            );
+          else
+            promises.push(
+              model
+                .countDocuments({ ...filterObj })
+                .then((count) => (filter_count = count)),
+            );
+        }
       }
 
       if (promises.length > 0) await Promise.all(promises);
