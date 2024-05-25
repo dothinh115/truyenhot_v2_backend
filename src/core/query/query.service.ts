@@ -238,7 +238,7 @@ export class QueryService {
       if (typeof object[key] !== 'object') {
         return {
           [key]:
-            key === '$in' || key === '$nin'
+            key === '$in' || key === '$nin' || '$all'
               ? numberRegex.test(object[key])
                 ? +object[key]
                 : this.toArray(object[key])
@@ -249,7 +249,7 @@ export class QueryService {
       }
       return {
         [key]:
-          key === '$in'
+          key === '$in' || '$all'
             ? this.toArray(this.stringToNumberObject(object[key]))
             : this.stringToNumberObject(object[key]),
       };
@@ -389,12 +389,11 @@ export class QueryService {
       populate = this.handleField(fields).populate;
       selectObj = this.handleField(fields).select;
     }
-
     if (filter)
       filterObj = this.handleFilter(
         qs.parse(qs.stringify(filter), { depth: 10 }),
       );
-
+    console.log(filterObj);
     if (meta)
       metaSelect = meta.split(',').filter((meta: string) => meta !== '');
     try {
