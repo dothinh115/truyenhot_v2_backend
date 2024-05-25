@@ -16,5 +16,5 @@ async function bootstrap(PORT: number) {
   await app.listen(PORT);
   console.log('App listened on PORT ' + PORT);
 }
-ClusterService.clusterize(bootstrap);
-// bootstrap();
+// ClusterService.clusterize(bootstrap);
+bootstrap(4567);
