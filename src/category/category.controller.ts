@@ -40,7 +40,7 @@ export class CategoryController {
     return this.categoryService.update(body, query, id);
   }
 
-  @Delete('id')
+  @Delete(':id')
   delete(@Param('id') id: number) {
     return this.categoryService.delete(id);
   }
