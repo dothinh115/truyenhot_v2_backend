@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import cluster from 'cluster';
 import * as os from 'os';
-const numCPUs = os.cpus().length;
+const numCPUs = 2;
 @Injectable()
 export class ClusterService {
   static clusterize(callback: Function) {
