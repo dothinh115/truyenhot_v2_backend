@@ -36,7 +36,7 @@ import { redisStore } from 'cache-manager-redis-yet';
       store: redisStore,
       isGlobal: true,
       // Store-specific configuration:
-      host: 'localhost',
+      host: '127.0.0.1',
       port: 6379,
     }),
     MongooseModule.forRoot(process.env.DB_URI, {
