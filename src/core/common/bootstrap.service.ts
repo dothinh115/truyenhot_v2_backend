@@ -61,7 +61,6 @@ export class BoostrapService {
       })
       .filter((item: any) => item !== undefined);
     parentRoutes = Array.from(parentRoutes);
-    console.log(existingRoutes);
     //Tạo permission
     for (const route of existingRoutes) {
       const existCheck = await this.permissionModel.findOne({
