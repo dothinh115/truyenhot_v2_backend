@@ -32,6 +32,7 @@ export class RolesGuard implements CanActivate {
       .join('/');
 
     const cacheKey = `${url}:${method.toLowerCase()}`;
+
     let currentRoutePermission: any = await this.cacheManager.get(cacheKey);
     if (!currentRoutePermission) {
       currentRoutePermission = await this.permissionModel.findOne({
