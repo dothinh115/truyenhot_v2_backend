@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { numberRegex } from '@/core/utils/models/common.model';
 import { TPopulate, TQuery } from '@/core/utils/models/query.model';
@@ -395,6 +395,7 @@ export class QueryService {
       );
     if (meta)
       metaSelect = meta.split(',').filter((meta: string) => meta !== '');
+
     try {
       if (_id && Array.isArray(_id))
         result = await model
@@ -458,27 +459,26 @@ export class QueryService {
       }
 
       if (promises.length > 0) await Promise.all(promises);
-    } catch (error) {
-      console.log(error);
-    }
-
-    const data = {
-      data: result ? result : [],
-    };
-    for (const meta of metaSelect) {
-      if (meta === '*') {
-        data['meta'] = {
-          total_count,
-          filter_count,
-        };
-        break;
+      const data = {
+        data: result ? result : [],
+      };
+      for (const meta of metaSelect) {
+        if (meta === '*') {
+          data['meta'] = {
+            total_count,
+            filter_count,
+          };
+          break;
+        }
+        if (meta === 'total_count')
+          data['meta'] = { ...data['meta'], total_count };
+        if (meta === 'filter_count')
+          data['meta'] = { ...data['meta'], filter_count };
       }
-      if (meta === 'total_count')
-        data['meta'] = { ...data['meta'], total_count };
-      if (meta === 'filter_count')
-        data['meta'] = { ...data['meta'], filter_count };
+      return data;
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
-    return data;
   }
 
   private async handleAggregate<T>(model: Model<T>, query: TQuery, _id?: any) {

@@ -43,7 +43,7 @@ import { redisStore } from 'cache-manager-redis-yet';
       dbName: process.env.DB_NAME,
       connectionFactory: async (connection: Connection) => {
         connection.plugin(globalPlugin);
-        connection.set('maxTimeMS', 20000);
+        connection.set('maxTimeMS', 10000);
         return connection;
       },
     }),
