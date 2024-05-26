@@ -29,6 +29,7 @@ export default class DefaultUser {
     type: mongoose.Schema.Types.String,
     ref: 'Role',
     default: null,
+    disabled: true,
   })
   role: string;
   @Prop({
