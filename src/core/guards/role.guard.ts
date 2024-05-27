@@ -17,12 +17,15 @@ import { Cache } from 'cache-manager';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
+  models = [];
   constructor(
     @InjectModel(Permission.name) private permissionModel: Model<Permission>,
     @InjectModel(User.name) private userModel: Model<User>,
     private jwtService: JwtService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+  ) {
+    this.models = global.models;
+  }
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
 
@@ -80,7 +83,31 @@ export class RolesGuard implements CanActivate {
         ...req.body,
         record_creater: user._id,
       };
+    } else if (
+      method.toLowerCase() === 'patch' ||
+      method.toLowerCase() === 'delete'
+    ) {
+      //dùng regex lấy ra route đang gọi tới, ví dụ role/:id thì => role
+
+      const match = url.match(/^[a-z]+[^\/]/);
+      if (!match) {
+        return false;
+      }
+      const name = match[0];
+      const model = this.models.find((x) => x.name === name)?.model;
+      if (model && req.params.id) {
+        const exist = await model
+          .findById(req.params.id)
+          .select('+record_creater');
+        if (
+          exist.record_creater !== user._id &&
+          !currentRoutePermission.moderators.includes(user.role) &&
+          !user.rootUser
+        )
+          return false;
+      }
     }
+
     // nếu là rootUser, pass ngay
     if (user.rootUser) return true;
 

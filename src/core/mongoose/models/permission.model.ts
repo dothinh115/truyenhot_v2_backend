@@ -20,4 +20,6 @@ export default class DefaultPermission {
   roles: string[];
   @Prop({ type: mongoose.Schema.Types.Boolean, default: false })
   public: boolean;
+  @Prop({ type: mongoose.Schema.Types.Array, default: [], ref: 'User' })
+  moderators: string[];
 }

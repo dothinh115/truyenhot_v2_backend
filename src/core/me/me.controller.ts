@@ -13,18 +13,17 @@ import { CustomRequest } from '@/core/utils/models/request.model';
 import { RolesGuard } from '../guards/role.guard';
 import { UpdateMeDto } from './dto/update-me.dto';
 
+@UseGuards(RolesGuard)
 @Controller('me')
 export class MeController {
   constructor(private meService: MeService) {}
 
-  @UseGuards(RolesGuard)
   @Get()
   find(@Req() req: CustomRequest, @Query() query: TQuery) {
     const { _id } = req.user;
     return this.meService.find(_id, query);
   }
 
-  @UseGuards(RolesGuard)
   @Patch()
   update(
     @Req() req: CustomRequest,
