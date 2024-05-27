@@ -77,11 +77,11 @@ export class RolesGuard implements CanActivate {
     //set user vào req
     req.user = user;
 
-    //nếu là post, cần phải set record_creater để lưu lại user nào vừa tạo ra record này
+    //nếu là post, cần phải set recordCreater để lưu lại user nào vừa tạo ra record này
     if (method.toLowerCase() === 'post') {
       req.body = {
         ...req.body,
-        record_creater: user._id,
+        recordCreater: user._id,
       };
     } else if (
       method.toLowerCase() === 'patch' ||
@@ -97,9 +97,9 @@ export class RolesGuard implements CanActivate {
       if (model && req.params.id) {
         const exist = await model
           .findById(req.params.id)
-          .select('+record_creater');
+          .select('+recordCreater');
         if (
-          exist.record_creater !== user._id &&
+          exist.recordCreater !== user._id &&
           !currentRoutePermission.moderators.includes(user.role) &&
           !user.rootUser
         )

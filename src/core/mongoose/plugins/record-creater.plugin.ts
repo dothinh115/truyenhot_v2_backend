@@ -1,14 +1,14 @@
 import mongoose, { Schema } from 'mongoose';
 
 export default function recordCreater(schema: Schema) {
-  if (!schema.paths['record_creater']) {
+  if (!schema.paths['recordCreater']) {
     schema.add({
-      record_creater: {
+      recordCreater: {
         type: mongoose.Schema.Types.String,
         select: false,
         ref: 'User',
       },
     });
-    schema.index({ record_creater: 1 });
+    schema.index({ recordCreater: 1 });
   }
 }

@@ -7,8 +7,8 @@ export const Fields = createParamDecorator(
     const result: any = plainToClass(data, request.body, {
       excludeExtraneousValues: true,
     });
-    if (request.method.toLowerCase() === 'post' && request.body.record_creater)
-      result.record_creater = request.body.record_creater;
+    if (request.method.toLowerCase() === 'post' && request.body.recordCreater)
+      result.recordCreater = request.body.recordCreater;
     return result;
   },
 );
