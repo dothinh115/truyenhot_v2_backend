@@ -88,7 +88,6 @@ export class RolesGuard implements CanActivate {
       method.toLowerCase() === 'delete'
     ) {
       //dùng regex lấy ra route đang gọi tới, ví dụ role/:id thì => role
-
       const match = url.match(/^[a-z]+[^\/]/);
       if (!match) {
         return false;
