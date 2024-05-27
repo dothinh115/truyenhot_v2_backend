@@ -65,6 +65,10 @@ export class Story {
 
 export const StorySchema = SchemaFactory.createForClass(Story);
 
+StorySchema.index({
+  category: 1,
+});
+
 StorySchema.plugin(AutoIncrementID, { startAt: 1 });
 
 StorySchema.plugin(autoSlug);

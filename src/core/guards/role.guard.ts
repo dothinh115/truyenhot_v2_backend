@@ -25,20 +25,28 @@ export class RolesGuard implements CanActivate {
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
+
     const { method, route } = req;
+
+    //xác định route nào đang dc gọi
     let url: string = route.path
       .split('/')
       .filter((x: string) => x !== '')
       .join('/');
 
+    //đặt cacheKey để lưu vào redis
     const cacheKey = `${url}:${method.toLowerCase()}`;
 
+    //lấy data từ redis
     let currentRoutePermission: any = await this.cacheManager.get(cacheKey);
+
+    //nếu redis ko có thì lấy từ db
     if (!currentRoutePermission) {
       currentRoutePermission = await this.permissionModel.findOne({
         path: url,
         method: method.toLowerCase(),
       });
+      //sau khi lấy xong lưu vào redis
       await this.cacheManager.set(
         cacheKey,
         currentRoutePermission || '',
@@ -46,7 +54,9 @@ export class RolesGuard implements CanActivate {
       );
     }
 
+    //nếu route ko dc phân quyền, hoặc route public thì pass
     if (!currentRoutePermission || currentRoutePermission.public) {
+      //extract user vào req
       if (req.headers.authorization) {
         const user = await this.extractUser(req);
         if (!user) return true;
@@ -54,14 +64,28 @@ export class RolesGuard implements CanActivate {
       }
       return true;
     }
+
+    //nếu route dc phân quyền, nhưng ko có token, quăng lỗi
     if (!req.headers.authorization) throw new UnauthorizedException();
+    //nếu có token, tiến hành extract User
     const user = await this.extractUser(req);
+    //ko có user, quăng lỗi
     if (!user) throw new UnauthorizedException();
+    //set user vào req
     req.user = user;
-    if (user.rootUser) return true;
-    for (const role of currentRoutePermission.roles) {
-      if (role === user.role) return true;
+
+    //nếu là post, cần phải set record_creater để lưu lại user nào vừa tạo ra record này
+    if (method.toLowerCase() === 'post') {
+      req.body = {
+        ...req.body,
+        record_creater: user._id,
+      };
     }
+    // nếu là rootUser, pass ngay
+    if (user.rootUser) return true;
+
+    //check xem role hiện tại của user có quyền truy cập vào api hay ko
+    if (currentRoutePermission.roles.includes(user.role)) return true;
     return false;
   }
 
@@ -79,7 +103,6 @@ export class RolesGuard implements CanActivate {
       const { _id } = decoded;
       const findUser = await this.userModel.findById(_id);
       user = findUser;
-
       await this.cacheManager.set(token, user || '', 60000);
     } catch (error) {
       throw new ForbiddenException();

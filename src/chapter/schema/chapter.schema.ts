@@ -40,6 +40,19 @@ export class Chapter {
 
 export const ChapterSchema = SchemaFactory.createForClass(Chapter);
 
+ChapterSchema.index({
+  story: 1,
+});
+ChapterSchema.index({
+  story: -1,
+});
+ChapterSchema.index({
+  createdAt: 1,
+});
+ChapterSchema.index({
+  createdAt: -1,
+});
+
 ChapterSchema.plugin(AutoIncrementID, { startAt: 1 });
 
 ChapterSchema.plugin(autoSlug, { field: 'name' });

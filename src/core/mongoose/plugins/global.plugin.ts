@@ -10,10 +10,14 @@ import { UserSchema } from '@/core/user/schema/user.schema';
 import { FolderSchema } from '@/core/upload/schema/folder.schema';
 import referenceCheckPlugin from './reference-check.plugin';
 import initPlugin from './init.plugin';
+import recordCreater from './record-creater.plugin';
 
 export default function globalPlugin(schema: Schema) {
   //init
   schema.plugin(initPlugin);
+
+  //record creater
+  schema.plugin(recordCreater);
 
   //text search plugin
   schema.plugin(textSearchPlugin);
