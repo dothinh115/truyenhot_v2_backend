@@ -1,7 +1,6 @@
 import {
   Controller,
   Post,
-  Body,
   Param,
   UseInterceptors,
   UploadedFile,
@@ -16,6 +15,7 @@ import { TQuery } from '@/core/utils/models/query.model';
 import { RolesGuard } from '@/core/guards/role.guard';
 import { CustomRequest } from '@/core/utils/models/request.model';
 import { CreateFolderDto } from './dto/create-folder.dto';
+import { Fields } from '../decorator/field.decorator';
 
 @UseGuards(RolesGuard)
 @Controller('upload')
@@ -50,7 +50,7 @@ export class UploadController {
   }
 
   @Post('folder')
-  createFolder(@Body() body: CreateFolderDto, @Query() query: TQuery) {
+  createFolder(@Fields() body: CreateFolderDto, @Query() query: TQuery) {
     return this.uploadService.createFolder(body, query);
   }
 

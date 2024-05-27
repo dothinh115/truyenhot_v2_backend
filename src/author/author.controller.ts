@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -14,6 +13,7 @@ import { RolesGuard } from '@/core/guards/role.guard';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { TQuery } from '@/core/utils/models/query.model';
 import { UpdateAuthorDto } from './dto/update-author.dto';
+import { Fields } from '@/core/decorator/field.decorator';
 
 @UseGuards(RolesGuard)
 @Controller('author')
@@ -21,7 +21,7 @@ export class AuthorController {
   constructor(private authorService: AuthorService) {}
 
   @Post()
-  create(@Body() body: CreateAuthorDto, @Query() query: TQuery) {
+  create(@Fields() body: CreateAuthorDto, @Query() query: TQuery) {
     return this.authorService.create(body, query);
   }
 
@@ -34,7 +34,7 @@ export class AuthorController {
   update(
     @Param('id') id: number,
     @Query() query: TQuery,
-    @Body() body: UpdateAuthorDto,
+    @Fields() body: UpdateAuthorDto,
   ) {
     return this.authorService.update(id, query, body);
   }

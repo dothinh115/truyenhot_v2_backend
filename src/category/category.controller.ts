@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -14,6 +13,7 @@ import { RolesGuard } from '@/core/guards/role.guard';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { TQuery } from '@/core/utils/models/query.model';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Fields } from '@/core/decorator/field.decorator';
 
 @UseGuards(RolesGuard)
 @Controller('category')
@@ -21,7 +21,7 @@ export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
   @Post()
-  create(@Body() body: CreateCategoryDto, @Query() query: TQuery) {
+  create(@Fields() body: CreateCategoryDto, @Query() query: TQuery) {
     return this.categoryService.create(body, query);
   }
 
@@ -32,7 +32,7 @@ export class CategoryController {
 
   @Patch(':id')
   update(
-    @Body() body: UpdateCategoryDto,
+    @Fields() body: UpdateCategoryDto,
     @Query() query: TQuery,
     @Param('id') id: number,
   ) {

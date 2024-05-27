@@ -1,7 +1,8 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, UseGuards } from '@nestjs/common';
 import { MailService } from './mail.service';
 import { SendMailDto } from './dto/send-mail.dto';
 import { RolesGuard } from '@/core/guards/role.guard';
+import { Fields } from '../decorator/field.decorator';
 
 @Controller('mail')
 export class MailController {
@@ -9,7 +10,7 @@ export class MailController {
 
   @UseGuards(RolesGuard)
   @Post()
-  sendMail(@Body() body: SendMailDto) {
+  sendMail(@Fields() body: SendMailDto) {
     return this.mailService.send(body);
   }
 }

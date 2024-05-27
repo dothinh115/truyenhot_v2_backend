@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -14,6 +13,7 @@ import { RolesGuard } from '@/core/guards/role.guard';
 import { TQuery } from '@/core/utils/models/query.model';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
+import { Fields } from '@/core/decorator/field.decorator';
 
 @UseGuards(RolesGuard)
 @Controller('story')
@@ -21,7 +21,7 @@ export class StoryController {
   constructor(private storyService: StoryService) {}
 
   @Post()
-  create(@Body() body: CreateStoryDto, query: TQuery) {
+  create(@Fields() body: CreateStoryDto, query: TQuery) {
     return this.storyService.create(body, query);
   }
 
@@ -33,7 +33,7 @@ export class StoryController {
   @Patch(':id')
   update(
     @Param('id') id: number,
-    @Body() body: UpdateStoryDto,
+    @Fields() body: UpdateStoryDto,
     @Query() query: TQuery,
   ) {
     return this.storyService.update(id, body, query);

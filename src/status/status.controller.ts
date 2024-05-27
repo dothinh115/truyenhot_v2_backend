@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -14,6 +13,7 @@ import { RolesGuard } from '@/core/guards/role.guard';
 import { StatusService } from './status.service';
 import { CreateStatusDto } from './dto/create-status.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
+import { Fields } from '@/core/decorator/field.decorator';
 
 @UseGuards(RolesGuard)
 @Controller('status')
@@ -21,7 +21,7 @@ export class StatusController {
   constructor(private statusService: StatusService) {}
 
   @Post()
-  create(@Body() body: CreateStatusDto, query: TQuery) {
+  create(@Fields() body: CreateStatusDto, query: TQuery) {
     return this.statusService.create(body, query);
   }
 
@@ -32,7 +32,7 @@ export class StatusController {
 
   @Patch(':id')
   update(
-    @Body() body: UpdateStatusDto,
+    @Fields() body: UpdateStatusDto,
     @Query() query: TQuery,
     @Param('id') id: number,
   ) {

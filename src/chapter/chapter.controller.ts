@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -14,6 +13,7 @@ import { TQuery } from '@/core/utils/models/query.model';
 import { CreateChapterDto } from './dto/create-chapter.dto';
 import { RolesGuard } from '@/core/guards/role.guard';
 import { UpdateChapterDto } from './dto/update-chapter.dto';
+import { Fields } from '@/core/decorator/field.decorator';
 
 @UseGuards(RolesGuard)
 @Controller('chapter')
@@ -21,7 +21,7 @@ export class ChapterController {
   constructor(private chapterService: ChapterService) {}
 
   @Post()
-  create(@Body() body: CreateChapterDto, query: TQuery) {
+  create(@Fields() body: CreateChapterDto, query: TQuery) {
     return this.chapterService.create(body, query);
   }
 
@@ -32,7 +32,7 @@ export class ChapterController {
 
   @Patch(':id')
   update(
-    @Body() body: UpdateChapterDto,
+    @Fields() body: UpdateChapterDto,
     @Query() query: TQuery,
     @Param('id') id: number,
   ) {

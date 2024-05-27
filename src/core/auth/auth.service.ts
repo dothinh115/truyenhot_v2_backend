@@ -10,7 +10,6 @@ import { JwtService } from '@nestjs/jwt';
 import { MailService } from '../mail/mail.service';
 import { BcryptService } from '../common/bcrypt.service';
 import { QueryService } from '../query/query.service';
-import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +20,7 @@ export class AuthService {
     private bcryptService: BcryptService,
     private queryService: QueryService,
   ) {}
-  async login(body: LoginAuthDto, req: Request) {
+  async login(body: LoginAuthDto) {
     try {
       const { email, password } = body;
       const exists = await this.userModel

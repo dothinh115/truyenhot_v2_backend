@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -16,6 +15,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { RolesGuard } from '../guards/role.guard';
 import { CustomRequest } from '../utils/models/request.model';
 import { CreateUserDto } from './dto/create-user.dto';
+import { Fields } from '../decorator/field.decorator';
 
 @UseGuards(RolesGuard)
 @Controller('user')
@@ -23,7 +23,7 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Post()
-  create(@Query() query: TQuery, @Body() body: CreateUserDto) {
+  create(@Query() query: TQuery, @Fields(CreateUserDto) body: CreateUserDto) {
     return this.userService.create(query, body);
   }
 
@@ -36,7 +36,7 @@ export class UserController {
   update(
     @Query() query: TQuery,
     @Param('id') id: string,
-    @Body() body: UpdateUserDto,
+    @Fields() body: UpdateUserDto,
     @Req() req: CustomRequest,
   ) {
     return this.userService.update(query, id, body, req);
