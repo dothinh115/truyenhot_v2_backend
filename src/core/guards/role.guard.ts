@@ -62,7 +62,7 @@ export class RolesGuard implements CanActivate {
       //extract user vào req
       if (req.headers.authorization) {
         const user = await this.extractUser(req);
-        if (!user) return true;
+        if (!user) throw new UnauthorizedException();
         req.user = user;
       }
       return true;
