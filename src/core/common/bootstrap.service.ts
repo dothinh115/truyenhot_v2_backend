@@ -27,6 +27,7 @@ export class BoostrapService {
     const exist = await this.settingModel.findOne();
     if (!exist) {
       await this.settingModel.create({});
+
       console.log('Tạo thành công setting');
     }
   }
