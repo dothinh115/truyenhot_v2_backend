@@ -1,25 +1,24 @@
-import { Prop } from '@nestjs/mongoose';
+import { Prop, Schema } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 
-export default class DefaultPermission {
-  @Prop({ auto: true, disabled: true })
+@Schema()
+export class DefaultPermission {
+  @Prop({
+    auto: true,
+    disabled: true,
+  })
   _id: mongoose.Schema.Types.ObjectId;
   @Prop({
-    required: true,
     type: mongoose.Schema.Types.String,
-    disabled: true,
+    ref: 'Route',
+    required: true,
   })
-  path: string;
+  route: string;
   @Prop({
+    type: mongoose.Schema.Types.Array,
     required: true,
-    type: mongoose.Schema.Types.String,
-    disabled: true,
+    ref: 'Role',
+    default: [],
   })
-  method: string;
-  @Prop({ type: mongoose.Schema.Types.Array, ref: 'Role' })
   roles: string[];
-  @Prop({ type: mongoose.Schema.Types.Boolean, default: false })
-  public: boolean;
-  @Prop({ type: mongoose.Schema.Types.Array, default: [], ref: 'User' })
-  moderators: string[];
 }

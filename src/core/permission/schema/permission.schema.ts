@@ -1,7 +1,6 @@
+import { DefaultPermission } from '@/core/mongoose/models/permission.model';
 import { Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import DefaultPermission from '@/core/mongoose/models/permission.model';
-
 export type PermissionDocument = HydratedDocument<Permission>;
 
 @Schema()

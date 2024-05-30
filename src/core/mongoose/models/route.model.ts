@@ -1,7 +1,7 @@
 import { Prop } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 
-export default class DefaultRoute {
+export class DefaultRoute {
   @Prop({ auto: true, disabled: true })
   _id: mongoose.Schema.Types.ObjectId;
   @Prop({
@@ -11,10 +11,9 @@ export default class DefaultRoute {
   })
   path: string;
   @Prop({
-    default: [],
-    ref: 'Permission',
-    type: mongoose.Schema.Types.Array,
+    type: mongoose.Schema.Types.String,
+    required: true,
     disabled: true,
   })
-  permission: string[];
+  method: string;
 }

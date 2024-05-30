@@ -8,14 +8,15 @@ import fs from 'fs';
 import { Setting } from '@/core/setting/schema/setting.schema';
 import { User } from '@/core/user/schema/user.schema';
 import { TRoute } from '@/core/utils/models/route.model';
-import { Permission } from '../permission/schema/permission.schema';
+import { Route } from '../route/schema/route.schema';
+import Redis from 'ioredis';
 
 export class BoostrapService {
   constructor(
     private adapterHost: HttpAdapterHost,
     private configService: ConfigService,
     @InjectModel(User.name) private userModel: Model<User>,
-    @InjectModel(Permission.name) private permissionModel: Model<Permission>,
+    @InjectModel(Route.name) private routeModel: Model<Route>,
     @InjectModel(Setting.name) private settingModel: Model<Setting>,
   ) {}
   private getParentRoute = (route: string) => {
@@ -62,13 +63,8 @@ export class BoostrapService {
       })
       .filter((item: any) => item !== undefined);
     parentRoutes = Array.from(parentRoutes);
-    //Tạo permission
+    //Tạo route
     for (const route of existingRoutes) {
-      const existCheck = await this.permissionModel.findOne({
-        path: route.path.slice(1),
-        method: route.method,
-      });
-      if (existCheck) continue;
       let isContinue = true;
       for (const excluded of settings.EXCLUDED_ROUTE) {
         if (this.getParentRoute(route.path) === excluded) {
@@ -77,26 +73,26 @@ export class BoostrapService {
         }
       }
       if (!isContinue) continue;
-      await this.permissionModel.create({
-        path: route.path.slice(1),
+      const exist = await this.routeModel.findOne({
+        path: route.path,
+        method: route.method,
+      });
+      if (exist) continue;
+
+      await this.routeModel.create({
+        path: route.path,
         method: route.method,
       });
       console.log('Tạo thành công route ' + route.path.slice(1));
     }
 
-    //Xoá các route đã cũ
-    const savedRoutes = await this.permissionModel.find();
-    //xoá lần 1, so với các route đang tồn tại
-    for (const savedRoute of savedRoutes) {
+    //xoá các route dư thừa
+    const routes = await this.routeModel.find();
+    for (const route of routes) {
       const find = existingRoutes.find(
-        (route) =>
-          route.path.slice(1) === savedRoute.path &&
-          route.method === savedRoute.method,
+        (x) => x.method === route.method && x.path === route.path,
       );
-      for (const excludedRoute of settings.EXCLUDED_ROUTE) {
-        if (this.getParentRoute(savedRoute.path) === excludedRoute || !find)
-          await this.permissionModel.findByIdAndDelete(savedRoute._id);
-      }
+      if (!find) await this.routeModel.findByIdAndDelete(route._id);
     }
   }
 
@@ -124,11 +120,31 @@ export class BoostrapService {
 
 @Injectable()
 export class OnBootStrapService implements OnApplicationBootstrap {
-  constructor(private bootstrapService: BoostrapService) {}
+  client;
+  constructor(private bootstrapService: BoostrapService) {
+    this.client = new Redis({
+      host: '127.0.0.1',
+      port: 6379,
+    });
+  }
+
   async onApplicationBootstrap() {
+    const key = 'app:on:bootstrap';
+    const value = 'locked';
+    const ttl = 60;
+
+    const isLocked = await this.client.set(key, value, 'NX', 'EX', ttl);
+
     await this.bootstrapService.createUploadFolder();
     await this.bootstrapService.createSetting();
-    await this.bootstrapService.handlePath();
+
+    if (!isLocked) {
+      // Nếu không thể đặt khóa, tức là khóa đã tồn tại
+      console.log(
+        'Bootstrap code has already been executed by another instance.',
+      );
+    } else await this.bootstrapService.handlePath();
+
     await this.bootstrapService.rootUserCheck();
   }
 }

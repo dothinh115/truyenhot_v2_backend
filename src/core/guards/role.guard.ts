@@ -1,5 +1,6 @@
 import { User } from '@/core/user/schema/user.schema';
 import {
+  BadRequestException,
   CanActivate,
   ExecutionContext,
   ForbiddenException,
@@ -11,14 +12,17 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Request } from 'express';
 import { Model } from 'mongoose';
-import { Permission } from '../permission/schema/permission.schema';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { Route } from '../route/schema/route.schema';
+import { Permission } from '../permission/schema/permission.schema';
+import settings from '../../settings.json';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   models = [];
   constructor(
+    @InjectModel(Route.name) private routeModel: Model<Route>,
     @InjectModel(Permission.name) private permissionModel: Model<Permission>,
     @InjectModel(User.name) private userModel: Model<User>,
     private jwtService: JwtService,
@@ -29,89 +33,86 @@ export class RolesGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
 
-    const { method, route } = req;
+    const { method, route, params } = req;
 
     //xác định route nào đang dc gọi
-    let url: string = route.path
-      .split('/')
-      .filter((x: string) => x !== '')
-      .join('/');
+    let url: string = route.path;
 
-    //đặt cacheKey để lưu vào redis
-    const cacheKey = `${url}:${method.toLowerCase()}`;
+    const currentRoute = await this.routeModel.findOne({
+      path: url,
+      method: method.toLowerCase(),
+    });
 
-    //lấy data từ redis
-    let currentRoutePermission: any = await this.cacheManager.get(cacheKey);
-
-    //nếu redis ko có thì lấy từ db
-    if (!currentRoutePermission) {
-      currentRoutePermission = await this.permissionModel.findOne({
-        path: url,
-        method: method.toLowerCase(),
-      });
-      //sau khi lấy xong lưu vào redis
-      await this.cacheManager.set(
-        cacheKey,
-        currentRoutePermission || '',
-        60000,
-      );
+    let user: any;
+    //extract user và đưa vào request
+    if (req.headers.authorization) {
+      user = await this.extractUser(req);
+      if (!user) throw new UnauthorizedException();
+      req.user = user;
     }
-
-    //nếu route ko dc phân quyền, hoặc route public thì pass
-    if (!currentRoutePermission || currentRoutePermission.public) {
-      //extract user vào req
-      if (req.headers.authorization) {
-        const user = await this.extractUser(req);
-        if (!user) throw new UnauthorizedException();
-        req.user = user;
-      }
-      return true;
-    }
-
-    //nếu route dc phân quyền, nhưng ko có token, quăng lỗi
-    if (!req.headers.authorization) throw new UnauthorizedException();
-    //nếu có token, tiến hành extract User
-    const user = await this.extractUser(req);
-    //ko có user, quăng lỗi
-    if (!user) throw new UnauthorizedException();
-    //set user vào req
-    req.user = user;
-
-    //nếu là post, cần phải set recordCreater để lưu lại user nào vừa tạo ra record này
-    if (method.toLowerCase() === 'post') {
+    if (method.toLowerCase() === 'post' && user) {
       req.body = {
         ...req.body,
         recordCreater: user._id,
       };
-    } else if (
-      method.toLowerCase() === 'patch' ||
-      method.toLowerCase() === 'delete'
-    ) {
-      //dùng regex lấy ra route đang gọi tới, ví dụ role/:id thì => role
-      const match = url.match(/^[a-z]+[^\/]/);
-      if (!match) {
-        return false;
-      }
-      const name = match[0];
-      const model = this.models.find((x) => x.name === name)?.model;
-      if (model && req.params.id) {
-        const exist = await model
-          .findById(req.params.id)
-          .select('+recordCreater');
-        if (
-          exist.recordCreater !== user._id &&
-          !currentRoutePermission.moderators.includes(user.role) &&
-          !user.rootUser
+    }
+    //nếu chưa có route này thì xem có rơi vào những route đã exclude hay ko
+    if (!currentRoute) {
+      const match = url.match(/^\/[a-z]+[^\/]/);
+      if (
+        settings.EXCLUDED_ROUTE.includes(
+          match[0]
+            .split('/')
+            .filter((x) => x !== '')
+            .join(),
         )
-          return false;
-      }
+      )
+        return true; //nếu rơi vào những route đã exclude trong setting thì cho qua
+      else return false;
     }
 
-    // nếu là rootUser, pass ngay
-    if (user.rootUser) return true;
+    const permission = await this.permissionModel.findOne({
+      route: currentRoute._id,
+    });
 
-    //check xem role hiện tại của user có quyền truy cập vào api hay ko
-    if (currentRoutePermission.roles.includes(user.role)) return true;
+    //check xem route đã dc phân quyền hay chưa
+    if (permission) {
+      //nếu đã phân quyền thì xem xét trường hợp route dc public, tức là roles = [], cho pass
+      if (permission.roles.length === 0) return true;
+
+      if (!user) throw new UnauthorizedException(); //nếu user chưa đăng nhập thì quăng 401
+
+      //nếu đã đăng nhập thì tiếp tục xem xét nếu là rootUser thì pass
+      if (user.rootUser) return true;
+
+      //check xem khi patch và delete, có phải người này đang sửa record do mình tạo ra hay ko
+      if (
+        method.toLowerCase() === 'patch' ||
+        method.toLowerCase() === 'delete'
+      ) {
+        const match = url.match(/[a-z]+[^/]/);
+        const find = this.models.find((x) => x.name === match[0]);
+        if (find) {
+          const { id } = params;
+          const model = find.model;
+          const exist = await model.findById(id).select('+recordCreater');
+          if (exist.recordCreater === user._id) return true;
+          else
+            throw new BadRequestException(
+              'Bạn không có quyền sửa hoặc xoá record này!',
+            );
+        }
+      }
+
+      //nếu ko phải là rootUser, đã phân quyền + đã đăng nhập, thì check tiếp xem role hiện tại của user có dc access hay ko
+      if (permission.roles.includes(user.role)) return true;
+    } else {
+      //nếu chưa dc phân quyền thì rootUser vẫn dc đi qua
+      if (!user) throw new UnauthorizedException(); //nếu user chưa đăng nhập thì quăng 401
+      //nếu đã đăng nhập thì tiếp tục xem xét nếu là rootUser thì pass
+      if (user.rootUser) return true;
+    }
+
     return false;
   }
 

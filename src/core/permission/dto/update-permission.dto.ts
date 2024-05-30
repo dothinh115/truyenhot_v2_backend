@@ -1,8 +1,4 @@
-import { Expose } from 'class-transformer';
-import { IsNotEmpty } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
+import { CreatePermissionDto } from './create-permission.dto';
 
-export class UpdatePermissionDto {
-  @Expose()
-  @IsNotEmpty({ message: 'roles không được để trống!' })
-  roles: string[];
-}
+export class UpdatePermissionDto extends PartialType(CreatePermissionDto) {}

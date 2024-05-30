@@ -18,10 +18,11 @@ import { CommonModule } from './common/common.module';
 import { QueryModule } from './query/query.module';
 import { SchemaModule } from './schema/schema.module';
 import { CommonService } from './common/common.service';
-import { PermissionModule } from './permission/permission.module';
 import { RoleModule } from './role/role.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
+import { RouteModule } from './route/route.module';
+import { PermissionModule } from './permission/permission.module';
 
 @Global()
 @Module({
@@ -60,7 +61,7 @@ import { redisStore } from 'cache-manager-redis-yet';
     RoleModule,
     MeModule,
     MailModule,
-    PermissionModule,
+    RouteModule,
     SettingModule,
     UploadModule,
     RoleGuardModule,
@@ -68,6 +69,7 @@ import { redisStore } from 'cache-manager-redis-yet';
     CommonModule,
     QueryModule,
     SchemaModule,
+    PermissionModule,
   ],
   providers: [CommonService],
   exports: [JwtModule, MulterModule, CacheModule],
