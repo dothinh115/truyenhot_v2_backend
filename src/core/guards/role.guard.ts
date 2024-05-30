@@ -37,11 +37,16 @@ export class RolesGuard implements CanActivate {
 
     //xác định route nào đang dc gọi
     let url: string = route.path;
+    const routeCacheKey = `route:${url}:${method.toLowerCase()}`;
+    let currentRoute: any = await this.cacheManager.get(routeCacheKey);
 
-    const currentRoute = await this.routeModel.findOne({
-      path: url,
-      method: method.toLowerCase(),
-    });
+    if (!currentRoute) {
+      currentRoute = await this.routeModel.findOne({
+        path: url,
+        method: method.toLowerCase(),
+      });
+      await this.cacheManager.set(routeCacheKey, currentRoute || '', 60000);
+    }
 
     let user: any;
     //extract user và đưa vào request
@@ -71,9 +76,15 @@ export class RolesGuard implements CanActivate {
       else return false;
     }
 
-    const permission = await this.permissionModel.findOne({
-      route: currentRoute._id,
-    });
+    const permissionCacheKey = `permission:${currentRoute._id}`;
+    let permission: any = await this.cacheManager.get(permissionCacheKey);
+
+    if (!permission) {
+      permission = await this.permissionModel.findOne({
+        route: currentRoute._id,
+      });
+      await this.cacheManager.set(permissionCacheKey, permission || '', 60000);
+    }
 
     //check xem route đã dc phân quyền hay chưa
     if (permission) {
