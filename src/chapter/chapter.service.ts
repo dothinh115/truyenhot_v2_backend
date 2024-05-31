@@ -41,8 +41,6 @@ export class ChapterService {
 
   async update(body: UpdateChapterDto, query: TQuery, id: number) {
     try {
-      const exist = await this.chapterModel.findById(id);
-      if (!exist) throw new Error('Không có chapter này trong hệ thống!');
       const result = await this.chapterModel.findByIdAndUpdate(id, body);
       return await this.queryService.handleQuery(
         this.chapterModel,
@@ -56,8 +54,6 @@ export class ChapterService {
 
   async delete(id: number) {
     try {
-      const exist = await this.chapterModel.findById(id);
-      if (!exist) throw new Error('Không có chapter này trong hệ thống!');
       await this.chapterModel.findByIdAndDelete(id);
       return {
         message: 'Thành công!',

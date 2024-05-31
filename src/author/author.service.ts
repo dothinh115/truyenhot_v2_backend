@@ -40,8 +40,6 @@ export class AuthorService {
 
   async update(id: number, query: TQuery, body: UpdateAuthorDto) {
     try {
-      const exist = await this.authorModel.findById(id);
-      if (!exist) throw new Error('Không có tác giả này trong hệ thống!');
       const result = await this.authorModel.findByIdAndUpdate(id, body);
       return await this.queryService.handleQuery(
         this.authorModel,
@@ -55,8 +53,6 @@ export class AuthorService {
 
   async delete(id: number) {
     try {
-      const exist = await this.authorModel.findById(id);
-      if (!exist) throw new Error('Không có tác giả này trong hệ thống!');
       await this.authorModel.findByIdAndDelete(id);
       return {
         message: 'Thành công!',

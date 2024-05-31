@@ -40,8 +40,6 @@ export class StatusService {
 
   async update(body: UpdateStatusDto, query: TQuery, id: number) {
     try {
-      const exist = await this.statusModel.findById(id);
-      if (!exist) throw new Error('Không có status này trong hệ thống!');
       const result = await this.statusModel.findByIdAndUpdate(id, body);
       return await this.queryService.handleQuery(
         this.statusModel,
@@ -55,8 +53,6 @@ export class StatusService {
 
   async delete(id: number) {
     try {
-      const exist = await this.statusModel.findById(id);
-      if (!exist) throw new Error('Không có status này trong hệ thống!');
       await this.statusModel.findByIdAndDelete(id);
       return {
         message: 'Thành công!',

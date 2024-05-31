@@ -36,8 +36,6 @@ export class RoleService {
 
   async update(id: string, body: UpdateRoleDto, query: TQuery) {
     try {
-      const exist = await this.roleModel.findById(id);
-      if (!exist) throw new Error('Không có role này trong hệ thống!');
       const result = await this.roleModel.findByIdAndUpdate(id, body);
       return await this.queryService.handleQuery(
         this.roleModel,
@@ -51,8 +49,6 @@ export class RoleService {
 
   async remove(id: string) {
     try {
-      const exist = await this.roleModel.findById(id);
-      if (!exist) throw new Error('Không có role này trong hệ thống!');
       await this.roleModel.findByIdAndDelete(id);
       return {
         message: 'Thành công!',

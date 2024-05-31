@@ -107,6 +107,7 @@ export class RolesGuard implements CanActivate {
           const { id } = params;
           const model = find.model;
           const exist = await model.findById(id).select('+recordCreater');
+          if (!exist) throw new BadRequestException('Không có record này!');
           if (exist.recordCreater === user._id) return true;
           else
             throw new BadRequestException(

@@ -38,8 +38,6 @@ export class StoryService {
 
   async update(id: number, body: UpdateStoryDto, query: TQuery) {
     try {
-      const exist = await this.storyModel.findById(id);
-      if (!exist) throw new Error('Không có truyện này trong hệ thống!');
       const result = await this.storyModel.findByIdAndUpdate(id, body);
       return await this.queryService.handleQuery(
         this.storyModel,
@@ -53,8 +51,6 @@ export class StoryService {
 
   async delete(id: number) {
     try {
-      const exist = await this.storyModel.findById(id);
-      if (!exist) throw new Error('Không có truyện này trong hệ thống!');
       await this.storyModel.findByIdAndDelete(id);
       return {
         message: 'Thành công!',

@@ -39,8 +39,6 @@ export class CategoryService {
 
   async update(body: UpdateCategoryDto, query: TQuery, id: number) {
     try {
-      const exist = await this.categoryModel.findById(id);
-      if (!exist) throw new Error('Không có thể loại này trong hệ thống!');
       const result = await this.categoryModel.findByIdAndUpdate(id, body);
       return await this.queryService.handleQuery(
         this.categoryModel,
@@ -54,8 +52,6 @@ export class CategoryService {
 
   async delete(id: number) {
     try {
-      const exist = await this.categoryModel.findById(id);
-      if (!exist) throw new Error('Không có thể loại này trong hệ thống!');
       await this.categoryModel.findByIdAndDelete(id);
       return {
         message: 'Thành công',
