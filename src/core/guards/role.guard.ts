@@ -36,7 +36,7 @@ export class RolesGuard implements CanActivate {
     const { method, route, params } = req;
 
     //xác định route nào đang dc gọi
-    let url: string = route.path;
+    const url: string = route.path;
     const routeCacheKey = `route:${url}:${method.toLowerCase()}`;
     let currentRoute: any = await this.cacheManager.get(routeCacheKey);
 

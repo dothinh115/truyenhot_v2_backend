@@ -39,7 +39,7 @@ export class StoryController {
     return this.storyService.update(id, body, query);
   }
 
-  @Delete('id')
+  @Delete(':id')
   delete(@Param('id') id: number) {
     return this.storyService.delete(id);
   }
