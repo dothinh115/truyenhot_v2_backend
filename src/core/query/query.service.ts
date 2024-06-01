@@ -257,7 +257,7 @@ export class QueryService {
   }
 
   private async handleFind<T>(model: Model<T>, query: TQuery, _id: any) {
-    let { fields } = query;
+    const { fields } = query;
     let selectObj: any,
       populate: any[] = [],
       result: any[];
@@ -325,7 +325,7 @@ export class QueryService {
   };
 
   private handleLookup(array: any[]) {
-    let result: any[] = [];
+    const result: any[] = [];
     //bóc tách từng phần tử để phân tích
     for (const item of array) {
       //bên trong này chắc chắn là object và chỉ cần quan tâm đến key của nó
@@ -371,7 +371,12 @@ export class QueryService {
   }
 
   async handleQuery<T>(model: Model<T>, query: TQuery, _id?: any) {
-    let { fields, filter, page, limit, meta, sort } = query;
+    const fields = query?.fields || '';
+    const filter = query?.filter || '';
+    let page = query?.page;
+    let limit = query?.limit;
+    const meta = query?.meta;
+    let sort = query?.sort;
     if (!page) page = 1;
     if (!limit) limit = 10;
     if (limit > settings.QUERY.LIMIT)
