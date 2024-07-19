@@ -46,8 +46,11 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
-          echo "Deploying application..."
+          echo "Deploying..."
           sshpass -p "${SSH_PASSWORD}" ssh ${SSH_USER}@${SSH_HOST} << "EOF"
+            #pull từ git về 
+            git pull
+
             #check process
             if pm2 list | grep -q 'truyenhot-backend'; then
               echo "Dừng và xoá process..."
