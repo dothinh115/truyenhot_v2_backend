@@ -50,5 +50,4 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
           echo "Deploying application..."
-          sshpass -p "${SSH_PASSWORD}" rsync -avz -e "ssh" ./dist/ ${SSH_USER}@${SSH_HOST}:/var/www/truyenhot_BE
-          sshpass -p "${SSH_PASSWORD}" ssh ${SSH_USER}@${SSH_HOST} "cd /var/www/truyenhot_BE && npm install && pm2 stop truyenhot-backend && pm2 delete truyenhot-backend && pm2 start ecosystem.config.js --env production"
+          sshpass -p "${SSH_PASSWORD}" ssh ${SSH_USER}@${SSH_HOST} "cd /var/www/truyenhot_BE && git pull && npm install && pm2 stop truyenhot-backend && pm2 delete truyenhot-backend && pm2 start ecosystem.config.js --env production"
