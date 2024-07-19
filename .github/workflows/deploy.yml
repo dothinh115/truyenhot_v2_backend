@@ -40,9 +40,9 @@ jobs:
 
       - name: Deploy to server
         env:
-          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PASSWORD: ${{ truyenhot-backend.SSH_PASSWORD }}
+          SSH_HOST: ${{ truyenhot-backend.SSH_HOST }}
+          SSH_USER: ${{ truyenhot-backend.SSH_USER }}
         run: |
           echo "Deploying application..."
           sshpass -p "${SSH_PASSWORD}" rsync -avz -e "ssh" ./dist/ ${SSH_USER}@${SSH_HOST}:/var/www/truyenhot_BE
