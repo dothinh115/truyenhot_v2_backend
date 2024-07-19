@@ -37,7 +37,6 @@ jobs:
 
       - name: Add SSH host key
         run: |
-          mkdir -p ~/.ssh
           ssh-keyscan -H ${SSH_HOST} >> ~/.ssh/known_hosts
 
       - name: Deploy to server
