@@ -34,11 +34,10 @@ jobs:
 
       - name: Deploy to server
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
-          echo "${SSH_PRIVATE_KEY}" > private_key
-          chmod 600 private_key
-          rsync -avz -e "ssh -i private_key" ./dist/ ${SSH_USER}@${SSH_HOST}:/var/www/truyenhot_BE
-          ssh -i private_key ${SSH_USER}@${SSH_HOST} "cd /var/www/truyenhot_BE && npm install && pm2 stop truyenhot-backend && pm2 delete truyenhot-backend && pm2 start ecosystem.config.js --env production"
+          echo "Deploying application..."
+          sshpass -p "${SSH_PASSWORD}" rsync -avz -e "ssh" ./dist/ ${SSH_USER}@${SSH_HOST}:/var/www/truyenhot_BE
+          sshpass -p "${SSH_PASSWORD}" ssh ${SSH_USER}@${SSH_HOST} "cd /var/www/truyenhot_BE && npm install && pm2 stop truyenhot-backend && pm2 delete truyenhot-backend && pm2 start ecosystem.config.js --env production"
