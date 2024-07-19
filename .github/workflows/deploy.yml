@@ -34,10 +34,7 @@ jobs:
 
       - name: Set up SSH
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan host ${SSH_HOST} >> ~/.ssh/known_hosts
@@ -50,4 +47,22 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
           echo "Deploying application..."
-          sshpass -p "${SSH_PASSWORD}" ssh ${SSH_USER}@${SSH_HOST} "cd /var/www/truyenhot_BE && git pull && npm install && pm2 stop truyenhot-backend && pm2 delete truyenhot-backend && pm2 start ecosystem.config.js --env production"
+          sshpass -p "${SSH_PASSWORD}" ssh ${SSH_USER}@${SSH_HOST} << "EOF"
+            #check process
+            if pm2 list | grep -q 'truyenhot-backend'; then
+              echo "Dừng và xoá process..."
+              pm2 stop truyenhot-backend
+              pm2 delete truyenhot-backend
+            else
+              echo "Không có process hoạt động."
+            fi
+
+            #cài đặt các dependencies
+            yarn install
+            yarn build
+
+            #chạy pm2
+            pm2 start ecosystem.config.js --env production
+
+            echo 'Deploy thành công!'
+          EOF
