@@ -1,0 +1,164 @@
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
+import { TField, TQuery } from '../utils/model.util';
+import { InjectEntityManager } from '@nestjs/typeorm';
+
+@Injectable()
+export class QueryService {
+  constructor(@InjectEntityManager() private manager: EntityManager) {}
+
+  private selectArr = [];
+
+  private handleMergeObjectInsideArray(array: object[]) {
+    let result = [];
+    for (const key in array) {
+      const item: any = array[key];
+      const index = result.findIndex((x) => x.alias === item.alias);
+      if (index !== -1) {
+        result[index] = {
+          ...result[index],
+          select: this.handleMergeObjectInsideArray(item.select),
+        };
+      } else result.push(item);
+    }
+    return result;
+  }
+
+  private ifRelation(fields: string[], repository: Repository<any>) {
+    const lastEl = fields.slice(-1).join('');
+    const penultimateEl = fields.slice(-2, -1).join('');
+    const find = this.manager.connection.entityMetadatas.find((entity) =>
+      entity.relations.some((rel) => rel.propertyName === penultimateEl),
+    );
+    if (find) return find.relations.some((rel) => rel.propertyName === lastEl);
+    return false;
+  }
+
+  private handleFields(
+    fields: string[],
+    alias: string,
+    repository: Repository<any>,
+  ) {
+    let relationObj: {
+      relations: {
+        [key: string]: string[];
+      };
+    } = { relations: {} };
+    const relations = repository.metadata.relations;
+    for (const field of fields) {
+      if (field.includes('.')) {
+        const fieldSplit = field.split('.').filter((x) => x !== '');
+        const ifRelation = this.ifRelation(fieldSplit, repository);
+        let key: string, value: string;
+        if (ifRelation) {
+          key = field;
+          value = '*';
+        } else {
+          key = fieldSplit.slice(0, -1).join('.');
+          value = fieldSplit.slice(-1).join('');
+        }
+
+        relationObj.relations[key]
+          ? relationObj.relations[key].push(value)
+          : (relationObj.relations[key] = [value]);
+      } else {
+        const ifRelation = relations.find((rel) => rel.propertyName === field);
+        if (ifRelation) {
+          relationObj.relations[field] = ['loadIds'];
+        } else this.selectArr.push(`${alias}.${field}`);
+      }
+    }
+    let result = [];
+
+    if (Object.keys(relationObj.relations).length > 0) {
+      for (const [key, value] of Object.entries(relationObj.relations)) {
+        const keySplit = key.split('.').filter((x) => x !== '');
+        if (keySplit.length > 0) {
+          let fieldObj: TField;
+          fieldObj = keySplit.reduceRight(
+            (prev: TField, current: string, index) => {
+              const currentAlias =
+                index > 0
+                  ? `${keySplit[index - 1]}_${current}_${index}`
+                  : `${alias}_${current}_${index}`;
+              return {
+                relation: index === 0 ? `${alias}.${current}` : current,
+                alias: currentAlias,
+                ...(index === keySplit.length - 1
+                  ? { fields: value }
+                  : { select: [prev] }),
+              };
+            },
+            {},
+          );
+          result.push(fieldObj);
+        }
+      }
+    }
+    result = this.handleMergeObjectInsideArray(result);
+    return result;
+  }
+
+  private async handleNestedRelations(
+    queryBuilder: SelectQueryBuilder<any>,
+    { alias, fields, relation, select }: TField,
+    repository: Repository<any>,
+  ) {
+    console.log(alias, fields, relation, select);
+    await queryBuilder.leftJoinAndSelect(relation, alias);
+
+    if (fields && fields.length > 0) {
+      for (const field of fields) {
+        if (field !== '*' && field !== 'loadIds')
+          this.selectArr.push(`${alias}.${field}`);
+        else this.selectArr.push(alias);
+      }
+    } else {
+      // Tự động thêm ID của quan hệ nếu không có trường nào được chọn
+      this.selectArr.push(`${alias}.id`);
+    }
+
+    if (select) {
+      for (const item of select) {
+        await this.handleNestedRelations(
+          queryBuilder,
+          { ...item, relation: `${alias}.${item.relation}` },
+          repository,
+        );
+      }
+    }
+  }
+
+  private async handleQueryBuilder(
+    queryBuilder: SelectQueryBuilder<any>,
+    relationObj: TField[],
+    repository: Repository<any>,
+  ) {
+    for (const relationData of relationObj) {
+      await this.handleNestedRelations(
+        queryBuilder,
+        { ...relationData },
+        repository,
+      );
+    }
+  }
+
+  public async handleQuery(repository: Repository<any>, query: TQuery) {
+    this.selectArr = [];
+    const fields = query.fields
+      ? query.fields.split(',').filter((x) => x !== '')
+      : [];
+
+    const entityName = repository.metadata.name.toLowerCase();
+    const queryBuilder = repository.createQueryBuilder(entityName);
+
+    this.selectArr.push(entityName);
+    const relationObj = this.handleFields(fields, entityName, repository);
+
+    await this.handleQueryBuilder(queryBuilder, relationObj, repository);
+    await queryBuilder.select(this.selectArr);
+
+    const result = await queryBuilder.getMany();
+    return result;
+  }
+}

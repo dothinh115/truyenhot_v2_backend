@@ -1,0 +1,3 @@
+{
+    "EXCLUDED_ROUTES": ["schema", "me"]
+}
