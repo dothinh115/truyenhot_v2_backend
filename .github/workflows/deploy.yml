@@ -35,7 +35,6 @@ jobs:
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          touch ~/.ssh/known_hosts
           ssh-keyscan -H ${SSH_HOST} >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
