@@ -3,12 +3,12 @@ module.exports = {
     {
       name: 'truyenhot-backend',
       script: 'dist/main.js',
-      instances: '6', // Số lượng instances tối đa sẽ bằng số CPU trên máy của bạn
-      exec_mode: 'cluster', // Chạy trong chế độ cluster
-      watch: false, // Tắt chế độ watch để tránh vấn đề khi cluster
+      instances: '8',
+      exec_mode: 'cluster',
+      watch: false,
       env_production: {
         NODE_ENV: 'production',
-        PORT: 4567, // Đặt cổng cho ứng dụng trong môi trường production
+        PORT: 4567,
       },
     },
   ],
