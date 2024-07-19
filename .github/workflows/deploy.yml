@@ -33,6 +33,10 @@ jobs:
             #pull từ git về 
             git pull
 
+            #cài đặt các dependencies
+            yarn install
+            yarn build
+
             #check process
             if pm2 list | grep -q 'truyenhot-backend'; then
               echo "Dừng và xoá process..."
@@ -42,9 +46,6 @@ jobs:
               echo "Không có process hoạt động."
             fi
 
-            #cài đặt các dependencies
-            yarn install
-            yarn build
 
             #chạy pm2
             pm2 start ./ecosystem.config.js --env production
