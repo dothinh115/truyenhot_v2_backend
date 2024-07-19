@@ -32,9 +32,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Add SSH host key
+      - name: Set up SSH
         run: |
+          mkdir -p ~/.ssh
+          touch ~/.ssh/known_hosts
           ssh-keyscan -H ${SSH_HOST} >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
 
       - name: Deploy to server
         env:
