@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: centos-latest
 
     steps:
       - name: Checkout repository
@@ -25,7 +25,7 @@ jobs:
         run: npm run build
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: centos-latest
     needs: build
 
     steps:
