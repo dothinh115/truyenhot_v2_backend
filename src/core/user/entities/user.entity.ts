@@ -1,3 +1,4 @@
+import { Disabled } from 'src/core/decorators/disabled.decorator';
 import { autoHashPassword } from 'src/core/middlewares/auto-hash-password.middleware';
 import { Role } from 'src/core/role/entities/role.entity';
 import {
@@ -12,6 +13,7 @@ import {
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
+  @Disabled()
   id: string;
 
   @Column({ nullable: false, unique: true })

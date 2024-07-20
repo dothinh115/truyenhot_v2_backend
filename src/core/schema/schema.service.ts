@@ -18,11 +18,15 @@ export class SchemaService {
       if (!entity) throw new Error('Không có schema này');
       const schema = {};
       for (const column of entity.columns) {
+        if (
+          column.propertyName === 'createdAt' ||
+          column.propertyName === 'updatedAt'
+        )
+          continue;
         const metadata = getAllMetadata(
           (entity.target as Function).prototype,
           column.propertyName,
         );
-
         schema[column.propertyName] = {
           type:
             typeof column.type === 'function'

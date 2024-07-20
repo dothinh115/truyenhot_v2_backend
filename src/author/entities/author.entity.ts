@@ -1,5 +1,4 @@
 import { autoSlug } from 'src/core/middlewares/auto-slug.middleware';
-import { Story } from 'src/story/entities/story.entity';
 import {
   BeforeInsert,
   BeforeUpdate,

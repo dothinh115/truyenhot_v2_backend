@@ -17,6 +17,7 @@ import { MeModule } from './me/me.module';
 import { UploadModule } from './upload/upload.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
+import { FolderModule } from './folder/folder.module';
 
 @Global()
 @Module({
@@ -44,6 +45,7 @@ import { redisStore } from 'cache-manager-redis-yet';
         port: 6379,
       }),
     }),
+    FolderModule,
   ],
   providers: [
     InitService,

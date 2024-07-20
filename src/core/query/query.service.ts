@@ -83,7 +83,7 @@ export class QueryService {
           where: checkIsExists,
         });
         if (isExists) {
-          throw new Error(`${checkIsExists} đã tồn tại.`);
+          throw new Error(`${JSON.stringify(checkIsExists)} đã tồn tại.`);
         }
       }
 

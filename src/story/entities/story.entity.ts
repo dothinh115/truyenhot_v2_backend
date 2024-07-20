@@ -1,5 +1,6 @@
 import { Author } from 'src/author/entities/author.entity';
 import { Category } from 'src/category/entities/category.entity';
+import { ColumnType } from 'src/core/decorators/column-type.decorator';
 import { autoSlug } from 'src/core/middlewares/auto-slug.middleware';
 import {
   BeforeInsert,
@@ -34,6 +35,7 @@ export class Story {
   slug: string;
 
   @Column({ nullable: false })
+  @ColumnType('richText')
   description: string;
 
   @Column({ default: 0 })
@@ -43,6 +45,7 @@ export class Story {
   source: string;
 
   @Column({ default: StatusType.CONTINUE, type: 'enum', enum: StatusType })
+  @ColumnType('string')
   status: StatusType;
 
   @Column({ default: null })

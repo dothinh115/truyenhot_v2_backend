@@ -31,6 +31,7 @@ jobs:
           sshpass -p "${SSH_PASSWORD}" ssh ${SSH_USER}@${SSH_HOST} << "EOF"
             cd /var/www/truyenhot_BE
             #pull từ git về 
+            git checkout -- yarn.lock
             git pull
 
             #cài đặt các dependencies

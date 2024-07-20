@@ -9,11 +9,10 @@ import {
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter(),
-    {
-      logger: ['error', 'warn', 'log', 'debug', 'verbose'],
-    },
+    new FastifyAdapter({ logger: true }),
   );
+
+  await app.register(require('@fastify/multipart'));
 
   app.enableCors({
     origin: '*',

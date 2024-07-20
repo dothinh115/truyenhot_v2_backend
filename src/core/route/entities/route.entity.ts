@@ -1,3 +1,4 @@
+import { ColumnType } from 'src/core/decorators/column-type.decorator';
 import { Role } from 'src/core/role/entities/role.entity';
 import {
   Column,
@@ -25,6 +26,7 @@ export class Route {
   path: string;
 
   @Column({ nullable: false, type: 'enum', enum: MethodType })
+  @ColumnType('string')
   method: MethodType;
 
   @Column({ nullable: false, default: false })

@@ -123,16 +123,12 @@ export class QueryBuilderService {
     this.queryBuilder.take(limit);
 
     //add select field
+    this.fieldDataArr = this.fieldDataArr.filter(
+      (field) => !field.includes('user.password'),
+    );
     if (this.fieldDataArr.length > 0) {
       if (!this.fieldDataArr.includes(`${this.entityName}.id`))
         this.fieldDataArr.push(`${this.entityName}.id`);
-      if (
-        this.entityName === 'user' &&
-        this.fieldDataArr.includes('user.password')
-      )
-        this.fieldDataArr = this.fieldDataArr.filter(
-          (x) => x !== 'user.password',
-        );
       this.queryBuilder.select(this.fieldDataArr);
     }
 

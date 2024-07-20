@@ -9,6 +9,8 @@ import { MethodType, Route } from '../route/entities/route.entity';
 import { METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants';
 import { PROTECTED_ROUTE_KEY } from '../decorators/protected-route.decorator';
 import { getMetadata } from '../utils/metadata.util';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class InitService implements OnModuleInit {
@@ -23,6 +25,7 @@ export class InitService implements OnModuleInit {
   async onModuleInit() {
     await this.createRoutes();
     await this.createRootUser();
+    this.createPublicDir();
   }
 
   private async createRoutes() {
@@ -122,6 +125,16 @@ export class InitService implements OnModuleInit {
         'password: ' + this.configService.get('ROOT_USER_PASSWORD'),
         'bgBlue',
       );
+    }
+  }
+
+  private createPublicDir() {
+    const projectPath = process.cwd();
+    const publicFolderPath = path.join(projectPath, '/public');
+    const isPublicDirExists = fs.existsSync(publicFolderPath);
+    if (!isPublicDirExists) {
+      fs.mkdirSync(publicFolderPath);
+      colorLog('Tạo thành công thư mục public!', 'bgBlue');
     }
   }
 }
