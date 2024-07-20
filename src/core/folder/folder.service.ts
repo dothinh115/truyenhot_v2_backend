@@ -135,13 +135,29 @@ export class FolderService {
   }
 
   async delete(id: string) {
+    const connection = this.manager.connection;
+    const queryRunner = connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
-      await this.queryService.delete({
-        repository: this.folderRepo,
-        id,
+      let folder = await this.folderRepo.findOne({
+        where: {
+          id,
+        },
       });
+      if (!folder) throw new Error('Folder này không tồn tại!');
+      const folderPath = path.join(process.cwd(), '/public/', folder.name);
+      await this.folderRepo.delete(id);
+      await fs.promises.rm(folderPath, { recursive: true });
+      await queryRunner.commitTransaction();
+      return {
+        message: 'Thành công!',
+      };
     } catch (error) {
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException(error.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 }

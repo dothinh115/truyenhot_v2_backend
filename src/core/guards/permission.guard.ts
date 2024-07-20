@@ -6,12 +6,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Route } from '../route/entities/route.entity';
+import { MethodType, Route } from '../route/entities/route.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../user/entities/user.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { CustomRequest } from '../utils/model.util';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
@@ -23,9 +24,10 @@ export class PermissionGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const req = context.switchToHttp().getRequest();
+    const req: CustomRequest = context.switchToHttp().getRequest();
     //check xem route đang được truy cập có được phân quyền hay ko
-    const { url, method } = req;
+
+    const { url, method } = req.routeOptions.config;
 
     const routeCacheKey = `route:${url}:${method}`;
     let currentRoute: Route = await this.cacheManager.get<Route>(routeCacheKey);
@@ -33,7 +35,7 @@ export class PermissionGuard implements CanActivate {
       currentRoute = await this.routeRepo.findOne({
         where: {
           path: url,
-          method: method,
+          method: method as MethodType,
         },
       });
       await this.cacheManager.set(routeCacheKey, currentRoute || '', 60000);
