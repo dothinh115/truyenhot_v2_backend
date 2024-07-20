@@ -44,7 +44,8 @@ export class FolderController {
     return this.folderService.update(id, body, query);
   }
 
-  @Delete('id')
+  @Delete(':id')
+  @Protected()
   delete(@Param('id') id: string) {
     return this.folderService.delete(id);
   }
