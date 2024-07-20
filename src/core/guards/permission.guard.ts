@@ -1,7 +1,7 @@
 import {
-  BadGatewayException,
   CanActivate,
   ExecutionContext,
+  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -10,6 +10,8 @@ import { Route } from '../route/entities/route.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../user/entities/user.entity';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
@@ -17,6 +19,7 @@ export class PermissionGuard implements CanActivate {
     @InjectRepository(Route) private routeRepo: Repository<Route>,
     @InjectRepository(User) private userRepo: Repository<User>,
     private jwtService: JwtService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -24,12 +27,18 @@ export class PermissionGuard implements CanActivate {
     //check xem route đang được truy cập có được phân quyền hay ko
     const { url, method } = req;
 
-    const currentRoute = await this.routeRepo.findOne({
-      where: {
-        path: url,
-        method: method,
-      },
-    });
+    const routeCacheKey = `route:${url}:${method}`;
+    let currentRoute: Route = await this.cacheManager.get<Route>(routeCacheKey);
+    if (!currentRoute) {
+      currentRoute = await this.routeRepo.findOne({
+        where: {
+          path: url,
+          method: method,
+        },
+      });
+      await this.cacheManager.set(routeCacheKey, currentRoute || '', 60000);
+    }
+
     //tiến hành lấy thông tin user nếu có
     const token = req.headers?.authorization?.split('Bearer ')[1];
     let user: User | null = null;

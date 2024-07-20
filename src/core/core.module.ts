@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { SchemaModule } from './schema/schema.module';
 import { QueryModule } from './query/query.module';
 import { CommonModule } from 'src/core/common/common.module';
@@ -15,6 +15,8 @@ import { GuardModule } from './guards/guard.module';
 import { PermissionGuard } from './guards/permission.guard';
 import { MeModule } from './me/me.module';
 import { UploadModule } from './upload/upload.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { redisStore } from 'cache-manager-redis-yet';
 
 @Global()
 @Module({
@@ -35,6 +37,13 @@ import { UploadModule } from './upload/upload.module';
     GuardModule,
     MeModule,
     UploadModule,
+    CacheModule.registerAsync({
+      useFactory: async () => ({
+        store: redisStore,
+        host: '127.0.0.1',
+        port: 6379,
+      }),
+    }),
   ],
   providers: [
     InitService,
@@ -43,5 +52,6 @@ import { UploadModule } from './upload/upload.module';
       useClass: PermissionGuard,
     },
   ],
+  exports: [CacheModule],
 })
 export class CoreModule {}

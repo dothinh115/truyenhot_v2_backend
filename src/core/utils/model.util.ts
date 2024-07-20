@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { FastifyRequest } from 'fastify';
 
 export type TQuery = {
   fields?: string;
@@ -9,6 +9,6 @@ export type TQuery = {
   sort?: string;
 };
 
-export interface CustomRequest extends Request {
+export interface CustomRequest extends FastifyRequest {
   user?: any;
 }
