@@ -14,9 +14,9 @@ async function bootstrap() {
 
   await app.register(require('@fastify/multipart'));
 
-  app.enableCors({
-    origin: '*',
-  });
+  // app.enableCors({
+  //   origin: '*',
+  // });
 
   app.useGlobalPipes(
     new ValidationPipe({
