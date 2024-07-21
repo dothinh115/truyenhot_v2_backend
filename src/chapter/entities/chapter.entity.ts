@@ -31,6 +31,7 @@ export class Chapter {
   @Column({ nullable: false })
   content: string;
 
+  @Index()
   @ManyToOne(() => Story, (story) => story.id)
   @JoinColumn()
   story: Story;

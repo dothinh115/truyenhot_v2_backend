@@ -159,7 +159,8 @@ export class FilterService {
                   .filter((val, index) => index <= currentAliasIndex)
                   .join('_');
               }
-
+              /*
+              DÙNG EXISTS, CẦN TEST THÊM VỀ HIỆU NĂNG
               where += `EXISTS (SELECT 1 FROM ${tableName} sc`;
               if (property !== 'id') {
                 const tableNameToJoin = inverseJoinTableMetadata.tableName;
@@ -182,6 +183,36 @@ export class FilterService {
                 }
               }
               where += ')';
+              */
+
+              where += `${currentAlias ? currentAlias : joinTable}.id IN (`;
+              where += `SELECT "${joinTableColumn}" `;
+              where += `FROM "${tableName}" sc`;
+              if (property !== 'id') {
+                const tableNameToJoin = inverseJoinTableMetadata.tableName;
+                where += ` LEFT JOIN "${tableNameToJoin}" c ON sc."${inverseJoinTableColumn}" = c.id`;
+              }
+              where += ` WHERE`;
+              if (property === 'id') {
+                where += ` "${inverseJoinTableColumn}" ${compareKey[key]}`;
+                if (key === '_in' || key === '_nin') {
+                  where += ` (:...${uniqueKey})`;
+                } else {
+                  where += ` :${uniqueKey}`;
+                }
+              } else {
+                if (key === '_contains' || key === '_ncontains') {
+                  where += ` unaccent(c.${property}) ILIKE unaccent(:${uniqueKey})`;
+                } else {
+                  where += ` c.${property} ${compareKey[key]}`;
+                  if (key === '_in' || key === '_nin') {
+                    where += ` (:...${uniqueKey})`;
+                  } else {
+                    where += ` :${uniqueKey}`;
+                  }
+                }
+              }
+              where += `)`;
             }
           } else {
             //nếu ko có thì where như bình thường
