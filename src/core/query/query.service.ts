@@ -44,18 +44,14 @@ export class QueryService {
       };
     }
 
-    try {
-      const queryBuilder = this.queryBuilderService.create(repository);
-      const result = await queryBuilder
-        .field(fields)
-        .filter(filter)
-        .sort(sort)
-        .meta(meta)
-        .build({ page, limit });
-      return result;
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
+    const queryBuilder = this.queryBuilderService.create(repository);
+    const result = await queryBuilder
+      .field(fields)
+      .filter(filter)
+      .sort(sort)
+      .meta(meta)
+      .build({ page, limit });
+    return result;
   }
 
   async create<T>({
@@ -69,40 +65,36 @@ export class QueryService {
     query: TQuery;
     checkIsExists?: Partial<T>;
   }) {
-    try {
-      //set default role nếu có
-      const entityName = repository.metadata.name.toLowerCase();
+    //set default role nếu có
+    const entityName = repository.metadata.name.toLowerCase();
 
-      if (entityName === 'user') {
-        body = await this.queryUtilService.setDefaultRole(body);
-      }
-
-      //check exist nếu có
-      if (checkIsExists) {
-        const isExists = await repository.exists({
-          where: checkIsExists,
-        });
-        if (isExists) {
-          throw new Error(`${JSON.stringify(checkIsExists)} đã tồn tại.`);
-        }
-      }
-
-      //convert cho đúng định dạng của entity
-      body = this.queryUtilService.convertToEntity(entityName, body);
-
-      //create entity và tiến hành lưu vào db
-      const newItem = repository.create(body);
-      const created = await repository.save(newItem);
-
-      //trả ra kết quả với filter là id của item vừa lưu
-      return await this.query({
-        repository,
-        query,
-        id: created.id,
-      });
-    } catch (error) {
-      throw new BadRequestException(error.message);
+    if (entityName === 'user') {
+      body = await this.queryUtilService.setDefaultRole(body);
     }
+
+    //check exist nếu có
+    if (checkIsExists) {
+      const isExists = await repository.exists({
+        where: checkIsExists,
+      });
+      if (isExists) {
+        throw new Error(`${JSON.stringify(checkIsExists)} đã tồn tại.`);
+      }
+    }
+
+    //convert cho đúng định dạng của entity
+    body = this.queryUtilService.convertToEntity(entityName, body);
+
+    //create entity và tiến hành lưu vào db
+    const newItem = repository.create(body);
+    const created = await repository.save(newItem);
+
+    //trả ra kết quả với filter là id của item vừa lưu
+    return await this.query({
+      repository,
+      query,
+      id: created.id,
+    });
   }
 
   async update<T>({
@@ -116,35 +108,31 @@ export class QueryService {
     body: T;
     query: TQuery;
   }) {
-    try {
-      //check exist trước khi update
-      const item = await repository.findOne({
-        where: {
-          id,
-        },
-      });
-      if (!item) throw new Error('Record không tồn tại!');
-      const entityName = repository.metadata.name.toLowerCase();
-      //nếu đang update setting
-      if (entityName === 'setting') {
-        this.queryUtilService.resetDefaultRole(body);
-      }
-
-      //convert cho đúng định dạng của entity
-      body = this.queryUtilService.convertToEntity(entityName, body);
-
-      for (const key of Object.keys(body)) {
-        item[key] = body[key];
-      }
-      const updated = await repository.save(item);
-      return await this.query({
-        repository,
-        query,
-        id: updated.id,
-      });
-    } catch (error) {
-      throw new BadRequestException(error.message);
+    //check exist trước khi update
+    const item = await repository.findOne({
+      where: {
+        id,
+      },
+    });
+    if (!item) throw new Error('Record không tồn tại!');
+    const entityName = repository.metadata.name.toLowerCase();
+    //nếu đang update setting
+    if (entityName === 'setting') {
+      this.queryUtilService.resetDefaultRole(body);
     }
+
+    //convert cho đúng định dạng của entity
+    body = this.queryUtilService.convertToEntity(entityName, body);
+
+    for (const key of Object.keys(body)) {
+      item[key] = body[key];
+    }
+    const updated = await repository.save(item);
+    return await this.query({
+      repository,
+      query,
+      id: updated.id,
+    });
   }
 
   async delete({
@@ -154,22 +142,18 @@ export class QueryService {
     repository: Repository<any>;
     id: string | number;
   }) {
-    try {
-      //check exist
-      const isExists = await repository.exists({
-        where: {
-          id,
-        },
-      });
-      if (!isExists) throw new Error('Record không tồn tại!');
-      //check relation để báo lỗi cho đúng
-      await this.ormService.checkIfReferenced(repository, id);
+    //check exist
+    const isExists = await repository.findOne({
+      where: {
+        id,
+      },
+    });
+    if (!isExists) throw new Error('Record không tồn tại!');
+    //check relation để báo lỗi cho đúng
+    await this.ormService.checkIfReferenced(repository, id);
 
-      //nếu pass hết thì tiến hành xoá
-      const deleted = await repository.delete(id);
-      return deleted;
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
+    //nếu pass hết thì tiến hành xoá
+    await repository.delete(id);
+    return isExists;
   }
 }

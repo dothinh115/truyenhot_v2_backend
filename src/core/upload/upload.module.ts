@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common';
-import { UploadController } from './upload.controller';
-import { UploadService } from './upload.service';
+import { Global, Module } from '@nestjs/common';
+import { FileUploadService } from './upload.service';
 
+@Global()
 @Module({
-  controllers: [UploadController],
-  providers: [UploadService],
+  providers: [FileUploadService],
+  exports: [FileUploadService],
 })
-export class UploadModule {}
+export class FileUploadModule {}

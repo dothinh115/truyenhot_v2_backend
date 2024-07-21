@@ -1,9 +1,11 @@
+import { File } from 'src/core/file/entities/file.entity';
 import { User } from 'src/core/user/entities/user.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 

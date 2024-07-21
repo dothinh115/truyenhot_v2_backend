@@ -8,6 +8,7 @@ import { CreateFolderDto } from '../folder/dto/create-folder.dto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { UpdateFolderDto } from '../folder/dto/update-folder.dto';
+import { File } from '../file/entities/file.entity';
 
 @Injectable()
 export class FolderService {
@@ -26,7 +27,7 @@ export class FolderService {
     //phân tích path của folder
     const projectDir = process.cwd();
     const folderName = body.name;
-    const folderPath = path.join(projectDir, '/public/', folderName);
+    const folderPath = path.join(projectDir, '/public', folderName);
 
     //tạo queryRunner
     const connection = this.manager.connection;
@@ -34,10 +35,12 @@ export class FolderService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
+    const folderRepo = queryRunner.manager.getRepository(Folder);
+
     try {
       //kiểm tra và tạo db nếu chưa có folder này
       const newFolder = await this.queryService.create({
-        repository: this.folderRepo,
+        repository: folderRepo,
         body: bodyWithUserId,
         query,
         checkIsExists: {
@@ -55,7 +58,7 @@ export class FolderService {
       await queryRunner.rollbackTransaction();
 
       try {
-        const isFolderExists = await this.folderRepo.existsBy({
+        const isFolderExists = await folderRepo.existsBy({
           name: body.name,
         });
         if (!isFolderExists)
@@ -87,8 +90,9 @@ export class FolderService {
     const queryRunner = connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
+    const folderRepo = queryRunner.manager.getRepository(Folder);
     try {
-      const folder = await this.folderRepo.findOne({
+      const folder = await folderRepo.findOne({
         where: {
           id,
         },
@@ -96,7 +100,7 @@ export class FolderService {
       if (!folder) throw new Error('Không có folder này!');
 
       //kiểm tra xem tên dc đổi có trùng hay ko
-      const ifFolderNameExists = await this.folderRepo.findOne({
+      const ifFolderNameExists = await folderRepo.findOne({
         where: {
           name: body.name,
           id: Not(folder.id),
@@ -105,11 +109,11 @@ export class FolderService {
       if (ifFolderNameExists) throw new Error('Thư mục này đã tồn tại!');
 
       const projectDir = process.cwd();
-      const oldFolderPath = path.join(projectDir, '/public/', folder.name);
-      const newFolderPath = path.join(projectDir, '/public/', body.name);
+      const oldFolderPath = path.join(projectDir, '/public', folder.name);
+      const newFolderPath = path.join(projectDir, '/public', body.name);
 
       const updatedFolder = await this.queryService.update({
-        repository: this.folderRepo,
+        repository: folderRepo,
         body,
         id,
         query,
@@ -139,15 +143,32 @@ export class FolderService {
     const queryRunner = connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
+    const folderRepo = queryRunner.manager.getRepository(Folder);
+    const fileRepo = queryRunner.manager.getRepository(File);
+
     try {
-      let folder = await this.folderRepo.findOne({
+      let folder = await folderRepo.findOne({
         where: {
           id,
         },
       });
       if (!folder) throw new Error('Folder này không tồn tại!');
-      const folderPath = path.join(process.cwd(), '/public/', folder.name);
-      await this.folderRepo.delete(id);
+
+      //tiến hành xoá toàn bộ file có trong folder
+      const files = await fileRepo.find({
+        where: {
+          folder,
+        },
+      });
+      if (files.length > 0) {
+        await fileRepo.remove(files);
+      }
+
+      //xoá folder
+      await folderRepo.delete(folder);
+
+      //xoá file trong hệ thống
+      const folderPath = path.join(process.cwd(), '/public', folder.name);
       await fs.promises.rm(folderPath, { recursive: true });
       await queryRunner.commitTransaction();
       return {

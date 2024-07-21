@@ -77,6 +77,7 @@ export class QueryBuilderService {
       });
       this.queryBuilder.where(where, variables);
     }
+
     return this;
   }
 
@@ -97,6 +98,7 @@ export class QueryBuilderService {
       });
       this.queryBuilder.orderBy(orderByObj);
     }
+
     return this;
   }
 
@@ -108,7 +110,7 @@ export class QueryBuilderService {
 
   async build({ page, limit }: { page: number; limit: number }) {
     //sau khi có dc joinData thì tiến hành join vào
-    const joinDataArr = Array.from(this.joinData);
+    let joinDataArr = Array.from(this.joinData);
     if (joinDataArr.length > 0) {
       await Promise.all(
         joinDataArr.map(async (item) => {
@@ -126,6 +128,7 @@ export class QueryBuilderService {
     this.fieldDataArr = this.fieldDataArr.filter(
       (field) => !field.includes('user.password'),
     );
+
     if (this.fieldDataArr.length > 0) {
       if (!this.fieldDataArr.includes(`${this.entityName}.id`))
         this.fieldDataArr.push(`${this.entityName}.id`);

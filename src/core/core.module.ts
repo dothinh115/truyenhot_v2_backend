@@ -14,10 +14,11 @@ import { AuthModule } from './auth/auth.module';
 import { GuardModule } from './guards/guard.module';
 import { PermissionGuard } from './guards/permission.guard';
 import { MeModule } from './me/me.module';
-import { UploadModule } from './upload/upload.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
 import { FolderModule } from './folder/folder.module';
+import { FileModule } from './file/file.module';
+import { FileUploadModule } from './upload/upload.module';
 
 @Global()
 @Module({
@@ -37,7 +38,7 @@ import { FolderModule } from './folder/folder.module';
     AuthModule,
     GuardModule,
     MeModule,
-    UploadModule,
+    FileUploadModule,
     CacheModule.registerAsync({
       useFactory: async () => ({
         store: redisStore,
@@ -46,6 +47,7 @@ import { FolderModule } from './folder/folder.module';
       }),
     }),
     FolderModule,
+    FileModule,
   ],
   providers: [
     InitService,

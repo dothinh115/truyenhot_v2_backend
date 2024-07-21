@@ -11,6 +11,8 @@ import { PROTECTED_ROUTE_KEY } from '../decorators/protected-route.decorator';
 import { getMetadata } from '../utils/metadata.util';
 import * as fs from 'fs';
 import * as path from 'path';
+import settings from '../../../settings.json';
+import { EFileType, FileLimit } from '../file/entities/file-limit.entity';
 
 @Injectable()
 export class InitService implements OnModuleInit {
@@ -19,13 +21,15 @@ export class InitService implements OnModuleInit {
     private reflector: Reflector,
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Route) private routeRepo: Repository<Route>,
+    @InjectRepository(FileLimit) private fileLimitRepo: Repository<FileLimit>,
     private configService: ConfigService,
   ) {}
 
   async onModuleInit() {
     await this.createRoutes();
     await this.createRootUser();
-    this.createPublicDir();
+    await this.createPublicDir();
+    await this.addMaxFileSize();
   }
 
   private async createRoutes() {
@@ -128,13 +132,45 @@ export class InitService implements OnModuleInit {
     }
   }
 
-  private createPublicDir() {
+  //tạo public dir nếu chưa có
+  private async createPublicDir() {
     const projectPath = process.cwd();
     const publicFolderPath = path.join(projectPath, '/public');
-    const isPublicDirExists = fs.existsSync(publicFolderPath);
-    if (!isPublicDirExists) {
-      fs.mkdirSync(publicFolderPath);
+    fs.promises.access(publicFolderPath).catch(() => {
       colorLog('Tạo thành công thư mục public!', 'bgBlue');
+      return fs.promises.mkdir(publicFolderPath);
+    });
+  }
+
+  //tạo các max file size lần đầu
+  private async addMaxFileSize() {
+    const fileLimitArr = [];
+    for (const [fileType, maxSize] of Object.entries(
+      settings.FILE_UPLOAD.MAX_ZISE,
+    )) {
+      const isExists = await this.fileLimitRepo.exists({
+        where: {
+          fileType: fileType as EFileType,
+        },
+      });
+      if (isExists) continue;
+      const create = this.fileLimitRepo.create({
+        fileType: fileType as EFileType,
+        maxSize,
+      });
+      fileLimitArr.push(create);
+    }
+
+    await this.fileLimitRepo.save(fileLimitArr);
+
+    const existingFileLimit = await this.fileLimitRepo.find();
+    const allowedFileLimitType = Object.keys(settings.FILE_UPLOAD.MAX_ZISE);
+    const shouldRemovedFizeSize = existingFileLimit.filter(
+      (fileLimit) =>
+        !allowedFileLimitType.some((key) => key !== fileLimit.fileType),
+    );
+    if (shouldRemovedFizeSize.length > 0) {
+      await this.fileLimitRepo.remove(shouldRemovedFizeSize);
     }
   }
 }
