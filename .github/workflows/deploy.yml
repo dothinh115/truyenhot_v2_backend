@@ -1,4 +1,4 @@
-name: truyenhot_autodeploy
+name: truyenhot_backend_autodeploy
 
 on:
   push:
