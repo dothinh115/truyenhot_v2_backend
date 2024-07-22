@@ -1,4 +1,9 @@
-import { Global, Module } from '@nestjs/common';
+import {
+  Global,
+  MiddlewareConsumer,
+  Module,
+  RequestMethod,
+} from '@nestjs/common';
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
@@ -19,6 +24,8 @@ import { redisStore } from 'cache-manager-redis-yet';
 import { FolderModule } from './folder/folder.module';
 import { FileModule } from './file/file.module';
 import { FileUploadModule } from './upload/upload.module';
+import { CacheResponseMiddleware } from './middlewares/cache-response.middleware';
+import { CacheResponseHook } from './hooks/cache-response.hook';
 
 @Global()
 @Module({
@@ -55,7 +62,14 @@ import { FileUploadModule } from './upload/upload.module';
       provide: APP_GUARD,
       useClass: PermissionGuard,
     },
+    CacheResponseHook,
   ],
   exports: [CacheModule],
 })
-export class CoreModule {}
+export class CoreModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(CacheResponseMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.GET });
+  }
+}

@@ -9,7 +9,10 @@ import {
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter({ logger: true, connectionTimeout: 120000 }),
+    new FastifyAdapter({
+      logger: true,
+      connectionTimeout: 120000,
+    }),
   );
 
   await app.register(require('@fastify/multipart'));

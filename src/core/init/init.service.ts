@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit, RequestMethod } from '@nestjs/common';
-import { DiscoveryService, Reflector } from '@nestjs/core';
+import { DiscoveryService } from '@nestjs/core';
 import { colorLog } from '../utils/color-console-log.util';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
@@ -13,12 +13,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import settings from '../../../settings.json';
 import { EFileType, FileLimit } from '../file/entities/file-limit.entity';
+import { FastifyInstance } from 'fastify';
 
 @Injectable()
 export class InitService implements OnModuleInit {
   constructor(
     private discoveryService: DiscoveryService,
-    private reflector: Reflector,
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Route) private routeRepo: Repository<Route>,
     @InjectRepository(FileLimit) private fileLimitRepo: Repository<FileLimit>,
