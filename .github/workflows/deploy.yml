@@ -8,7 +8,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    outputs:
+      log_file: ${{ steps.deploy.outputs.log_file }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -18,27 +19,28 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan host ${SSH_HOST} >> ~/.ssh/known_hosts
+          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
       - name: Deploy to server
+        id: deploy
         env:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
-          echo "Deploying..."
-          sshpass -p "${SSH_PASSWORD}" ssh ${SSH_USER}@${SSH_HOST} << "EOF"
+          echo "Deploying..." > deploy.log
+          sshpass -p "$SSH_PASSWORD" ssh $SSH_USER@$SSH_HOST << EOF >> deploy.log 2>&1
             cd /var/www/truyenhot_BE
-            #pull từ git về 
+            # Pull từ git về 
             git checkout -- yarn.lock
             git pull
 
-            #cài đặt các dependencies
+            # Cài đặt các dependencies
             yarn install
             yarn build
 
-            #check process
+            # Check process
             if pm2 list | grep -q 'truyenhot-backend'; then
               echo "Dừng và xoá process..."
               pm2 stop truyenhot-backend
@@ -47,24 +49,25 @@ jobs:
               echo "Không có process hoạt động."
             fi
 
-
-            #chạy pm2
+            # Chạy pm2
             pm2 start ./ecosystem.config.js --env production
 
             echo 'Deploy thành công!'
           EOF
+          echo "::set-output name=log_file::$(pwd)/deploy.log"
 
-  notify:
+  notify_success:
     runs-on: ubuntu-latest
     needs: deploy
+    if: success()
     steps:
-      - name: Notify Discord
+      - name: Notify Discord Success
         uses: actions/github-script@v7
         with:
           script: |
             const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR} = process.env;
             const message = {
-              content: `${GITHUB_ACTOR} vừa deploy thành công truyenhot-backend`
+              content: `**Project:** truyenhot-backend\n**Status:** Success\n**Message:** ${GITHUB_ACTOR} đã deploy thành công.`
             };
             await fetch(DISCORD_WEBHOOK_URL, {
               method: 'POST',
@@ -75,3 +78,32 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           GITHUB_ACTOR: ${{ github.actor }}
+
+  notify_fail:
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: failure()
+    steps:
+      - name: Read Deploy Log
+        id: read_log
+        run: |
+          cat ${{ needs.deploy.outputs.log_file }}
+          echo "::set-output name=deploy_log::$(cat ${{ needs.deploy.outputs.log_file }})"
+
+      - name: Notify Discord Failure
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, DEPLOY_LOG} = process.env;
+            const message = {
+              content: `**Project:** truyenhot-backend\n**Status:** Fail\n**Message:** ${GITHUB_ACTOR} đã gặp lỗi khi deploy.\n**Error Info:** \`\`\`${DEPLOY_LOG}\`\`\``
+            };
+            await fetch(DISCORD_WEBHOOK_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(message)
+            });
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          DEPLOY_LOG: ${{ steps.read_log.outputs.deploy_log }}
