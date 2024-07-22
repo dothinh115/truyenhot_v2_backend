@@ -53,3 +53,25 @@ jobs:
 
             echo 'Deploy thành công!'
           EOF
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - name: Notify Discord
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fetch = require('node-fetch');
+            const webhookUrl = ${DISCORD_WEBHOOK_URL};
+            const message = {
+              content: `${GITHUB_ACTOR} vừa deploy thành công truyenhot-backend`
+            };
+            fetch(webhookUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(message)
+            });
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          GITHUB_ACTOR: ${{ github.actor }}
