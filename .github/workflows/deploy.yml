@@ -40,8 +40,8 @@ jobs:
             cd /var/www/truyenhot_BE
             # Pull từ git về 
             git checkout -- yarn.lock
-            git pull || { echo "Failed to pull latest changes"; exit 1; }
-
+            git pull 
+            
             # Cài đặt các dependencies
             yarn install
             yarn build
