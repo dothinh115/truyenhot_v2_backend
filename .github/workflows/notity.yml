@@ -33,7 +33,7 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           GITHUB_ACTOR: ${{ github.actor }}
-          COMMIT_MESSAGE: ${{ needs.deploy.outputs.commit_message }}
+          COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
 
   notify_fail:
     runs-on: ubuntu-latest
@@ -61,4 +61,4 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           GITHUB_ACTOR: ${{ github.actor }}
-          COMMIT_MESSAGE: ${{ needs.deploy.outputs.commit_message }}
+          COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
