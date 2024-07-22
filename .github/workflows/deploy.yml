@@ -59,16 +59,16 @@ jobs:
     needs: deploy
     steps:
       - name: Notify Discord
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
+            const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR} = process.env;
             const nodeFetch = require('node-fetch');
-            const webhookUrl = ${DISCORD_WEBHOOK_URL};
 
             const message = {
-              content: `${githubActor} vừa deploy thành công truyenhot-backend`
+              content: `${GITHUB_ACTOR} vừa deploy thành công truyenhot-backend`
             };
-            await nodeFetch(webhookUrl, {
+            await nodeFetch(DISCORD_WEBHOOK_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(message)
