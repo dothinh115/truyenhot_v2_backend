@@ -16,8 +16,7 @@ export class CacheResponseHook {
       const cacheKey = `responseCachedFor:${request.url}`;
       const cachedResponse = await cacheManager.get(cacheKey);
       if (!cachedResponse) {
-        payload = JSON.stringify(payload);
-        await cacheManager.set(cacheKey, payload, 5000);
+        await cacheManager.set(cacheKey, JSON.stringify(payload), 5000);
       }
       return payload;
     });
