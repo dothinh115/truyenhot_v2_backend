@@ -74,12 +74,11 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const fetch = require('node-fetch');
             const moment = require('moment-timezone');
             const now = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'); // Múi giờ Hà Nội
             const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, COMMIT_MESSAGE} = process.env;
             const message = {
-              content: `✅ ✅ ✅\n**Project:** truyenhot-backend\n**Commit Message:** *"${COMMIT_MESSAGE}"*\n**Status:** *"Success"*\n**Date:** ${now}\n**Message:** *"${GITHUB_ACTOR} đã deploy thành công."*`
+              content: `🚀 🚀 🚀\n📁**Project:** truyenhot-backend\n📝**Commit Message:** *"${COMMIT_MESSAGE}"*\n✅**Status:** *"Success"*\n📅**Date:** ${now}\n📣**Message:** *"${GITHUB_ACTOR} đã deploy thành công."*`
             };
             await fetch(DISCORD_WEBHOOK_URL, {
               method: 'POST',
@@ -108,7 +107,7 @@ jobs:
             const now = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'); // Múi giờ Hà Nội
             const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, COMMIT_MESSAGE} = process.env;
             const message = {
-              content: `❌ ❌ ❌\n**Project:** truyenhot-backend\n**Commit Message:** *"${COMMIT_MESSAGE}"*\n**Status:** *"Fail"*\n**Date:** ${now}\n**Message:** *"${GITHUB_ACTOR} đã gặp lỗi khi deploy."*`
+              content: `🔴 🔴 🔴\n📁**Project:** truyenhot-backend\n📝**Commit Message:** *"${COMMIT_MESSAGE}"*\n❌**Status:** *"Fail"*\n📅**Date:** ${now}\n📣**Message:** *"${GITHUB_ACTOR} đã gặp lỗi khi deploy."*`
             };
             await fetch(DISCORD_WEBHOOK_URL, {
               method: 'POST',
