@@ -62,14 +62,14 @@ import { CacheResponseHook } from './hooks/cache-response.hook';
       provide: APP_GUARD,
       useClass: PermissionGuard,
     },
-    CacheResponseHook,
+    // CacheResponseHook,
   ],
   exports: [CacheModule],
 })
 export class CoreModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(CacheResponseMiddleware)
-      .forRoutes({ path: '*', method: RequestMethod.GET });
-  }
+  // configure(consumer: MiddlewareConsumer) {
+  //   consumer
+  //     .apply(CacheResponseMiddleware)
+  //     .forRoutes({ path: '*', method: RequestMethod.GET });
+  // }
 }
