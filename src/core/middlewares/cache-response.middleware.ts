@@ -10,6 +10,7 @@ export class CacheResponseMiddleware implements NestMiddleware {
     const cacheKey = `responseCachedFor:${req.originalUrl}`;
     let cachedResponse = await this.cacheManager.get<string>(cacheKey);
     if (cachedResponse) {
+      await this.cacheManager.del(cacheKey);
       res
         .setHeader('Content-Type', 'application/json')
         .end(JSON.parse(cachedResponse));
