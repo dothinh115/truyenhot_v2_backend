@@ -21,9 +21,9 @@ jobs:
           script: |
             const moment = require('moment-timezone');
             const now = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'); // Múi giờ Hà Nội
-            const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, COMMIT_MESSAGE, REPOSITORY} = process.env;
+            const {DISCORD_WEBHOOK_URL, COMMIT_MESSAGE, REPOSITORY, MESSAGE} = process.env;
             const message = {
-              content: `🚀 🚀 🚀\n\n📁 **Repository:** ${REPOSITORY}\n\n📝 **Commit Message:** *"${COMMIT_MESSAGE}"*\n\n✅ **Status:** *"Success"*\n\n📅 **Date:** ${now}\n\n📣 **Message:** *"${GITHUB_ACTOR} đã deploy thành công 👏."*`
+              content: `🚀 🚀 🚀\n\n📁 **Repository:** ${REPOSITORY}\n\n📝 **Commit Message:** *"${COMMIT_MESSAGE}"*\n\n✅ **Status:** *"Success"*\n\n📅 **Date:** ${now}\n\n📣 **Message:** *"${MESSAGE}"*`
             };
             await fetch(DISCORD_WEBHOOK_URL, {
               method: 'POST',
@@ -32,9 +32,9 @@ jobs:
             });
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          GITHUB_ACTOR: ${{ github.actor }}
           COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
           REPOSITORY: ${{ github.event.repository.name }}
+          MESSAGE: ${{ github.actor }} đã deploy thành công 👏.
 
   notify_fail:
     runs-on: ubuntu-latest
@@ -50,9 +50,9 @@ jobs:
           script: |
             const moment = require('moment-timezone');
             const now = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'); // Múi giờ Hà Nội
-            const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, COMMIT_MESSAGE, REPOSITORY} = process.env;
+            const {DISCORD_WEBHOOK_URL, COMMIT_MESSAGE, REPOSITORY, MESSAGE} = process.env;
             const message = {
-              content: `🔴 🔴 🔴\n\n📁 **Project:** ${REPOSITORY}\n\n📝 **Commit Message:** *"${COMMIT_MESSAGE}"*\n\n❌ **Status:** *"Fail"*\n\n📅 **Date:** ${now}\n\n📣 **Message:** *"${GITHUB_ACTOR} đã gặp lỗi khi deploy 😢."*`
+              content: `🔴 🔴 🔴\n\n📁 **Project:** ${REPOSITORY}\n\n📝 **Commit Message:** *"${COMMIT_MESSAGE}"*\n\n❌ **Status:** *"Fail"*\n\n📅 **Date:** ${now}\n\n📣 **Message:** *"${MESSAGE}"*`
             };
             await fetch(DISCORD_WEBHOOK_URL, {
               method: 'POST',
@@ -61,6 +61,6 @@ jobs:
             });
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          GITHUB_ACTOR: ${{ github.actor }}
           COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
           REPOSITORY: ${{ github.event.repository.name }}
+          MESSAGE: ${{ github.actor }} đã gặp lỗi khi deploy 😢
