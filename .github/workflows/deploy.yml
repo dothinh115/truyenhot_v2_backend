@@ -10,9 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       log_file: ${{ steps.deploy.outputs.log_file }}
+      commit_message: ${{ steps.get_commit_message.outputs.commit_message }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Get Commit Message
+        id: get_commit_message
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=format:"%s")
+          echo "::set-output name=commit_message::$COMMIT_MESSAGE"
 
       - name: Set up SSH
         env:
@@ -61,23 +68,29 @@ jobs:
     needs: deploy
     if: success()
     steps:
+      - name: Install dependencies
+        run: |
+          npm install moment-timezone
+
       - name: Notify Discord Success
         uses: actions/github-script@v7
         with:
           script: |
-            const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR} = process.env;
+            const moment = require('moment-timezone');
+            const now = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'); // Múi giờ Hà Nội
+            const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, COMMIT_MESSAGE} = process.env;
             const message = {
-              content: `\n**Project:** truyenhot-backend\n**Status:** Success\n**Message:** ${GITHUB_ACTOR} đã deploy thành công.\n`
+              content: `**Project:** truyenhot-backend\n**Commit Message:** *${COMMIT_MESSAGE}*\n**Status:** Success\n**Date:** ${now}\n**Message:** ${GITHUB_ACTOR} đã deploy thành công.`
             };
             await fetch(DISCORD_WEBHOOK_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(message)
             });
-
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           GITHUB_ACTOR: ${{ github.actor }}
+          COMMIT_MESSAGE: ${{ needs.deploy.outputs.commit_message }}
 
   notify_fail:
     runs-on: ubuntu-latest
@@ -90,13 +103,19 @@ jobs:
           cat ${{ needs.deploy.outputs.log_file }}
           echo "::set-output name=deploy_log::$(cat ${{ needs.deploy.outputs.log_file }})"
 
+      - name: Install dependencies
+        run: |
+          npm install moment-timezone
+
       - name: Notify Discord Failure
         uses: actions/github-script@v7
         with:
           script: |
-            const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, DEPLOY_LOG} = process.env;
+            const moment = require('moment-timezone');
+            const now = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'); // Múi giờ Hà Nội
+            const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, DEPLOY_LOG, COMMIT_MESSAGE} = process.env;
             const message = {
-              content: `\n**Project:** truyenhot-backend\n**Status:** Fail\n**Message:** ${GITHUB_ACTOR} đã gặp lỗi khi deploy.\n**Error Info:** \`\`\`${DEPLOY_LOG}\`\`\``\n
+              content: `**Project:** truyenhot-backend\n**Commit Message:** *${COMMIT_MESSAGE}*\n**Status:** Fail\n**Date:** ${now}\n**Message:** ${GITHUB_ACTOR} đã gặp lỗi khi deploy.\n**Error Info:** \`\`\`${DEPLOY_LOG}\`\`\``
             };
             await fetch(DISCORD_WEBHOOK_URL, {
               method: 'POST',
@@ -107,3 +126,4 @@ jobs:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           GITHUB_ACTOR: ${{ github.actor }}
           DEPLOY_LOG: ${{ steps.read_log.outputs.deploy_log }}
+          COMMIT_MESSAGE: ${{ needs.deploy.outputs.commit_message }}
