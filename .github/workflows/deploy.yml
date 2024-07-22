@@ -38,20 +38,20 @@ jobs:
         run: |
           echo "Deploying..." > deploy.log
           sshpass -p "$SSH_PASSWORD" ssh $SSH_USER@$SSH_HOST << EOF >> deploy.log 2>&1
-            cd /var/www/truyenhot_BE
+            cd /var/www/truyenhot_BE || { echo "Failed to change directory"; exit 1; }
             # Pull từ git về 
-            git checkout -- yarn.lock
-            git pull
+            git checkout -- yarn.lock || { echo "Failed to checkout yarn.lock"; exit 1; }
+            git pull || { echo "Failed to pull latest changes"; exit 1; }
 
             # Cài đặt các dependencies
-            yarn install
-            yarn build
+            yarn install || { echo "Failed to install dependencies"; exit 1; }
+            yarn build || { echo "Failed to build project"; exit 1; }
 
             # Check process
             if pm2 list | grep -q 'truyenhot-backend'; then
               echo "Dừng và xoá process..."
-              pm2 stop truyenhot-backend
-              pm2 delete truyenhot-backend
+              pm2 stop truyenhot-backend || { echo "Failed to stop PM2 process"; exit 1; }
+              pm2 delete truyenhot-backend || { echo "Failed to delete PM2 process"; exit 1; }
             else
               echo "Không có process hoạt động."
             fi
@@ -76,6 +76,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const fetch = require('node-fetch');
             const moment = require('moment-timezone');
             const now = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'); // Múi giờ Hà Nội
             const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, COMMIT_MESSAGE} = process.env;
@@ -111,6 +112,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const fetch = require('node-fetch');
             const moment = require('moment-timezone');
             const now = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'); // Múi giờ Hà Nội
             const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, DEPLOY_LOG, COMMIT_MESSAGE} = process.env;
