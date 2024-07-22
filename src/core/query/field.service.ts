@@ -19,6 +19,7 @@ export class FieldService {
     entityName: string;
   }) {
     const fieldData = new Set<string>();
+
     if (fields.length === 0) {
       const properties = this.ormService.getProperties(entityName);
       if (properties && properties.length > 0) {
