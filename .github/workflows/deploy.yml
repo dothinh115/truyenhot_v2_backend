@@ -62,16 +62,19 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const fetch = require('node-fetch');
+            const nodeFetch = require('node-fetch');
             const webhookUrl = ${DISCORD_WEBHOOK_URL};
             const message = {
               content: `${GITHUB_ACTOR} vừa deploy thành công truyenhot-backend`
             };
-            fetch(webhookUrl, {
+            (async () => {
+            await nodeFetch(webhookUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(message)
             });
+            })()
+
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           GITHUB_ACTOR: ${{ github.actor }}
