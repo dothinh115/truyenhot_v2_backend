@@ -37,20 +37,20 @@ jobs:
         run: |
           echo "Deploying..."
           sshpass -p "$SSH_PASSWORD" ssh $SSH_USER@$SSH_HOST << EOF
-            cd /var/www/truyenhot_BE || { echo "Failed to change directory"; exit 1; }
+            cd /var/www/truyenhot_BE
             # Pull từ git về 
-            git checkout -- yarn.lock || { echo "Failed to checkout yarn.lock"; exit 1; }
+            git checkout -- yarn.lock
             git pull || { echo "Failed to pull latest changes"; exit 1; }
 
             # Cài đặt các dependencies
-            yarn install || { echo "Failed to install dependencies"; exit 1; }
-            yarn build || { echo "Failed to build project"; exit 1; }
+            yarn install
+            yarn build
 
             # Check process
             if pm2 list | grep -q 'truyenhot-backend'; then
               echo "Dừng và xoá process..."
-              pm2 stop truyenhot-backend || { echo "Failed to stop PM2 process"; exit 1; }
-              pm2 delete truyenhot-backend || { echo "Failed to delete PM2 process"; exit 1; }
+              pm2 stop truyenhot-backend
+              pm2 delete truyenhot-backend
             else
               echo "Không có process hoạt động."
             fi
@@ -79,7 +79,7 @@ jobs:
             const now = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'); // Múi giờ Hà Nội
             const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, COMMIT_MESSAGE} = process.env;
             const message = {
-              content: `**Project:** truyenhot-backend\n**Commit Message:** *"${COMMIT_MESSAGE}"*\n**Status:** *"Success"*\n**Date:** ${now}\n**Message:** *"${GITHUB_ACTOR} đã deploy thành công."*`
+              content: `✅ ✅ ✅\n**Project:** truyenhot-backend\n**Commit Message:** *"${COMMIT_MESSAGE}"*\n**Status:** *"Success"*\n**Date:** ${now}\n**Message:** *"${GITHUB_ACTOR} đã deploy thành công."*`
             };
             await fetch(DISCORD_WEBHOOK_URL, {
               method: 'POST',
@@ -108,7 +108,7 @@ jobs:
             const now = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'); // Múi giờ Hà Nội
             const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, COMMIT_MESSAGE} = process.env;
             const message = {
-              content: `**Project:** truyenhot-backend\n**Commit Message:** *"${COMMIT_MESSAGE}"*\n**Status:** *"Fail"*\n**Date:** ${now}\n**Message:** *"${GITHUB_ACTOR} đã gặp lỗi khi deploy."*`
+              content: `❌ ❌ ❌\n**Project:** truyenhot-backend\n**Commit Message:** *"${COMMIT_MESSAGE}"*\n**Status:** *"Fail"*\n**Date:** ${now}\n**Message:** *"${GITHUB_ACTOR} đã gặp lỗi khi deploy."*`
             };
             await fetch(DISCORD_WEBHOOK_URL, {
               method: 'POST',
