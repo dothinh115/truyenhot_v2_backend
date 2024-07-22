@@ -67,7 +67,7 @@ jobs:
           script: |
             const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR} = process.env;
             const message = {
-              content: `**Project:** truyenhot-backend\n**Status:** Success\n**Message:** ${GITHUB_ACTOR} đã deploy thành công.`
+              content: `\n**Project:** truyenhot-backend\n**Status:** Success\n**Message:** ${GITHUB_ACTOR} đã deploy thành công.\n`
             };
             await fetch(DISCORD_WEBHOOK_URL, {
               method: 'POST',
@@ -96,7 +96,7 @@ jobs:
           script: |
             const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, DEPLOY_LOG} = process.env;
             const message = {
-              content: `**Project:** truyenhot-backend\n**Status:** Fail\n**Message:** ${GITHUB_ACTOR} đã gặp lỗi khi deploy.\n**Error Info:** \`\`\`${DEPLOY_LOG}\`\`\``
+              content: `\n**Project:** truyenhot-backend\n**Status:** Fail\n**Message:** ${GITHUB_ACTOR} đã gặp lỗi khi deploy.\n**Error Info:** \`\`\`${DEPLOY_LOG}\`\`\``\n
             };
             await fetch(DISCORD_WEBHOOK_URL, {
               method: 'POST',
