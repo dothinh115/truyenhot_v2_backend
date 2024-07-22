@@ -64,8 +64,8 @@ jobs:
           script: |
             const nodeFetch = require('node-fetch');
             const webhookUrl = ${DISCORD_WEBHOOK_URL};
-            (async () => {
-              const message = {
+            async function letsFetch () {
+            const message = {
                 content: `${githubActor} vừa deploy thành công truyenhot-backend`
               };
               await nodeFetch(webhookUrl, {
@@ -73,7 +73,8 @@ jobs:
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(message)
               });
-            })();
+            };
+            await letsFetch();
 
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
