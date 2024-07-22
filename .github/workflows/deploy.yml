@@ -112,7 +112,6 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const fetch = require('node-fetch');
             const moment = require('moment-timezone');
             const now = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'); // Múi giờ Hà Nội
             const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, DEPLOY_LOG, COMMIT_MESSAGE} = process.env;
