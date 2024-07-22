@@ -68,7 +68,7 @@ jobs:
             const message = {
               content: `${githubActor} vừa deploy thành công truyenhot-backend`
             };
-            nodeFetch(webhookUrl, {
+            await nodeFetch(webhookUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(message)
