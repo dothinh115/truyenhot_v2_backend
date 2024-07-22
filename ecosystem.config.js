@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'truyenhot-backend',
       script: 'dist/src/main.js',
-      instances: '4',
+      instances: '7',
       exec_mode: 'cluster',
       watch: false,
       env_production: {
