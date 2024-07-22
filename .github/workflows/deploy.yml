@@ -64,16 +64,16 @@ jobs:
           script: |
             const nodeFetch = require('node-fetch');
             const webhookUrl = ${DISCORD_WEBHOOK_URL};
-            const message = {
-              content: `${GITHUB_ACTOR} vừa deploy thành công truyenhot-backend`
-            };
             (async () => {
-            await nodeFetch(webhookUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(message)
-            });
-            })()
+              const message = {
+                content: `${githubActor} vừa deploy thành công truyenhot-backend`
+              };
+              await nodeFetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(message)
+              });
+            })();
 
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
