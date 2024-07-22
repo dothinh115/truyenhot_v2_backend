@@ -1,4 +1,4 @@
-name: truyenhot_backend_autodeploy
+name: truyenhot_backend_deploy
 
 on:
   push:
@@ -60,61 +60,3 @@ jobs:
 
             echo 'Deploy thành công!'
           EOF
-
-  notify_success:
-    runs-on: ubuntu-latest
-    needs: deploy
-    if: success()
-    steps:
-      - name: Install dependencies
-        run: |
-          npm install moment-timezone
-
-      - name: Notify Discord Success
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const moment = require('moment-timezone');
-            const now = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'); // Múi giờ Hà Nội
-            const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, COMMIT_MESSAGE} = process.env;
-            const message = {
-              content: `🚀 🚀 🚀\n\n📁 **Project:** truyenhot-backend\n\n📝 **Commit Message:** *"${COMMIT_MESSAGE}"*\n\n✅ **Status:** *"Success"*\n\n📅 **Date:** ${now}\n\n📣 **Message:** *"${GITHUB_ACTOR} đã deploy thành công."*`
-            };
-            await fetch(DISCORD_WEBHOOK_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(message)
-            });
-        env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          GITHUB_ACTOR: ${{ github.actor }}
-          COMMIT_MESSAGE: ${{ needs.deploy.outputs.commit_message }}
-
-  notify_fail:
-    runs-on: ubuntu-latest
-    needs: deploy
-    if: failure()
-    steps:
-      - name: Install dependencies
-        run: |
-          npm install moment-timezone
-
-      - name: Notify Discord Failure
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const moment = require('moment-timezone');
-            const now = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'); // Múi giờ Hà Nội
-            const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, COMMIT_MESSAGE} = process.env;
-            const message = {
-              content: `🔴 🔴 🔴\n\n📁 **Project:** truyenhot-backend\n\n📝 **Commit Message:** *"${COMMIT_MESSAGE}"*\n\n❌ **Status:** *"Fail"*\n\n📅 **Date:** ${now}\n\n📣 **Message:** *"${GITHUB_ACTOR} đã gặp lỗi khi deploy."*`
-            };
-            await fetch(DISCORD_WEBHOOK_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(message)
-            });
-        env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          GITHUB_ACTOR: ${{ github.actor }}
-          COMMIT_MESSAGE: ${{ needs.deploy.outputs.commit_message }}
