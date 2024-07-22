@@ -9,7 +9,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     outputs:
-      log_file: ${{ steps.deploy.outputs.log_file }}
       commit_message: ${{ steps.get_commit_message.outputs.commit_message }}
     steps:
       - name: Checkout repository
@@ -36,8 +35,8 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
-          echo "Deploying..." > deploy.log
-          sshpass -p "$SSH_PASSWORD" ssh $SSH_USER@$SSH_HOST << EOF >> deploy.log 2>&1
+          echo "Deploying..."
+          sshpass -p "$SSH_PASSWORD" ssh $SSH_USER@$SSH_HOST << EOF
             cd /var/www/truyenhot_BE || { echo "Failed to change directory"; exit 1; }
             # Pull từ git về 
             git checkout -- yarn.lock || { echo "Failed to checkout yarn.lock"; exit 1; }
@@ -61,7 +60,6 @@ jobs:
 
             echo 'Deploy thành công!'
           EOF
-          echo "::set-output name=log_file::$(pwd)/deploy.log"
 
   notify_success:
     runs-on: ubuntu-latest
@@ -98,12 +96,6 @@ jobs:
     needs: deploy
     if: failure()
     steps:
-      - name: Read Deploy Log
-        id: read_log
-        run: |
-          cat ${{ needs.deploy.outputs.log_file }}
-          echo "::set-output name=deploy_log::$(cat ${{ needs.deploy.outputs.log_file }})"
-
       - name: Install dependencies
         run: |
           npm install moment-timezone
@@ -114,9 +106,9 @@ jobs:
           script: |
             const moment = require('moment-timezone');
             const now = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'); // Múi giờ Hà Nội
-            const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, DEPLOY_LOG, COMMIT_MESSAGE} = process.env;
+            const {DISCORD_WEBHOOK_URL, GITHUB_ACTOR, COMMIT_MESSAGE} = process.env;
             const message = {
-              content: `**Project:** truyenhot-backend\n**Commit Message:** *"${COMMIT_MESSAGE}"*\n**Status:** *"Fail"*\n**Date:** ${now}\n**Message:** *"${GITHUB_ACTOR} đã gặp lỗi khi deploy."*\n**Error Info:** \`\`\`${DEPLOY_LOG}\`\`\``
+              content: `**Project:** truyenhot-backend\n**Commit Message:** *"${COMMIT_MESSAGE}"*\n**Status:** *"Fail"*\n**Date:** ${now}\n**Message:** *"${GITHUB_ACTOR} đã gặp lỗi khi deploy."*`
             };
             await fetch(DISCORD_WEBHOOK_URL, {
               method: 'POST',
@@ -126,5 +118,4 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           GITHUB_ACTOR: ${{ github.actor }}
-          DEPLOY_LOG: ${{ steps.read_log.outputs.deploy_log }}
           COMMIT_MESSAGE: ${{ needs.deploy.outputs.commit_message }}
