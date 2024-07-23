@@ -120,7 +120,6 @@ export class QueryService {
     if (entityName === 'setting') {
       this.queryUtilService.resetDefaultRole(body);
     }
-
     //convert cho đúng định dạng của entity
     body = this.queryUtilService.convertToEntity(entityName, body);
 

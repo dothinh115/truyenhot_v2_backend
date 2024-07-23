@@ -77,6 +77,7 @@ export class QueryUtilService {
 
   convertToEntity<T>(entityName: string, body: T) {
     for (const [key, value] of Object.entries(body)) {
+      if (!value) continue;
       const relationType = this.ormService.checkIfRelation([entityName, key]);
       if (relationType) {
         let propertyData: { id: string | number } | { id: string | number }[];

@@ -27,12 +27,14 @@ export enum StatusType {
 @Index(['author'])
 export class Story {
   @PrimaryGeneratedColumn()
+  @Disabled()
   id: number;
 
   @Column({ nullable: false })
   title: string;
 
   @Column({ nullable: false })
+  @Disabled()
   slug: string;
 
   @Column({ nullable: false })
@@ -53,7 +55,7 @@ export class Story {
   @Column({ default: null })
   cover: string | null;
 
-  @ManyToOne(() => Author, (author) => author.id)
+  @ManyToOne(() => Author, (author) => author.id, { nullable: false })
   @JoinColumn()
   author: Author;
 
