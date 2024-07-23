@@ -44,6 +44,9 @@ export class SchemaService {
           ...(column.default && {
             default: column.default,
           }),
+          ...(column.default !== undefined && {
+            default: column.default,
+          }),
           ...metadata,
         };
       }
