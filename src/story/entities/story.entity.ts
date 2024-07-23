@@ -18,7 +18,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-enum StatusType {
+export enum StatusType {
   CONTINUE = 'Đang ra',
   FULL = 'Full',
 }

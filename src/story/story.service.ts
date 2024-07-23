@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadGatewayException,
+  BadRequestException,
+  Injectable,
+} from '@nestjs/common';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Story } from './entities/story.entity';
 import { Repository } from 'typeorm';
-import { Author } from 'src/author/entities/author.entity';
-import { Category } from 'src/category/entities/category.entity';
 import { TQuery } from 'src/core/utils/model.util';
 import { QueryService } from 'src/core/query/query.service';
 
@@ -13,27 +15,49 @@ import { QueryService } from 'src/core/query/query.service';
 export class StoryService {
   constructor(
     @InjectRepository(Story) private storyRepo: Repository<Story>,
-    @InjectRepository(Author) private authorRepo: Repository<Author>,
-    @InjectRepository(Category) private categoryRepo: Repository<Category>,
     private queryService: QueryService,
   ) {}
-  create(createStoryDto: CreateStoryDto) {
-    return 'This action adds a new story';
+  async create(body: CreateStoryDto, query: TQuery) {
+    try {
+      return await this.queryService.create({
+        repository: this.storyRepo,
+        body,
+        query,
+        checkIsExists: {
+          title: body.title,
+          author: body.author,
+        },
+      });
+    } catch (error) {
+      throw new BadGatewayException(error.message);
+    }
   }
 
-  async findAll(query: TQuery) {
+  async find(query: TQuery) {
     return await this.queryService.query({ repository: this.storyRepo, query });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} story`;
+  async update(id: number, body: UpdateStoryDto, query: TQuery) {
+    try {
+      return await this.queryService.update({
+        repository: this.storyRepo,
+        body,
+        query,
+        id,
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
-  update(id: number, updateStoryDto: UpdateStoryDto) {
-    return `This action updates a #${id} story`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} story`;
+  async remove(id: number) {
+    try {
+      return await this.queryService.delete({
+        id,
+        repository: this.storyRepo,
+      });
+    } catch (error) {
+      throw new BadGatewayException(error.message);
+    }
   }
 }

@@ -7,7 +7,7 @@ import { Author } from 'src/author/entities/author.entity';
 import { Category } from 'src/category/entities/category.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Story, Author, Category])],
+  imports: [TypeOrmModule.forFeature([Story])],
   controllers: [StoryController],
   providers: [StoryService],
 })
