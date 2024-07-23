@@ -41,9 +41,6 @@ export class SchemaService {
               column.relationMetadata.propertyName,
             ),
           }),
-          ...(column.default && {
-            default: column.default,
-          }),
           ...(column.default !== undefined && {
             default: column.default,
           }),
