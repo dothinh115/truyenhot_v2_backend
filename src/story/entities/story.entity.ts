@@ -59,7 +59,7 @@ export class Story {
   @JoinColumn()
   author: Author;
 
-  @ManyToMany(() => Category, { cascade: true, eager: true })
+  @ManyToMany(() => Category, { cascade: true, eager: true, nullable: false })
   @JoinTable()
   categories: Category[];
 
