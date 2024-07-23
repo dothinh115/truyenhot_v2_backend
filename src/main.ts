@@ -10,7 +10,6 @@ async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter({
-      logger: true,
       connectionTimeout: 120000,
     }),
   );
