@@ -1,6 +1,7 @@
 import { Author } from 'src/author/entities/author.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { ColumnType } from 'src/core/decorators/column-type.decorator';
+import { Disabled } from 'src/core/decorators/disabled.decorator';
 import { autoSlug } from 'src/core/middlewares/auto-slug.middleware';
 import {
   BeforeInsert,
@@ -39,6 +40,7 @@ export class Story {
   description: string;
 
   @Column({ default: 0 })
+  @Disabled()
   view: number;
 
   @Column({ default: 'Sưu tầm' })
