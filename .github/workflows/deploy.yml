@@ -13,7 +13,6 @@ jobs:
       PROJECT_PATH: /var/www/truyenhot_BE
       SSH_HOST: ${{ secrets.SSH_HOST }}
       SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
-      SSH_HOST: ${{ secrets.SSH_HOST }}
       SSH_USER: ${{ secrets.SSH_USER }}
     outputs:
       commit_message: ${{ steps.get_commit_message.outputs.commit_message }}
