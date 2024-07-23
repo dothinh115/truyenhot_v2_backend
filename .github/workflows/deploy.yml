@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PROCESS_NAME: truyenhot-backend
+      PROJECT_PATH: /var/www/truyenhot_BE
       SSH_HOST: ${{ secrets.SSH_HOST }}
       SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
       SSH_HOST: ${{ secrets.SSH_HOST }}
@@ -37,7 +38,7 @@ jobs:
         run: |
           echo "Deploying..."
           sshpass -p "$SSH_PASSWORD" ssh $SSH_USER@$SSH_HOST << EOF
-            cd /var/www/truyenhot_BE
+            cd ${{ env.PROJECT_PATH }}
             # Pull từ git về 
             git checkout -- yarn.lock
             git pull 
