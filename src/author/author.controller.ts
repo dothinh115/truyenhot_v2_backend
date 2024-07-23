@@ -1,30 +1,41 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { AuthorService } from './author.service';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
+import { Protected } from 'src/core/decorators/protected-route.decorator';
+import { TQuery } from 'src/core/utils/model.util';
 
 @Controller('author')
 export class AuthorController {
   constructor(private readonly authorService: AuthorService) {}
 
   @Post()
-  create(@Body() createAuthorDto: CreateAuthorDto) {
-    return this.authorService.create(createAuthorDto);
+  @Protected()
+  create(@Body() body: CreateAuthorDto, @Query() query: TQuery) {
+    return this.authorService.create(body, query);
   }
 
   @Get()
-  findAll() {
-    return this.authorService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authorService.findOne(+id);
+  find(@Query() query: TQuery) {
+    return this.authorService.find(query);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthorDto: UpdateAuthorDto) {
-    return this.authorService.update(+id, updateAuthorDto);
+  update(
+    @Param('id') id: string,
+    @Body() body: UpdateAuthorDto,
+    @Query() query: TQuery,
+  ) {
+    return this.authorService.update(+id, body, query);
   }
 
   @Delete(':id')
