@@ -14,11 +14,7 @@ export class CommonService {
   }
 
   isArray(str: string) {
-    try {
-      const parsed = JSON.parse(str);
-      return Array.isArray(parsed);
-    } catch (e) {
-      return false;
-    }
+    const regex = /^([0-9a-zA-Z-]+)(,([0-9a-zA-Z-]+))+$/;
+    return regex.test(str);
   }
 }

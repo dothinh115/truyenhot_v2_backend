@@ -94,7 +94,7 @@ export class FilterService {
           if (checkIfNumber) value = Number(value);
 
           const checkIfArray = this.commonService.isArray(value as string);
-          if (checkIfArray) value = JSON.parse(value as string);
+          if (checkIfArray) value = (value as string).split(',');
           //
 
           //kiểm tra toán tử hợp lệ
