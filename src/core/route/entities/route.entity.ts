@@ -1,4 +1,5 @@
 import { ColumnType } from 'src/core/decorators/column-type.decorator';
+import { Disabled } from 'src/core/decorators/disabled.decorator';
 import { Role } from 'src/core/role/entities/role.entity';
 import {
   Column,
@@ -20,16 +21,20 @@ export enum MethodType {
 @Unique(['path', 'method'])
 export class Route {
   @PrimaryGeneratedColumn()
+  @Disabled()
   id: number;
 
   @Column({ nullable: false })
+  @Disabled()
   path: string;
 
   @Column({ nullable: false, type: 'enum', enum: MethodType })
   @ColumnType('string')
+  @Disabled()
   method: MethodType;
 
   @Column({ nullable: false, default: false })
+  @Disabled()
   isProtected: boolean;
 
   @ManyToMany(() => Role, { cascade: true, eager: true })
