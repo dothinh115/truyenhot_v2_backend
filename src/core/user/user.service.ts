@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadGatewayException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,14 +14,18 @@ export class UserService {
     private queryService: QueryService,
   ) {}
   async create(body: CreateUserDto, query: TQuery) {
-    return await this.queryService.create({
-      repository: this.userRepo,
-      body,
-      checkIsExists: {
-        email: body.email,
-      },
-      query,
-    });
+    try {
+      return await this.queryService.create({
+        repository: this.userRepo,
+        body,
+        checkIsExists: {
+          email: body.email,
+        },
+        query,
+      });
+    } catch (error) {
+      throw new BadGatewayException(error.message);
+    }
   }
 
   async find(query: TQuery) {
@@ -32,18 +36,26 @@ export class UserService {
   }
 
   async update(id: string, body: UpdateUserDto, query: TQuery) {
-    return this.queryService.update({
-      repository: this.userRepo,
-      body,
-      query,
-      id,
-    });
+    try {
+      return this.queryService.update({
+        repository: this.userRepo,
+        body,
+        query,
+        id,
+      });
+    } catch (error) {
+      throw new BadGatewayException(error.message);
+    }
   }
 
   async remove(id: string) {
-    return this.queryService.delete({
-      repository: this.userRepo,
-      id,
-    });
+    try {
+      return this.queryService.delete({
+        repository: this.userRepo,
+        id,
+      });
+    } catch (error) {
+      throw new BadGatewayException(error.message);
+    }
   }
 }

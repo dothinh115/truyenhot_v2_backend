@@ -17,15 +17,18 @@ export class User {
   id: string;
 
   @Column({ nullable: false, unique: true })
+  @Disabled()
   email: string;
 
   @Column({ nullable: false, select: false })
   password: string;
 
   @Column({ default: false })
+  @Disabled()
   rootUser: boolean;
 
   @ManyToOne(() => Role, (role) => role.id, { eager: true })
+  @Disabled()
   role: Role;
 
   @BeforeInsert()
