@@ -1,3 +1,4 @@
+import { ColumnType } from 'src/core/decorators/column-type.decorator';
 import { autoSlug } from 'src/core/middlewares/auto-slug.middleware';
 import { Story } from 'src/story/entities/story.entity';
 import {
@@ -10,11 +11,13 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
 @Index(['story', 'slug', 'name'])
+@Unique(['story', 'slug'])
 export class Chapter {
   @PrimaryGeneratedColumn()
   id: number;
@@ -29,6 +32,7 @@ export class Chapter {
   title: string;
 
   @Column({ nullable: false })
+  @ColumnType('richText')
   content: string;
 
   @Index()

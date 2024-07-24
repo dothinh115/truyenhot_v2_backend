@@ -55,7 +55,7 @@ export class InitService implements OnModuleInit {
 
           const method = RequestMethod[requestMethod];
 
-          if (method) {
+          if (method && !settings.EXCLUDED_ROUTES.includes(controllerPath)) {
             routes.push({
               path: `${controllerPath === '/' ? '' : `/${controllerPath}`}${methodPath === '/' ? '' : `/${methodPath}`}`,
               method: method,
@@ -86,7 +86,6 @@ export class InitService implements OnModuleInit {
     if (createdRoute.length > 0) {
       await this.routeRepo.save(createdRoute);
     }
-
     await this.clearRemovedRoutes(routes);
   }
 
