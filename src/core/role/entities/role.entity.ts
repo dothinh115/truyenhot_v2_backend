@@ -5,6 +5,7 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -21,6 +22,9 @@ export class Role {
   slug: string;
 
   @ManyToMany(() => Route)
+  @JoinTable({
+    name: 'route_roles_role',
+  })
   routes: Route[];
 
   @BeforeInsert()

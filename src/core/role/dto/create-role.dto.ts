@@ -5,4 +5,7 @@ export class CreateRoleDto {
   @Expose()
   @IsNotEmpty({ message: 'title không được để trống' })
   title: string;
+
+  @Expose()
+  routes?: number[];
 }
