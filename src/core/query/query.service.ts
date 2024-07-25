@@ -1,5 +1,5 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { BadGatewayException, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { TQuery } from '../utils/model.util';
 import { QueryBuilderService } from './query-builder.service';
 import { QueryUtilService } from './query-util.service';
@@ -44,14 +44,18 @@ export class QueryService {
       };
     }
 
-    const queryBuilder = this.queryBuilderService.create(repository);
-    const result = await queryBuilder
-      .field(fields)
-      .filter(filter)
-      .sort(sort)
-      .meta(meta)
-      .build({ page, limit });
-    return result;
+    try {
+      const queryBuilder = this.queryBuilderService.create(repository);
+      const result = await queryBuilder
+        .field(fields)
+        .filter(filter)
+        .sort(sort)
+        .meta(meta)
+        .build({ page, limit });
+      return result;
+    } catch (error) {
+      throw new BadGatewayException(error.message);
+    }
   }
 
   async create<T>({

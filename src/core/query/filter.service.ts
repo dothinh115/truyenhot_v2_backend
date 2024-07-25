@@ -89,12 +89,9 @@ export class FilterService {
           return result;
         } else {
           //chuyển value về đúng định dạng
-
-          const checkIfArray = this.commonService.isArray(value as string);
           const checkIfNumber =
             typeof Number(value) === 'number' && !isNaN(Number(value));
-          if (checkIfArray) value = (value as string).split(',');
-          else if (checkIfNumber) value = Number(value);
+          if (checkIfNumber) value = Number(value);
 
           //
           //kiểm tra toán tử hợp lệ
@@ -240,11 +237,18 @@ export class FilterService {
             }
           }
 
+          let uniqueKeyValue: any;
+
+          if (key === '_contains' || key === '_ncontains') {
+            uniqueKeyValue = `%${value}%`;
+          } else if (key === '_in' || key === '_nin') {
+            uniqueKeyValue = value.toString().split(',');
+          } else {
+            uniqueKeyValue = value;
+          }
+
           const variable = {
-            [uniqueKey]:
-              key === '_contains' || key === '_ncontains'
-                ? `%${value}%`
-                : value,
+            [uniqueKey]: uniqueKeyValue,
           };
           return { where, variable };
         }
