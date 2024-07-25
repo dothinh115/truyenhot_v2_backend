@@ -14,7 +14,8 @@ export class CommonService {
   }
 
   isArray(str: string) {
-    const regex = /^([0-9a-zA-Z-]+)(,([0-9a-zA-Z-]+))+$/;
+    const regex = /^([0-9a-zA-Z-]+)(,[0-9a-zA-Z-]+)*$/;
+
     return regex.test(str);
   }
 }

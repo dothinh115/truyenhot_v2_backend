@@ -89,14 +89,14 @@ export class FilterService {
           return result;
         } else {
           //chuyển value về đúng định dạng
-          const checkIfNumber =
-            typeof Number(value) === 'number' && !isNaN(Number(value));
-          if (checkIfNumber) value = Number(value);
 
           const checkIfArray = this.commonService.isArray(value as string);
+          const checkIfNumber =
+            typeof Number(value) === 'number' && !isNaN(Number(value));
           if (checkIfArray) value = (value as string).split(',');
-          //
+          else if (checkIfNumber) value = Number(value);
 
+          //
           //kiểm tra toán tử hợp lệ
           if (!compareKey[key])
             throw new Error(

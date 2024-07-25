@@ -77,7 +77,6 @@ export class QueryBuilderService {
       });
       this.queryBuilder.where(where, variables);
     }
-
     return this;
   }
 
