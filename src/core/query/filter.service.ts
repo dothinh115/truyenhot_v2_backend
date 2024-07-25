@@ -199,7 +199,7 @@ export class FilterService {
                 }
               } else {
                 if (key === '_contains' || key === '_ncontains') {
-                  where += ` unaccent(c.${property}) ILIKE unaccent(:${uniqueKey})`;
+                  where += ` unaccent(c.${property}::text) ILIKE unaccent(:${uniqueKey})`;
                 } else {
                   where += ` c.${property} ${compareKey[key]}`;
                   if (key === '_in' || key === '_nin') {
@@ -222,7 +222,7 @@ export class FilterService {
             }
             where += `${prevAlias}.${property}`;
             if (key === '_contains' || key === '_ncontains') {
-              where += `)`;
+              where += `::text)`;
             }
             where += ` ${compareKey[key]}`;
             if (key === '_contains' || key === '_ncontains') {
@@ -240,7 +240,7 @@ export class FilterService {
           let uniqueKeyValue: any;
 
           if (key === '_contains' || key === '_ncontains') {
-            uniqueKeyValue = `%${value}%`;
+            uniqueKeyValue = `%${value.toString()}%`;
           } else if (key === '_in' || key === '_nin') {
             uniqueKeyValue = value.toString().split(',');
           } else {
