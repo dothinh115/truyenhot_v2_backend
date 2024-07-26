@@ -15,7 +15,7 @@ import { Cache } from 'cache-manager';
 import { CustomRequest } from '../utils/model.util';
 
 @Injectable()
-export class PermissionGuard implements CanActivate {
+export class RoleGuard implements CanActivate {
   constructor(
     @InjectRepository(Route) private routeRepo: Repository<Route>,
     @InjectRepository(User) private userRepo: Repository<User>,
@@ -28,7 +28,7 @@ export class PermissionGuard implements CanActivate {
     //check xem route đang được truy cập có được phân quyền hay ko
 
     const { url, method } = req.routeOptions.config;
-
+    const { user } = req;
     const routeCacheKey = `route:${url}:${method}`;
     let currentRoute: Route = await this.cacheManager.get<Route>(routeCacheKey);
     if (!currentRoute) {
@@ -39,16 +39,6 @@ export class PermissionGuard implements CanActivate {
         },
       });
       await this.cacheManager.set(routeCacheKey, currentRoute || '', 60000);
-    }
-
-    //tiến hành lấy thông tin user nếu có
-    const token = req.headers?.authorization?.split('Bearer ')[1];
-    let user: User | null = null;
-    if (token) {
-      try {
-        user = await this.getUserFromToken(token);
-      } catch (error) {}
-      if (user) req.user = user; //đưa thông tin user vào req
     }
 
     if (currentRoute && currentRoute.isProtected) {
@@ -66,13 +56,5 @@ export class PermissionGuard implements CanActivate {
     }
     //nếu route ko dc protect thì mặc định dc vượt qua
     return true;
-  }
-
-  async getUserFromToken(token: string) {
-    const decoded = await this.jwtService.verifyAsync(token);
-    if (decoded.id) {
-      const user = await this.userRepo.findOneBy({ id: decoded.id });
-      return user;
-    }
   }
 }

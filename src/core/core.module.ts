@@ -1,9 +1,4 @@
-import {
-  Global,
-  MiddlewareConsumer,
-  Module,
-  RequestMethod,
-} from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
@@ -16,16 +11,14 @@ import { RoleModule } from './role/role.module';
 import { RouteModule } from './route/route.module';
 import { SettingModule } from './setting/setting.module';
 import { AuthModule } from './auth/auth.module';
-import { GuardModule } from './guards/guard.module';
-import { PermissionGuard } from './guards/permission.guard';
 import { MeModule } from './me/me.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
 import { FolderModule } from './folder/folder.module';
 import { FileModule } from './file/file.module';
 import { FileUploadModule } from './upload/upload.module';
-import { CacheResponseMiddleware } from './middlewares/cache-response.middleware';
-import { CacheResponseHook } from './hooks/cache-response.hook';
+import { RoleGuard } from './guards/role.guard';
+import { JwtUserExtract } from './guards/jwt-extract.guard';
 
 @Global()
 @Module({
@@ -43,7 +36,6 @@ import { CacheResponseHook } from './hooks/cache-response.hook';
     RouteModule,
     SettingModule,
     AuthModule,
-    GuardModule,
     MeModule,
     FileUploadModule,
     CacheModule.registerAsync({
@@ -60,16 +52,13 @@ import { CacheResponseHook } from './hooks/cache-response.hook';
     InitService,
     {
       provide: APP_GUARD,
-      useClass: PermissionGuard,
+      useClass: JwtUserExtract,
     },
-    // CacheResponseHook,
+    {
+      provide: APP_GUARD,
+      useClass: RoleGuard,
+    },
   ],
   exports: [CacheModule],
 })
-export class CoreModule {
-  // configure(consumer: MiddlewareConsumer) {
-  //   consumer
-  //     .apply(CacheResponseMiddleware)
-  //     .forRoutes({ path: '*', method: RequestMethod.GET });
-  // }
-}
+export class CoreModule {}
