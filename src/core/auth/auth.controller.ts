@@ -4,6 +4,7 @@ import { RegisterAuthDto } from './dto/register-auth.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { TQuery } from '../utils/model.util';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { LogoutAuthDto } from './dto/logout-auth.dto';
 
 @Controller()
 export class AuthController {
@@ -22,5 +23,10 @@ export class AuthController {
   @Post('refreshtoken')
   refreshToken(@Body() body: RefreshTokenDto) {
     return this.authService.refreshToken(body);
+  }
+
+  @Post('logout')
+  logout(@Body() body: LogoutAuthDto) {
+    return this.authService.logout(body);
   }
 }
