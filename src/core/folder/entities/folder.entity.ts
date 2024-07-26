@@ -11,6 +11,7 @@ import {
 @Entity()
 export class Folder {
   @PrimaryGeneratedColumn('uuid')
+  @Disabled()
   id: string;
 
   @Column({ nullable: false })
