@@ -13,7 +13,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import settings from '../../../settings.json';
 import { EFileType, FileLimit } from '../file/entities/file-limit.entity';
-import { FastifyInstance } from 'fastify';
 
 @Injectable()
 export class InitService implements OnModuleInit {

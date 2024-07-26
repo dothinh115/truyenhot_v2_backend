@@ -1,11 +1,10 @@
-import { File } from 'src/core/file/entities/file.entity';
+import { Disabled } from 'src/core/decorators/disabled.decorator';
 import { User } from 'src/core/user/entities/user.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -19,5 +18,6 @@ export class Folder {
 
   @ManyToOne(() => User, { eager: true })
   @JoinColumn()
+  @Disabled()
   user: User;
 }
