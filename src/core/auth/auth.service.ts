@@ -43,7 +43,7 @@ export class AuthService {
         { expiresIn: '15m' },
       );
       const refreshToken = this.jwtService.sign(
-        { id: user.id },
+        { id: user.id, clientId: body.clientId },
         { expiresIn: '7d' },
       );
 
@@ -77,12 +77,14 @@ export class AuthService {
   async refreshToken(body: RefreshTokenDto) {
     try {
       const decoded = await this.jwtService.verifyAsync(body.refreshToken);
+      if (body.clientId !== decoded.clientId)
+        throw new Error('Client ID không hợp lệ!');
       const accessToken = this.jwtService.sign(
         { id: decoded.id },
         { expiresIn: '15m' },
       );
       const refreshToken = this.jwtService.sign(
-        { id: decoded.id },
+        { id: decoded.id, clientId: body.clientId },
         { expiresIn: '7d' },
       );
 

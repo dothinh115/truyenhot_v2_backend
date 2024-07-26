@@ -10,4 +10,8 @@ export class LoginAuthDto {
   @Expose()
   @IsNotEmpty({ message: 'password không được để trống!' })
   password: string;
+
+  @Expose()
+  @IsNotEmpty({ message: 'clientId không được để trống!' })
+  clientId: string;
 }
