@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadGatewayException, Injectable } from '@nestjs/common';
 import { UpdateSettingDto } from './dto/update-setting.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Setting } from './entities/setting.entity';
@@ -14,18 +14,26 @@ export class SettingService {
   ) {}
 
   async find(query: TQuery) {
-    return await this.queryService.query({
-      repository: this.settingRepo,
-      query,
-    });
+    try {
+      return await this.queryService.query({
+        repository: this.settingRepo,
+        query,
+      });
+    } catch (error) {
+      throw new BadGatewayException(error.message);
+    }
   }
 
   async update(id: string, body: UpdateSettingDto, query: TQuery) {
-    return await this.queryService.update({
-      repository: this.settingRepo,
-      id,
-      query,
-      body,
-    });
+    try {
+      return await this.queryService.update({
+        repository: this.settingRepo,
+        id,
+        query,
+        body,
+      });
+    } catch (error) {
+      throw new BadGatewayException(error.message);
+    }
   }
 }

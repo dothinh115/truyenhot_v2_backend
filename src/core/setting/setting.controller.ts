@@ -18,9 +18,9 @@ export class SettingController {
   @Protected()
   update(
     @Param('id') id: string,
-    @Body() updateSettingDto: UpdateSettingDto,
+    @Body() body: UpdateSettingDto,
     @Query() query: TQuery,
   ) {
-    return this.settingService.update(id, updateSettingDto, query);
+    return this.settingService.update(id, body, query);
   }
 }
