@@ -196,7 +196,13 @@ export class AuthService {
       const clientId = state;
       const callBackUri = `${settings.API_URL}/auth/google/callback`;
 
-      console.log('fetch token');
+      console.log('fetch token', {
+        client_id: this.configService.get('OAUTH_CLIENT_ID'),
+        client_secret: this.configService.get('OAUTH_SECRET'),
+        code,
+        grant_type: 'authorization_code',
+        redirect_uri: callBackUri,
+      });
       //lấy token từ oauth
       const tokenResponse = await this.httpService.axiosRef.post(
         'https://oauth2.googleapis.com/token',
