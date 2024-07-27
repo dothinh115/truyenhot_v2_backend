@@ -182,8 +182,16 @@ export class AuthService {
   }
 
   async oauthCallback(code: string, state: string, res: FastifyReply) {
-    res.send(
-      `<script>window.opener.postMessage({ state: '${state}' }, '*'); window.close();</script>`,
-    );
+    res.type('text/html');
+    res.send(`
+      <html>
+        <body>
+          <script>
+            window.opener.postMessage({ success: 'okay' }, window.location.origin);
+            window.close();
+          </script>
+        </body>
+      </html>
+    `);
   }
 }
