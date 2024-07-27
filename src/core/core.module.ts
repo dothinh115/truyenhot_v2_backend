@@ -20,6 +20,7 @@ import { FileUploadModule } from './upload/upload.module';
 import { RoleGuard } from './guards/role.guard';
 import { JwtUserExtract } from './guards/jwt-extract.guard';
 import { ResponseModule } from './response/response.module';
+import { HttpModule, HttpService } from '@nestjs/axios';
 
 @Global()
 @Module({
@@ -36,6 +37,7 @@ import { ResponseModule } from './response/response.module';
     RoleModule,
     RouteModule,
     ResponseModule,
+    HttpModule,
     SettingModule,
     AuthModule,
     MeModule,
@@ -61,6 +63,6 @@ import { ResponseModule } from './response/response.module';
       useClass: RoleGuard,
     },
   ],
-  exports: [CacheModule],
+  exports: [CacheModule, HttpModule],
 })
 export class CoreModule {}

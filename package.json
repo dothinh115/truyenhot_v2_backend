@@ -22,6 +22,7 @@
   "dependencies": {
     "@fastify/cors": "7.0.0",
     "@fastify/multipart": "^8.3.0",
+    "@nestjs/axios": "^3.0.2",
     "@nestjs/cache-manager": "^2.2.2",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.2",
@@ -31,6 +32,7 @@
     "@nestjs/platform-fastify": "^10.3.10",
     "@nestjs/typeorm": "^10.0.2",
     "@types/multer": "^1.4.11",
+    "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
     "cache-manager": "^5.7.3",
     "cache-manager-redis-yet": "^5.1.3",

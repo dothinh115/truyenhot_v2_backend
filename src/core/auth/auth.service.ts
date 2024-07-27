@@ -15,6 +15,7 @@ import { ResponseService } from '../response/response.service';
 import { ConfigService } from '@nestjs/config';
 import settings from '../configs/settings.json';
 import { FastifyReply } from 'fastify';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +29,7 @@ export class AuthService {
     @InjectEntityManager() private entityManager: EntityManager,
     private responseService: ResponseService,
     private configService: ConfigService,
+    private httpService: HttpService,
   ) {}
 
   async login(body: LoginAuthDto) {
@@ -182,16 +184,50 @@ export class AuthService {
   }
 
   async oauthCallback(code: string, state: string, res: FastifyReply) {
-    res.type('text/html');
-    res.send(`
+    try {
+      const callBackUri = `${settings.API_URL}/auth/google/callback`;
+
+      const tokenResponse = await this.httpService.axiosRef.post(
+        'https://oauth2.googleapis.com/token',
+        null,
+        {
+          params: {
+            client_id: this.configService.get('OAUTH_CLIENT_ID'),
+            client_secret: this.configService.get('OAUTH_SECRET'),
+            code,
+            grant_type: 'authorization_code',
+            redirect_uri: callBackUri,
+          },
+        },
+      );
+
+      const { access_token } = tokenResponse.data;
+
+      // Lấy thông tin người dùng từ Google
+      const userInfoResponse = await this.httpService.axiosRef.get(
+        'https://www.googleapis.com/oauth2/v2/userinfo',
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        },
+      );
+
+      const user = userInfoResponse.data;
+
+      res.type('text/html');
+      res.send(`
       <html>
         <body>
           <script>
-            window.opener.postMessage({ success: 'okay' }, 'http://localhost:3000/login');
+            window.opener.postMessage({ user: ${user} }, window.location.origin);
             window.close();
           </script>
         </body>
       </html>
     `);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }
