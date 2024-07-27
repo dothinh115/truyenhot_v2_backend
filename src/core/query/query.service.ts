@@ -54,6 +54,9 @@ export class QueryService {
         .sort(sort)
         .meta(meta)
         .build({ page, limit });
+      if (id) {
+        result.data = result.data[0];
+      }
       return this.responseService.success(result);
     } catch (error) {
       throw new BadGatewayException(error.message);
