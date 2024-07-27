@@ -196,6 +196,7 @@ export class AuthService {
       const clientId = state;
       const callBackUri = `${settings.API_URL}/auth/google/callback`;
 
+      console.log('fetch token');
       //lấy token từ oauth
       const tokenResponse = await this.httpService.axiosRef.post(
         'https://oauth2.googleapis.com/token',
@@ -209,6 +210,7 @@ export class AuthService {
       );
 
       const { access_token } = tokenResponse.data;
+      console.log('fetch user');
 
       //lấy user info từ oauth
       const userInfoResponse = await this.httpService.axiosRef.get(
@@ -271,13 +273,14 @@ export class AuthService {
       <html>
         <body>
           <script>
-            window.opener.postMessage({ accessToken: "${accessToken}", refreshToken: "${refreshToken}"  }, window.location.orifin);
+            window.opener.postMessage({ accessToken: "${accessToken}", refreshToken: "${refreshToken}"  }, window.location.origin);
             window.close();
           </script>
         </body>
       </html>
     `);
     } catch (error) {
+      console.log(error);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(error.message);
     } finally {

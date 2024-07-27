@@ -17,6 +17,11 @@
             "application/pdf": 1,
             "application/zip": 2
         }
+    },
+    "OAUTH": {
+        "URL_TO_SEND_TOKEN": [
+            "http://localhost:4567/login",
+            "https://cp.truyenhot.info/login"
+        ]
     }
-
 }
