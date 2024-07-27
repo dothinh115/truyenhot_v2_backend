@@ -32,7 +32,7 @@ export class AuthController {
     return this.authService.logout(body);
   }
 
-  @Post('auth/google/ur;')
+  @Post('auth/google/url')
   getAuthUrl(@Body() body: OAuthLoginDto) {
     return this.authService.getAuthUrl(body);
   }
