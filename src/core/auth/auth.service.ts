@@ -187,7 +187,7 @@ export class AuthService {
       <html>
         <body>
           <script>
-            window.opener.postMessage({ success: 'okay' }, window.location.origin);
+            window.opener.postMessage({ success: 'okay' }, 'http://localhost:3000/login');
             window.close();
           </script>
         </body>
