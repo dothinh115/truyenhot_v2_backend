@@ -279,7 +279,7 @@ export class AuthService {
       <html>
         <body>
           <script>
-            const urls = ${[...settings.OAUTH.URL_TO_SEND_TOKEN]};  
+            const urls = ${settings.OAUTH.URL_TO_SEND_TOKEN};  
             const data = {
               accessToken: "${accessToken}",
               refreshToken: "${refreshToken}"
