@@ -14,6 +14,7 @@ import { LogoutAuthDto } from './dto/logout-auth.dto';
 import { ResponseService } from '../response/response.service';
 import { ConfigService } from '@nestjs/config';
 import settings from '../configs/settings.json';
+import { FastifyReply } from 'fastify';
 
 @Injectable()
 export class AuthService {
@@ -180,5 +181,7 @@ export class AuthService {
     );
   }
 
-  async oauthCallback(code: string, state: string) {}
+  async oauthCallback(code: string, state: string, res: FastifyReply) {
+    res.redirect('/login?success=true');
+  }
 }

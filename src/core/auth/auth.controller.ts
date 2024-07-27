@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { CustomRequest, TQuery } from '../utils/model.util';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { LogoutAuthDto } from './dto/logout-auth.dto';
+import { FastifyReply } from 'fastify';
 
 @Controller()
 export class AuthController {
@@ -36,7 +37,11 @@ export class AuthController {
   }
 
   @Get('auth/google/callback')
-  oauthCallback(@Query('code') code: string, @Query('state') state: string) {
-    return this.authService.oauthCallback(code, state);
+  oauthCallback(
+    @Query('code') code: string,
+    @Query('state') state: string,
+    @Res() res: FastifyReply,
+  ) {
+    return this.authService.oauthCallback(code, state, res);
   }
 }
