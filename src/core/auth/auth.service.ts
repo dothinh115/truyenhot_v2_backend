@@ -186,9 +186,6 @@ export class AuthService {
   }
 
   async oAuthCallback(code: string, state: string, res: FastifyReply) {
-    return {
-      message: 'ok',
-    };
     const connection = this.entityManager.connection;
     const queryRunner = connection.createQueryRunner();
     await queryRunner.connect();
@@ -270,9 +267,8 @@ export class AuthService {
       });
       await refreshTokenRepo.save(newRefreshToken);
       await queryRunner.commitTransaction();
-      res.redirect(
-        `${redirectTo}?accessToken=${accessToken}&refreshToken=${refreshToken}`,
-      );
+      const uri = `${redirectTo}?accessToken=${accessToken}&refreshToken=${refreshToken}`;
+      res.status(302).header('Location', uri).send();
       //   res.type('text/html');
       //   res.send(`
       //   <html>
