@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { TQuery } from '../utils/model.util';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Route } from './entities/route.entity';
@@ -14,18 +14,26 @@ export class RouteService {
   ) {}
 
   async find(query: TQuery) {
-    return await this.queryService.query({
-      repository: this.routeRepo,
-      query,
-    });
+    try {
+      return await this.queryService.query({
+        repository: this.routeRepo,
+        query,
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async update(id: number, body: UpdateRouteDto, query: TQuery) {
-    return await this.queryService.update({
-      repository: this.routeRepo,
-      id,
-      body,
-      query,
-    });
+    try {
+      return await this.queryService.update({
+        repository: this.routeRepo,
+        id,
+        body,
+        query,
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

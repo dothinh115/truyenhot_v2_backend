@@ -1,5 +1,6 @@
 import {
   BadGatewayException,
+  BadRequestException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -18,13 +19,17 @@ export class MeService {
   ) {}
 
   async find(query: TQuery, req: CustomRequest) {
-    const reqUser = req.user;
-    if (!reqUser) throw new UnauthorizedException();
-    return await this.queryService.query({
-      repository: this.userRepo,
-      query,
-      id: reqUser.id,
-    });
+    try {
+      const reqUser = req.user;
+      if (!reqUser) throw new UnauthorizedException();
+      return await this.queryService.query({
+        repository: this.userRepo,
+        query,
+        id: reqUser.id,
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async update(body: UpdateMeDto, req: CustomRequest, query: TQuery) {

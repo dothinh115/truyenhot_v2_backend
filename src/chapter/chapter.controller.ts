@@ -20,8 +20,8 @@ export class ChapterController {
 
   @Post()
   @Protected()
-  create(@Body() createChapterDto: CreateChapterDto) {
-    return this.chapterService.create(createChapterDto);
+  create(@Body() body: CreateChapterDto, @Query() query: TQuery) {
+    return this.chapterService.create(body, query);
   }
 
   @Get()
@@ -31,8 +31,12 @@ export class ChapterController {
 
   @Patch(':id')
   @Protected()
-  update(@Param('id') id: string, @Body() updateChapterDto: UpdateChapterDto) {
-    return this.chapterService.update(+id, updateChapterDto);
+  update(
+    @Param('id') id: string,
+    @Body() body: UpdateChapterDto,
+    @Query() query: TQuery,
+  ) {
+    return this.chapterService.update(+id, body, query);
   }
 
   @Delete(':id')

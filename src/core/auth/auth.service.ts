@@ -7,10 +7,11 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { QueryService } from '../query/query.service';
-import { CustomRequest, TQuery } from '../utils/model.util';
+import { TQuery } from '../utils/model.util';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { LogoutAuthDto } from './dto/logout-auth.dto';
+import { ResponseService } from '../response/response.service';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +23,7 @@ export class AuthService {
     @InjectRepository(RefreshToken)
     private refreshTokenRepo: Repository<RefreshToken>,
     @InjectEntityManager() private entityManager: EntityManager,
+    private responseService: ResponseService,
   ) {}
 
   async login(body: LoginAuthDto) {
@@ -71,10 +73,10 @@ export class AuthService {
       });
       await refreshTokenRepo.save(newRefreshToken);
       await queryRunner.commitTransaction();
-      return {
+      return this.responseService.success({
         accessToken,
         refreshToken,
-      };
+      });
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(error.message);
@@ -133,10 +135,10 @@ export class AuthService {
       refToken.expiredDate = expiredDate;
       await this.refreshTokenRepo.save(refToken);
 
-      return {
+      return this.responseService.success({
         accessToken,
         refreshToken: newRefreshToken,
-      };
+      });
     } catch (error) {
       //Xử lý khi token hết hạn
       if (error.name === 'TokenExpiredError') {
@@ -159,7 +161,8 @@ export class AuthService {
       });
       if (!refToken) throw new Error('Token không hợp lệ!');
       await this.refreshTokenRepo.delete({ refreshToken });
-      return { message: 'Logout thành công!' };
+
+      return this.responseService.success({ message: 'Logout thành công!' });
     } catch (error) {
       throw new BadRequestException(error.message);
     }

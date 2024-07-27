@@ -29,14 +29,14 @@ export class CategoryService {
   }
 
   async find(query: TQuery) {
-    return this.queryService.query({
-      repository: this.categoryRepo,
-      query,
-    });
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+    try {
+      return this.queryService.query({
+        repository: this.categoryRepo,
+        query,
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async update(id: number, body: UpdateCategoryDto, query: TQuery) {

@@ -34,7 +34,14 @@ export class StoryService {
   }
 
   async find(query: TQuery) {
-    return await this.queryService.query({ repository: this.storyRepo, query });
+    try {
+      return await this.queryService.query({
+        repository: this.storyRepo,
+        query,
+      });
+    } catch (error) {
+      throw new BadGatewayException(error.message);
+    }
   }
 
   async update(id: number, body: UpdateStoryDto, query: TQuery) {

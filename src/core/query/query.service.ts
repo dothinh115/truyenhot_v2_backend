@@ -5,6 +5,7 @@ import { QueryBuilderService } from './query-builder.service';
 import { QueryUtilService } from './query-util.service';
 import { OrmService } from './orm.service';
 import * as qs from 'qs';
+import { ResponseService } from '../response/response.service';
 
 @Injectable()
 export class QueryService {
@@ -12,6 +13,7 @@ export class QueryService {
     private queryBuilderService: QueryBuilderService,
     private queryUtilService: QueryUtilService,
     private ormService: OrmService,
+    private responseService: ResponseService,
   ) {}
 
   public async query({
@@ -52,7 +54,7 @@ export class QueryService {
         .sort(sort)
         .meta(meta)
         .build({ page, limit });
-      return result;
+      return this.responseService.success(result);
     } catch (error) {
       throw new BadGatewayException(error.message);
     }

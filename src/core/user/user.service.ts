@@ -29,10 +29,14 @@ export class UserService {
   }
 
   async find(query: TQuery) {
-    return await this.queryService.query({
-      repository: this.userRepo,
-      query,
-    });
+    try {
+      return await this.queryService.query({
+        repository: this.userRepo,
+        query,
+      });
+    } catch (error) {
+      throw new BadGatewayException(error.message);
+    }
   }
 
   async update(id: string, body: UpdateUserDto, query: TQuery) {

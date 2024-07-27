@@ -19,6 +19,7 @@ import { FileModule } from './file/file.module';
 import { FileUploadModule } from './upload/upload.module';
 import { RoleGuard } from './guards/role.guard';
 import { JwtUserExtract } from './guards/jwt-extract.guard';
+import { ResponseModule } from './response/response.module';
 
 @Global()
 @Module({
@@ -34,6 +35,7 @@ import { JwtUserExtract } from './guards/jwt-extract.guard';
     DiscoveryModule,
     RoleModule,
     RouteModule,
+    ResponseModule,
     SettingModule,
     AuthModule,
     MeModule,

@@ -29,10 +29,14 @@ export class AuthorService {
   }
 
   async find(query: TQuery) {
-    return await this.queryService.query({
-      repository: this.authorRepo,
-      query,
-    });
+    try {
+      return await this.queryService.query({
+        repository: this.authorRepo,
+        query,
+      });
+    } catch (error) {
+      throw new BadGatewayException(error.message);
+    }
   }
 
   async update(id: number, body: UpdateAuthorDto, query: TQuery) {

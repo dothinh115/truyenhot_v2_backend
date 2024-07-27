@@ -6,7 +6,7 @@ import { Story } from 'src/story/entities/story.entity';
 import { Chapter } from './entities/chapter.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Story, Chapter])],
+  imports: [TypeOrmModule.forFeature([Chapter])],
   controllers: [ChapterController],
   providers: [ChapterService],
 })

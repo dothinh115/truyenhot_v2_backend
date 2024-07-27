@@ -7,6 +7,7 @@ import { File } from './entities/file.entity';
 import { QueryService } from '../query/query.service';
 import * as path from 'path';
 import * as fs from 'fs';
+import { ResponseService } from '../response/response.service';
 
 @Injectable()
 export class FileService {
@@ -15,6 +16,7 @@ export class FileService {
     @InjectEntityManager() private entityManager: EntityManager,
     @InjectRepository(File) private fileRepo: Repository<File>,
     private queryService: QueryService,
+    private responseService: ResponseService,
   ) {}
   async create(
     file: Express.Multer.File,
@@ -50,10 +52,14 @@ export class FileService {
   }
 
   async find(query: TQuery) {
-    return await this.queryService.query({
-      repository: this.fileRepo,
-      query,
-    });
+    try {
+      return await this.queryService.query({
+        repository: this.fileRepo,
+        query,
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async remove(id: string) {
@@ -78,9 +84,9 @@ export class FileService {
       await fs.promises.rm(filePath, { force: true });
 
       await queryRunner.commitTransaction();
-      return {
+      return this.responseService.success({
         message: 'Thành công!',
-      };
+      });
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(error.message);

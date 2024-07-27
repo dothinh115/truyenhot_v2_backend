@@ -9,6 +9,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { UpdateFolderDto } from '../folder/dto/update-folder.dto';
 import { File } from '../file/entities/file.entity';
+import { ResponseService } from '../response/response.service';
 
 @Injectable()
 export class FolderService {
@@ -16,6 +17,7 @@ export class FolderService {
     @InjectEntityManager() private manager: EntityManager,
     @InjectRepository(Folder) private folderRepo: Repository<Folder>,
     private queryService: QueryService,
+    private resopnseService: ResponseService,
   ) {}
 
   async create(req: CustomRequest, body: CreateFolderDto, query: TQuery) {
@@ -79,10 +81,14 @@ export class FolderService {
   }
 
   async find(query: TQuery) {
-    return await this.queryService.query({
-      repository: this.folderRepo,
-      query,
-    });
+    try {
+      return await this.queryService.query({
+        repository: this.folderRepo,
+        query,
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async update(id: string, body: UpdateFolderDto, query: TQuery) {
@@ -171,9 +177,9 @@ export class FolderService {
       const folderPath = path.join(process.cwd(), '/public', folder.name);
       await fs.promises.rm(folderPath, { recursive: true });
       await queryRunner.commitTransaction();
-      return {
+      return this.resopnseService.success({
         message: 'Thành công!',
-      };
+      });
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(error.message);

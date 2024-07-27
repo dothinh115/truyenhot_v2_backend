@@ -14,36 +14,52 @@ export class RoleService {
     private queryService: QueryService,
   ) {}
   async create(body: CreateRoleDto, query: TQuery) {
-    return await this.queryService.create({
-      repository: this.roleRepo,
-      body,
-      checkIsExists: {
-        title: body.title,
-      },
-      query,
-    });
+    try {
+      return await this.queryService.create({
+        repository: this.roleRepo,
+        body,
+        checkIsExists: {
+          title: body.title,
+        },
+        query,
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async find(query: TQuery) {
-    return await this.queryService.query({
-      repository: this.roleRepo,
-      query,
-    });
+    try {
+      return await this.queryService.query({
+        repository: this.roleRepo,
+        query,
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async update(id: number, body: UpdateRoleDto, query: TQuery) {
-    return await this.queryService.update({
-      repository: this.roleRepo,
-      body,
-      id,
-      query,
-    });
+    try {
+      return await this.queryService.update({
+        repository: this.roleRepo,
+        body,
+        id,
+        query,
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async remove(id: string) {
-    return await this.queryService.delete({
-      repository: this.roleRepo,
-      id,
-    });
+    try {
+      return await this.queryService.delete({
+        repository: this.roleRepo,
+        id,
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }
