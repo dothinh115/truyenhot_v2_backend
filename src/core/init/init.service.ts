@@ -70,7 +70,6 @@ export class InitService implements OnModuleInit {
         });
       }
     });
-    console.log(routes);
     const createdRoute = [];
     for (const route of routes) {
       const isExists = await this.routeRepo.findOne({

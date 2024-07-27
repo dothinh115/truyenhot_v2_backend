@@ -176,12 +176,12 @@ export class AuthService {
   }
 
   getAuthUrl(body: OAuthLoginDto) {
-    const { clientId: visitorId } = body;
+    const state = JSON.stringify(body);
     const clientId = this.configService.get('OAUTH_CLIENT_ID');
     const callBackUri = `${settings.API_URL}/auth/google/callback`;
     const scope = 'email profile';
     return this.responseService.success(
-      `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${callBackUri}&response_type=code&scope=${scope}&state=${visitorId}`,
+      `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${callBackUri}&response_type=code&scope=${scope}&state=${state}`,
     );
   }
 
@@ -193,16 +193,9 @@ export class AuthService {
     const userRepo = queryRunner.manager.getRepository(User);
     const refreshTokenRepo = queryRunner.manager.getRepository(RefreshToken);
     try {
-      const clientId = state;
+      const body = JSON.parse(state);
+      const { clientId, redirectTo } = body;
       const callBackUri = `${settings.API_URL}/auth/google/callback`;
-
-      console.log('fetch token', {
-        client_id: this.configService.get('OAUTH_CLIENT_ID'),
-        client_secret: this.configService.get('OAUTH_SECRET'),
-        code,
-        grant_type: 'authorization_code',
-        redirect_uri: callBackUri,
-      });
       //lấy token từ oauth
       const tokenResponse = await this.httpService.axiosRef.post(
         'https://oauth2.googleapis.com/token',
@@ -274,25 +267,28 @@ export class AuthService {
       });
       await refreshTokenRepo.save(newRefreshToken);
       await queryRunner.commitTransaction();
-      res.type('text/html');
-      res.send(`
-      <html>
-        <body>
-          <script>
-            const urls = ${JSON.stringify(settings.OAUTH.URL_TO_SEND_TOKEN)};  
-            const data = {
-              accessToken: "${accessToken}",
-              refreshToken: "${refreshToken}"
-            };
-            urls.forEach(url => {
-              const targetOrigin = new URL(url).origin; 
-              window.opener.postMessage(data, targetOrigin);
-            });
-            window.close();
-          </script>
-        </body>
-      </html>
-    `);
+      res.redirect(
+        `${redirectTo}?accessToken=${accessToken}&refreshToken=${refreshToken}`,
+      );
+      //   res.type('text/html');
+      //   res.send(`
+      //   <html>
+      //     <body>
+      //       <script>
+      //         const urls = ${JSON.stringify(settings.OAUTH.URL_TO_SEND_TOKEN)};
+      //         const data = {
+      //           accessToken: "${accessToken}",
+      //           refreshToken: "${refreshToken}"
+      //         };
+      //         urls.forEach(url => {
+      //           const targetOrigin = new URL(url).origin;
+      //           window.opener.postMessage(data, targetOrigin);
+      //         });
+      //         window.close();
+      //       </script>
+      //     </body>
+      //   </html>
+      // `);
     } catch (error) {
       console.log(error);
       await queryRunner.rollbackTransaction();
