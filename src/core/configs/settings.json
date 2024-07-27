@@ -1,5 +1,6 @@
 {
     "EXCLUDED_ROUTES": ["schema", "me"],
+    "API_URL": "https://api.truyenhot.info",
     "FILE_UPLOAD": {
         "MAX_ZISE": { 
             //file size tính theo Mb
@@ -17,4 +18,5 @@
             "application/zip": 2
         }
     }
+
 }

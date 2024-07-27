@@ -12,6 +12,8 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { LogoutAuthDto } from './dto/logout-auth.dto';
 import { ResponseService } from '../response/response.service';
+import { ConfigService } from '@nestjs/config';
+import settings from '../configs/settings.json';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +26,7 @@ export class AuthService {
     private refreshTokenRepo: Repository<RefreshToken>,
     @InjectEntityManager() private entityManager: EntityManager,
     private responseService: ResponseService,
+    private configService: ConfigService,
   ) {}
 
   async login(body: LoginAuthDto) {
@@ -167,4 +170,15 @@ export class AuthService {
       throw new BadRequestException(error.message);
     }
   }
+
+  getAuthUrl() {
+    const clientId = this.configService.get('OAUTH_CLIENT_ID');
+    const callBackUri = `${settings.API_URL}/auth/google/callback`;
+    const scope = 'email profile';
+    return this.responseService.success(
+      `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${callBackUri}&response_type=code&scope=${scope}`,
+    );
+  }
+
+  async oauthCallback(code: string, state: string) {}
 }

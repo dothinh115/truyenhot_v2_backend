@@ -11,7 +11,7 @@ import { PROTECTED_ROUTE_KEY } from '../decorators/protected-route.decorator';
 import { getMetadata } from '../utils/metadata.util';
 import * as fs from 'fs';
 import * as path from 'path';
-import settings from '../../../settings.json';
+import settings from '../configs/settings.json';
 import { EFileType, FileLimit } from '../file/entities/file-limit.entity';
 
 @Injectable()

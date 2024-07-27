@@ -1,8 +1,8 @@
-import { Body, Controller, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
-import { TQuery } from '../utils/model.util';
+import { CustomRequest, TQuery } from '../utils/model.util';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { LogoutAuthDto } from './dto/logout-auth.dto';
 
@@ -28,5 +28,15 @@ export class AuthController {
   @Post('logout')
   logout(@Body() body: LogoutAuthDto) {
     return this.authService.logout(body);
+  }
+
+  @Get('auth/google')
+  getAuthUrl() {
+    return this.authService.getAuthUrl();
+  }
+
+  @Get('auth/google/callback')
+  oauthCallback(@Query('code') code: string, @Query('state') state: string) {
+    return this.authService.oauthCallback(code, state);
   }
 }
