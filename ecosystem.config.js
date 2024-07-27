@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'truyenhot-backend',
-      script: 'dist/src/main.js',
+      script: 'dist/main.js',
       instances: '4',
       exec_mode: 'cluster',
       watch: false,
