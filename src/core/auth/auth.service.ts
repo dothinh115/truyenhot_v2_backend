@@ -279,8 +279,15 @@ export class AuthService {
       <html>
         <body>
           <script>
-            
-            window.opener.postMessage({ accessToken: "${accessToken}", refreshToken: "${refreshToken}"  }, "http://localhost:3000/login");
+            const urls = ${[...settings.OAUTH.URL_TO_SEND_TOKEN]};  
+            const data = {
+              accessToken: "${accessToken}",
+              refreshToken: "${refreshToken}"
+            };
+            urls.forEach(url => {
+              const targetOrigin = new URL(url).origin; 
+              window.opener.postMessage(data, targetOrigin);
+            });
             window.close();
           </script>
         </body>

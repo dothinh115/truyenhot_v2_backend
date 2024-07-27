@@ -20,7 +20,7 @@
     },
     "OAUTH": {
         "URL_TO_SEND_TOKEN": [
-            "http://localhost:4567/login",
+            "http://localhost:3000/login",
             "https://cp.truyenhot.info/login"
         ]
     }
