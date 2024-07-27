@@ -186,7 +186,9 @@ export class AuthService {
   }
 
   async oAuthCallback(code: string, state: string, res: FastifyReply) {
-    return;
+    return {
+      message: 'ok',
+    };
     const connection = this.entityManager.connection;
     const queryRunner = connection.createQueryRunner();
     await queryRunner.connect();
