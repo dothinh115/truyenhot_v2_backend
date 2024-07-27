@@ -162,6 +162,6 @@ export class QueryService {
 
     //nếu pass hết thì tiến hành xoá
     await repository.delete(id);
-    return isExists;
+    return this.responseService.success(isExists);
   }
 }

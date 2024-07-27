@@ -77,8 +77,8 @@ export class FileService {
       const filePath = path.join(
         process.cwd(),
         '/public',
-        deletedFile.folder ? deletedFile.folder : '',
-        `${deletedFile.id}${deletedFile.extension}`,
+        deletedFile.data.folder ? deletedFile.data.folder : '',
+        `${deletedFile.data.id}${deletedFile.data.extension}`,
       );
 
       await fs.promises.rm(filePath, { force: true });
