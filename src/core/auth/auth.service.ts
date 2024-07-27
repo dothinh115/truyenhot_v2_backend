@@ -271,7 +271,7 @@ export class AuthService {
       <html>
         <body>
           <script>
-            window.opener.postMessage({ accessToken: "${accessToken}", refreshToken: "${refreshToken}"  }, 'http://localhost:3000/login');
+            window.opener.postMessage({ accessToken: "${accessToken}", refreshToken: "${refreshToken}"  }, window.location.orifin);
             window.close();
           </script>
         </body>
