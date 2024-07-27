@@ -16,6 +16,7 @@ import { ConfigService } from '@nestjs/config';
 import settings from '../configs/settings.json';
 import { FastifyReply } from 'fastify';
 import { HttpService } from '@nestjs/axios';
+import { OAuthLoginDto } from './dto/oauth-login.dto';
 
 @Injectable()
 export class AuthService {
@@ -174,36 +175,42 @@ export class AuthService {
     }
   }
 
-  getAuthUrl() {
+  getAuthUrl(body: OAuthLoginDto) {
+    const { clientId: visitorId } = body;
     const clientId = this.configService.get('OAUTH_CLIENT_ID');
     const callBackUri = `${settings.API_URL}/auth/google/callback`;
     const scope = 'email profile';
     return this.responseService.success(
-      `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${callBackUri}&response_type=code&scope=${scope}`,
+      `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${callBackUri}&response_type=code&scope=${scope}&state=${visitorId}`,
     );
   }
 
-  async oauthCallback(code: string, state: string, res: FastifyReply) {
+  async oAuthCallback(code: string, state: string, res: FastifyReply) {
+    const connection = this.entityManager.connection;
+    const queryRunner = connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    const userRepo = queryRunner.manager.getRepository(User);
+    const refreshTokenRepo = queryRunner.manager.getRepository(RefreshToken);
     try {
+      const clientId = state;
       const callBackUri = `${settings.API_URL}/auth/google/callback`;
 
+      //lấy token từ oauth
       const tokenResponse = await this.httpService.axiosRef.post(
         'https://oauth2.googleapis.com/token',
-        null,
         {
-          params: {
-            client_id: this.configService.get('OAUTH_CLIENT_ID'),
-            client_secret: this.configService.get('OAUTH_SECRET'),
-            code,
-            grant_type: 'authorization_code',
-            redirect_uri: callBackUri,
-          },
+          client_id: this.configService.get('OAUTH_CLIENT_ID'),
+          client_secret: this.configService.get('OAUTH_SECRET'),
+          code,
+          grant_type: 'authorization_code',
+          redirect_uri: callBackUri,
         },
       );
 
       const { access_token } = tokenResponse.data;
 
-      // Lấy thông tin người dùng từ Google
+      //lấy user info từ oauth
       const userInfoResponse = await this.httpService.axiosRef.get(
         'https://www.googleapis.com/oauth2/v2/userinfo',
         {
@@ -213,21 +220,68 @@ export class AuthService {
         },
       );
 
-      const user = userInfoResponse.data;
+      const userInfoFromOAuth = userInfoResponse.data;
 
+      //khi có thông tin user, tiến hành kiểm tra xem emai đã được đăng ký trong hệ thống hay chưa
+      const exists = await userRepo.findOne({
+        where: {
+          email: userInfoFromOAuth.email,
+        },
+      });
+
+      //nếu chưa có thì lưu lại vào hệ thống
+      let user: User;
+      if (!exists) {
+        user = userRepo.create({
+          email: userInfoFromOAuth.email,
+          password: Math.random().toString(),
+        });
+        await userRepo.save(user);
+      } else {
+        //nếu có rồi thì phải lấy dc id của user đó ra
+        user = exists;
+      }
+
+      //sau đó tiến hành cấp accessToken và refreshToken như bình thường
+      const accessToken = this.jwtService.sign(
+        { id: user.id },
+        { expiresIn: '15m' },
+      );
+
+      const refreshToken = this.jwtService.sign(
+        { id: user.id },
+        { expiresIn: '7d' },
+      );
+
+      const expiredDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+      //xoá token cũ của clientId này
+      await this.refreshTokenRepo.delete({ clientId });
+
+      //lưu refreshToken vào db để kiểm tra lại
+      const newRefreshToken = refreshTokenRepo.create({
+        clientId,
+        refreshToken,
+        expiredDate,
+      });
+      await refreshTokenRepo.save(newRefreshToken);
+      await queryRunner.commitTransaction();
       res.type('text/html');
       res.send(`
       <html>
         <body>
           <script>
-            window.opener.postMessage({ user: ${user} }, window.location.origin);
+            window.opener.postMessage({ accessToken: "${accessToken}", refreshToken: "${refreshToken}"  }, 'http://localhost:3000/login');
             window.close();
           </script>
         </body>
       </html>
     `);
     } catch (error) {
+      await queryRunner.rollbackTransaction();
       throw new BadRequestException(error.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 }

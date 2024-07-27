@@ -6,6 +6,7 @@ import { CustomRequest, TQuery } from '../utils/model.util';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { LogoutAuthDto } from './dto/logout-auth.dto';
 import { FastifyReply } from 'fastify';
+import { OAuthLoginDto } from './dto/oauth-login.dto';
 
 @Controller()
 export class AuthController {
@@ -31,9 +32,9 @@ export class AuthController {
     return this.authService.logout(body);
   }
 
-  @Get('auth/google')
-  getAuthUrl() {
-    return this.authService.getAuthUrl();
+  @Post('auth/google/ur;')
+  getAuthUrl(@Body() body: OAuthLoginDto) {
+    return this.authService.getAuthUrl(body);
   }
 
   @Get('auth/google/callback')
@@ -42,6 +43,6 @@ export class AuthController {
     @Query('state') state: string,
     @Res() res: FastifyReply,
   ) {
-    return this.authService.oauthCallback(code, state, res);
+    return this.authService.oAuthCallback(code, state, res);
   }
 }
