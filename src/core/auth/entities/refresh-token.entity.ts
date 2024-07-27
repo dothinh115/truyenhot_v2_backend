@@ -1,6 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @Entity()
+@Index(['refreshToken', 'clientId'])
+@Unique(['refreshToken', 'clientId'])
 export class RefreshToken {
   @PrimaryGeneratedColumn()
   id: number;
