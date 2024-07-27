@@ -182,6 +182,8 @@ export class AuthService {
   }
 
   async oauthCallback(code: string, state: string, res: FastifyReply) {
-    res.redirect('/login?success=true');
+    res.send(
+      `<script>window.opener.postMessage({ state: '${state}' }, '*'); window.close();</script>`,
+    );
   }
 }
