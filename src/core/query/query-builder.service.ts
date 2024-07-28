@@ -107,7 +107,14 @@ export class QueryBuilderService {
     return this;
   }
 
-  async build({ page, limit }: { page: number; limit: number }) {
+  paginate({ page, limit }: { page: number; limit: number }) {
+    const skip = (page - 1) * limit;
+    if (skip !== 0) this.queryBuilder.skip(skip);
+    this.queryBuilder.take(limit);
+    return this;
+  }
+
+  async build() {
     //sau khi có dc joinData thì tiến hành join vào
     let joinDataArr = Array.from(this.joinData);
     if (joinDataArr.length > 0) {
@@ -118,10 +125,6 @@ export class QueryBuilderService {
         }),
       );
     }
-
-    const skip = (page - 1) * limit;
-    if (skip !== 0) this.queryBuilder.skip(skip);
-    this.queryBuilder.take(limit);
 
     //add select field
     this.fieldDataArr = this.fieldDataArr.filter(

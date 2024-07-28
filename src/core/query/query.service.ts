@@ -52,8 +52,9 @@ export class QueryService {
         .field(fields)
         .filter(filter)
         .sort(sort)
+        .paginate({ page, limit })
         .meta(meta)
-        .build({ page, limit });
+        .build();
       if (id) {
         result.data = result.data[0];
       }
