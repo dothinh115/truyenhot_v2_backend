@@ -1,4 +1,6 @@
 import { FastifyRequest } from 'fastify';
+import { IncomingMessage } from 'http';
+import { User } from '../user/entities/user.entity';
 
 export type TQuery = {
   fields?: string;
@@ -10,5 +12,9 @@ export type TQuery = {
 };
 
 export interface CustomRequest extends FastifyRequest {
-  user?: any;
+  raw: ExtendedIncomingMessage;
+}
+
+export interface ExtendedIncomingMessage extends IncomingMessage {
+  user?: User;
 }

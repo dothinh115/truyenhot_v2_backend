@@ -20,7 +20,7 @@ export class MeService {
 
   async find(query: TQuery, req: CustomRequest) {
     try {
-      const reqUser = req.user;
+      const reqUser = req.raw.user;
       if (!reqUser) throw new UnauthorizedException();
       return await this.queryService.query({
         repository: this.userRepo,
@@ -34,7 +34,7 @@ export class MeService {
 
   async update(body: UpdateMeDto, req: CustomRequest, query: TQuery) {
     try {
-      const reqUser = req.user;
+      const reqUser = req.raw.user;
       if (!reqUser) throw new UnauthorizedException();
       return await this.queryService.update({
         repository: this.userRepo,

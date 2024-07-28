@@ -8,27 +8,24 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { MethodType, Route } from '../route/entities/route.entity';
 import { Repository } from 'typeorm';
-import { JwtService } from '@nestjs/jwt';
-import { User } from '../user/entities/user.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { CustomRequest } from '../utils/model.util';
+import { CustomRequest, ExtendedIncomingMessage } from '../utils/model.util';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
   constructor(
     @InjectRepository(Route) private routeRepo: Repository<Route>,
-    @InjectRepository(User) private userRepo: Repository<User>,
-    private jwtService: JwtService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: CustomRequest = context.switchToHttp().getRequest();
     //check xem route đang được truy cập có được phân quyền hay ko
-
+    const { raw }: { raw: ExtendedIncomingMessage } = req;
+    //đối với fastify, req.raw tham chiếu trực tiếp đến InComingMessage, nên gán cho req chính là gán cho raw
     const { url, method } = req.routeOptions.config;
-    const { user } = req;
+    const { user } = raw;
     const routeCacheKey = `route:${url}:${method}`;
     let currentRoute: Route = await this.cacheManager.get<Route>(routeCacheKey);
     if (!currentRoute) {

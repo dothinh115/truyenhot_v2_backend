@@ -24,7 +24,7 @@ export class FolderService {
     //thêm user vào body để xác định ai là người tạo folder
     const bodyWithUserId = {
       ...body,
-      user: req.user.id,
+      user: req.raw.user.id,
     };
     //phân tích path của folder
     const projectDir = process.cwd();

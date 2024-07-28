@@ -1,23 +1,26 @@
 import {
   BadGatewayException,
-  CanActivate,
-  ExecutionContext,
   Injectable,
+  NestMiddleware,
 } from '@nestjs/common';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { JwtService } from '@nestjs/jwt';
-import { CustomRequest } from '../utils/model.util';
-import { User } from '../user/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
+import { ExtendedIncomingMessage } from '../utils/model.util';
 
 @Injectable()
-export class JwtUserExtract implements CanActivate {
+export class AutoJwtExtractMiddleware implements NestMiddleware {
   constructor(
     private jwtService: JwtService,
     @InjectRepository(User) private userRepo: Repository<User>,
   ) {}
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const req: CustomRequest = context.switchToHttp().getRequest();
+  async use(
+    req: ExtendedIncomingMessage,
+    res: FastifyReply['raw'],
+    next: (error?: Error | any) => void,
+  ) {
     const authorization = req.headers?.authorization;
 
     let user: User | null = null;
@@ -38,7 +41,6 @@ export class JwtUserExtract implements CanActivate {
       }
     }
     if (user) req.user = user; //đưa thông tin user vào req
-
-    return true;
+    next();
   }
 }

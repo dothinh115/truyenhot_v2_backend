@@ -63,7 +63,7 @@ export class FileUploadService {
         extension: extension as FileExtension,
         originalName: file.originalname,
         size: file.size,
-        user: req.user.id,
+        user: req.raw.user.id,
         ...(body.folder && {
           folder: body.folder as any,
         }),

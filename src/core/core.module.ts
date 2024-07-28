@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { Global, MiddlewareConsumer, Module } from '@nestjs/common';
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
@@ -18,9 +18,9 @@ import { FolderModule } from './folder/folder.module';
 import { FileModule } from './file/file.module';
 import { FileUploadModule } from './upload/upload.module';
 import { RoleGuard } from './guards/role.guard';
-import { JwtUserExtract } from './guards/jwt-extract.guard';
 import { ResponseModule } from './response/response.module';
-import { HttpModule, HttpService } from '@nestjs/axios';
+import { HttpModule } from '@nestjs/axios';
+import { AutoJwtExtractMiddleware } from './middlewares/auto-jwt-extract.midleware';
 
 @Global()
 @Module({
@@ -56,13 +56,13 @@ import { HttpModule, HttpService } from '@nestjs/axios';
     InitService,
     {
       provide: APP_GUARD,
-      useClass: JwtUserExtract,
-    },
-    {
-      provide: APP_GUARD,
       useClass: RoleGuard,
     },
   ],
   exports: [CacheModule, HttpModule],
 })
-export class CoreModule {}
+export class CoreModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AutoJwtExtractMiddleware).forRoutes('*');
+  }
+}
