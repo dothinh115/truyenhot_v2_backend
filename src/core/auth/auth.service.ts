@@ -196,9 +196,10 @@ export class AuthService {
     await queryRunner.startTransaction();
     const userRepo = queryRunner.manager.getRepository(User);
     const refreshTokenRepo = queryRunner.manager.getRepository(RefreshToken);
+    const body = JSON.parse(state);
+    const { clientId, redirectTo } = body;
+
     try {
-      const body = JSON.parse(state);
-      const { clientId, redirectTo } = body;
       const callBackUri = `${settings.API_URL}/auth/google/callback`;
       //lấy token từ oauth
       const tokenResponse = await this.httpService.axiosRef.post(
@@ -278,13 +279,17 @@ export class AuthService {
       //lưu vào cache, sống 10 phút
       await this.cacheManager.set(tokenId, data, 600000);
 
-      const uri = `${redirectTo}?tokenId=${tokenId}`;
+      const url = new URL(redirectTo);
+      url.searchParams.set('tokenId', tokenId);
+      const urlString = url.toString();
       //redirect về FE
-      res.status(302).header('Location', uri).send();
+      res.status(302).header('Location', urlString).send();
     } catch (error) {
-      console.log(error);
       await queryRunner.rollbackTransaction();
-      throw new BadRequestException(error.message);
+      const url = new URL(redirectTo);
+      url.searchParams.set('error', 'true');
+      const urlString = url.toString();
+      res.status(302).header('Location', urlString).send();
     } finally {
       await queryRunner.release();
     }
