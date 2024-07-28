@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
 import { EntityManager, Repository } from 'typeorm';
@@ -17,6 +17,9 @@ import settings from '../configs/settings.json';
 import { FastifyReply } from 'fastify';
 import { HttpService } from '@nestjs/axios';
 import { OAuthLoginDto } from './dto/oauth-login.dto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
@@ -31,6 +34,7 @@ export class AuthService {
     private responseService: ResponseService,
     private configService: ConfigService,
     private httpService: HttpService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async login(body: LoginAuthDto) {
@@ -224,23 +228,19 @@ export class AuthService {
       const userInfoFromOAuth = userInfoResponse.data;
 
       //khi có thông tin user, tiến hành kiểm tra xem emai đã được đăng ký trong hệ thống hay chưa
-      const exists = await userRepo.findOne({
+
+      //nếu chưa có thì lưu lại vào hệ thống
+      let user: User = await userRepo.findOne({
         where: {
           email: userInfoFromOAuth.email,
         },
       });
-
-      //nếu chưa có thì lưu lại vào hệ thống
-      let user: User;
-      if (!exists) {
+      if (!user) {
         user = userRepo.create({
           email: userInfoFromOAuth.email,
           password: Math.random().toString(),
         });
         await userRepo.save(user);
-      } else {
-        //nếu có rồi thì phải lấy dc id của user đó ra
-        user = exists;
       }
 
       //sau đó tiến hành cấp accessToken và refreshToken như bình thường
@@ -267,27 +267,20 @@ export class AuthService {
       });
       await refreshTokenRepo.save(newRefreshToken);
       await queryRunner.commitTransaction();
-      const uri = `${redirectTo}?accessToken=${accessToken}&refreshToken=${refreshToken}`;
+      //sau khi có dc tất cả session thì tiến hành tạo 1 id để trả về cho FE, đồng thời cache lại kết quả để truy xuất nhanh
+      const tokenId = uuidv4();
+      //chuyển data thành chuỗi để cache
+      const data = JSON.stringify({
+        accessToken,
+        refreshToken,
+      });
+
+      //lưu vào cache, sống 10 phút
+      await this.cacheManager.set(tokenId, data, 600000);
+
+      const uri = `${redirectTo}?tokenId=${tokenId}`;
+      //redirect về FE
       res.status(302).header('Location', uri).send();
-      //   res.type('text/html');
-      //   res.send(`
-      //   <html>
-      //     <body>
-      //       <script>
-      //         const urls = ${JSON.stringify(settings.OAUTH.URL_TO_SEND_TOKEN)};
-      //         const data = {
-      //           accessToken: "${accessToken}",
-      //           refreshToken: "${refreshToken}"
-      //         };
-      //         urls.forEach(url => {
-      //           const targetOrigin = new URL(url).origin;
-      //           window.opener.postMessage(data, targetOrigin);
-      //         });
-      //         window.close();
-      //       </script>
-      //     </body>
-      //   </html>
-      // `);
     } catch (error) {
       console.log(error);
       await queryRunner.rollbackTransaction();
@@ -295,5 +288,15 @@ export class AuthService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async getToken(tokenId: string) {
+    const cachedData = await this.cacheManager.get<string>(tokenId);
+    if (!cachedData)
+      throw new BadRequestException('tokenId đã hết hạn hoặc không hợp lệ!');
+    const data = JSON.parse(cachedData);
+    //xoá trong cache để free bộ nhớ và huỷ dữ liệu về token
+    await this.cacheManager.del(tokenId);
+    return this.responseService.success(data);
   }
 }
