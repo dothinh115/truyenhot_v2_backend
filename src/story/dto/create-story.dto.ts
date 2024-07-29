@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 import { StatusType } from '../entities/story.entity';
 
 export class CreateStoryDto {
@@ -16,9 +16,11 @@ export class CreateStoryDto {
   author: string;
 
   @Expose()
+  @IsOptional()
   source?: string;
 
   @Expose()
+  @IsOptional()
   status?: StatusType;
 
   @Expose()
@@ -26,5 +28,6 @@ export class CreateStoryDto {
   categories: number[];
 
   @Expose()
+  @IsOptional()
   cover?: string;
 }

@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateRoleDto {
   @Expose()
@@ -7,5 +7,6 @@ export class CreateRoleDto {
   title: string;
 
   @Expose()
+  @IsOptional()
   routes?: number[];
 }
