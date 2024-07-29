@@ -236,11 +236,20 @@ export class AuthService {
         },
       });
       if (!user) {
-        user = userRepo.create({
-          email: userInfoFromOAuth.email,
-          password: Math.random().toString(),
+        // user = userRepo.create({
+        //   email: userInfoFromOAuth.email,
+        //   password: Math.random().toString(),
+        // });
+        // await userRepo.save(user);
+        const newUser = await this.queryService.create({
+          repository: userRepo,
+          body: {
+            email: userInfoFromOAuth.email,
+            password: Math.random().toString(),
+          },
+          query: null,
         });
-        await userRepo.save(user);
+        user = newUser.data;
       }
 
       //sau đó tiến hành cấp accessToken và refreshToken như bình thường
