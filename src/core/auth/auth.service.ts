@@ -249,7 +249,7 @@ export class AuthService {
           },
           query: null,
         });
-        user = newUser.data;
+        user = newUser.data.data;
       }
 
       //sau đó tiến hành cấp accessToken và refreshToken như bình thường
