@@ -1,4 +1,5 @@
 import { ColumnType } from 'src/core/decorators/column-type.decorator';
+import { Disabled } from 'src/core/decorators/disabled.decorator';
 import { autoSlug } from 'src/core/middlewares/auto-slug.middleware';
 import { Story } from 'src/story/entities/story.entity';
 import {
@@ -20,12 +21,14 @@ import {
 @Unique(['story', 'slug'])
 export class Chapter {
   @PrimaryGeneratedColumn()
+  @Disabled()
   id: number;
 
   @Column({ nullable: false })
   name: string;
 
   @Column({ nullable: false })
+  @Disabled()
   slug: string;
 
   @Column({ nullable: false })

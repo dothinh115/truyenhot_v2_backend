@@ -1,3 +1,4 @@
+import { Disabled } from 'src/core/decorators/disabled.decorator';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum EFileType {
@@ -18,9 +19,11 @@ export enum EFileType {
 @Entity()
 export class FileLimit {
   @PrimaryGeneratedColumn()
+  @Disabled()
   id: number;
 
   @Column({ nullable: false, type: 'enum', enum: EFileType })
+  @Disabled()
   fileType: EFileType;
 
   @Column()

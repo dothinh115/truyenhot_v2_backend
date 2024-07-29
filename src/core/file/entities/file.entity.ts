@@ -9,6 +9,7 @@ import {
 import { ColumnType } from 'src/core/decorators/column-type.decorator';
 import { Folder } from 'src/core/folder/entities/folder.entity';
 import { EFileType } from './file-limit.entity';
+import { Disabled } from 'src/core/decorators/disabled.decorator';
 
 export enum FileExtension {
   JPEG = '.jpeg',
@@ -29,23 +30,29 @@ export enum FileExtension {
 @Entity()
 export class File {
   @PrimaryGeneratedColumn('uuid')
+  @Disabled()
   id: string;
 
   @Column({ nullable: false, type: 'enum', enum: EFileType })
   @ColumnType('string')
+  @Disabled()
   mimeType: EFileType;
 
   @Column({ nullable: false })
+  @Disabled()
   originalName: string;
 
   @Column({ nullable: false })
+  @Disabled()
   size: number;
 
   @ManyToOne(() => User, (user) => user.id, { eager: true })
+  @Disabled()
   user: User;
 
   @ManyToOne(() => Folder, (folder) => folder.id, { eager: true })
   @JoinColumn()
+  @Disabled()
   folder: Folder;
 
   @Column({ nullable: false, type: 'enum', enum: FileExtension })

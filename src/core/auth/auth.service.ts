@@ -214,7 +214,6 @@ export class AuthService {
       );
 
       const { access_token } = tokenResponse.data;
-      console.log('fetch user');
 
       //lấy user info từ oauth
       const userInfoResponse = await this.httpService.axiosRef.get(
@@ -228,7 +227,7 @@ export class AuthService {
 
       const userInfoFromOAuth = userInfoResponse.data;
 
-      //khi có thông tin user, tiến hành kiểm tra xem emai đã được đăng ký trong hệ thống hay chưa
+      //khi có thông tin user, tiến hành kiểm tra xem email đã được đăng ký trong hệ thống hay chưa
 
       //nếu chưa có thì lưu lại vào hệ thống
       let user: User = await userRepo.findOne({

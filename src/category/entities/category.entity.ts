@@ -1,3 +1,4 @@
+import { Disabled } from 'src/core/decorators/disabled.decorator';
 import { autoSlug } from 'src/core/middlewares/auto-slug.middleware';
 import {
   BeforeInsert,
@@ -12,12 +13,14 @@ import {
 @Entity()
 export class Category {
   @PrimaryGeneratedColumn()
+  @Disabled()
   id: number;
 
   @Column({ nullable: false })
   title: string;
 
   @Column({ nullable: false })
+  @Disabled()
   slug: string;
 
   @CreateDateColumn()
