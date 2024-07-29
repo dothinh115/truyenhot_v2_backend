@@ -28,7 +28,6 @@ export class User {
   rootUser: boolean;
 
   @ManyToOne(() => Role, (role) => role.id, { eager: true })
-  @Disabled()
   role: Role;
 
   @BeforeInsert()
