@@ -154,11 +154,14 @@ export class AuthService {
     } catch (error) {
       //Xử lý khi token hết hạn
       if (error.name === 'TokenExpiredError') {
+        console.log('token hết hạn');
         await this.refreshTokenRepo.delete({
           refreshToken: body.refreshToken,
         });
         throw new BadRequestException('Token đã hết hạn!');
       }
+      console.log('error', error.mesage);
+      console.log('lỗi khác');
       throw new BadRequestException(error.message);
     }
   }
