@@ -15,4 +15,7 @@ export class RefreshToken {
 
   @Column({ nullable: false })
   expiredDate: Date;
+
+  @Column({ default: 0 })
+  refreshCount: number;
 }

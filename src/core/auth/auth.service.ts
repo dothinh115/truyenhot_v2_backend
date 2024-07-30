@@ -144,6 +144,7 @@ export class AuthService {
       //sau khi tạo ra refreshToken mới thì update lại
       refToken.refreshToken = newRefreshToken;
       refToken.expiredDate = expiredDate;
+      refToken.refreshCount++;
       await this.refreshTokenRepo.save(refToken);
 
       return this.responseService.success({
