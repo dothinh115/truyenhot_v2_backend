@@ -3,7 +3,7 @@ import {
   Injectable,
   NestMiddleware,
 } from '@nestjs/common';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { FastifyReply } from 'fastify';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
@@ -32,12 +32,7 @@ export class AutoJwtExtractMiddleware implements NestMiddleware {
           if (decoded.id) {
             user = await this.userRepo.findOneBy({ id: decoded.id });
           }
-        } catch (error) {
-          if (error.name === 'TokenExpiredError') {
-            throw new BadGatewayException('Token đã hết hạn!');
-          }
-          throw new BadGatewayException(error.message);
-        }
+        } catch (error) {}
       }
     }
     if (user) req.user = user; //đưa thông tin user vào req

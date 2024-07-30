@@ -22,7 +22,7 @@ export class AuthController {
     return this.authService.register(body, query);
   }
 
-  @Post('refreshtoken')
+  @Post('refreshToken')
   refreshToken(@Body() body: RefreshTokenDto) {
     return this.authService.refreshToken(body);
   }
