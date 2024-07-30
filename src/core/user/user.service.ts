@@ -40,7 +40,6 @@ export class UserService {
   }
 
   async update(id: string, body: UpdateUserDto, query: TQuery) {
-    console.log(body);
     try {
       return this.queryService.update({
         repository: this.userRepo,

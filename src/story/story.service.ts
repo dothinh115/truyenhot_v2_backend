@@ -45,7 +45,6 @@ export class StoryService {
   }
 
   async update(id: number, body: UpdateStoryDto, query: TQuery) {
-    console.log(body);
     try {
       return await this.queryService.update({
         repository: this.storyRepo,
