@@ -5,10 +5,12 @@ import {
   BeforeInsert,
   BeforeUpdate,
   Column,
+  CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -29,6 +31,12 @@ export class Role {
     name: 'route_roles_role',
   })
   routes: Route[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @BeforeInsert()
   @BeforeUpdate()

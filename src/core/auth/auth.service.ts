@@ -240,11 +240,6 @@ export class AuthService {
         },
       });
       if (!user) {
-        // user = userRepo.create({
-        //   email: userInfoFromOAuth.email,
-        //   password: Math.random().toString(),
-        // });
-        // await userRepo.save(user);
         const newUser = await this.queryService.create({
           repository: userRepo,
           body: {

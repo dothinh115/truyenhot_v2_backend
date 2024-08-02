@@ -5,9 +5,11 @@ import {
   BeforeInsert,
   BeforeUpdate,
   Column,
+  CreateDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -29,6 +31,12 @@ export class User {
 
   @ManyToOne(() => Role, (role) => role.id, { eager: true })
   role: Role;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @BeforeInsert()
   @BeforeUpdate()

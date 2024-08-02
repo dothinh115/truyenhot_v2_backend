@@ -1,10 +1,12 @@
 import { User } from 'src/core/user/entities/user.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { ColumnType } from 'src/core/decorators/column-type.decorator';
 import { Folder } from 'src/core/folder/entities/folder.entity';
@@ -58,4 +60,10 @@ export class File {
   @Column({ nullable: false, type: 'enum', enum: FileExtension })
   @ColumnType('string')
   extension: FileExtension;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

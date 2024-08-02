@@ -3,11 +3,13 @@ import { Disabled } from 'src/core/decorators/disabled.decorator';
 import { Role } from 'src/core/role/entities/role.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
   Unique,
+  UpdateDateColumn,
 } from 'typeorm';
 
 export enum MethodType {
@@ -42,4 +44,10 @@ export class Route {
     name: 'route_roles_role',
   })
   roles: Role[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

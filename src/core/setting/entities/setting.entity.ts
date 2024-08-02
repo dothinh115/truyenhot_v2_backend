@@ -1,6 +1,13 @@
 import { Disabled } from 'src/core/decorators/disabled.decorator';
 import { Role } from 'src/core/role/entities/role.entity';
-import { Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Setting {
@@ -11,4 +18,10 @@ export class Setting {
   @OneToOne(() => Role, { eager: true })
   @JoinColumn()
   defaultRole: Role;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
