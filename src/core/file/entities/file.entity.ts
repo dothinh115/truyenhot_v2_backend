@@ -26,7 +26,8 @@ export enum FileExtension {
   MP4 = '.mp4',
 
   PDF = '.pdf',
-  zip = '.zip',
+  ZIP = '.zip',
+  XLXS = '.xlsx',
 }
 
 @Entity()
