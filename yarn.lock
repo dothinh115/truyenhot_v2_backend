@@ -2921,6 +2921,20 @@ fastify-multer@2.0.3:
     type-is "~1.6.18"
     xtend "^4.0.2"
 
+fastify-multer@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/fastify-multer/-/fastify-multer-2.0.3.tgz#de05af4cc42460a90507bba62611f1ea24fd48a3"
+  integrity sha512-QnFqrRgxmUwWHTgX9uyQSu0C/hmVCfcxopqjApZ4uaZD5W9MJ+nHUlW4+9q7Yd3BRxDIuHvgiM5mjrh6XG8cAA==
+  dependencies:
+    "@fastify/busboy" "^1.0.0"
+    append-field "^1.0.0"
+    concat-stream "^2.0.0"
+    fastify-plugin "^2.0.1"
+    mkdirp "^1.0.4"
+    on-finished "^2.3.0"
+    type-is "~1.6.18"
+    xtend "^4.0.2"
+
 fastify-plugin@^2.0.1:
   version "2.3.4"
   resolved "https://registry.npmjs.org/fastify-plugin/-/fastify-plugin-2.3.4.tgz"

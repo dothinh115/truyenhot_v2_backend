@@ -34,10 +34,11 @@ jobs:
           sshpass -p "$SSH_PASSWORD" ssh $SSH_USER@$SSH_HOST << EOF
             cd ${{ env.PROJECT_PATH }}
             # Pull từ git về 
-            git checkout -- yarn.lock package-lock.json
+            git checkout -- package-lock.json
             git pull 
             
             # Cài đặt các dependencies
+            rm yarn.lock
             yarn install
             yarn build
 
