@@ -35,7 +35,7 @@ export class File {
   @Disabled()
   id: string;
 
-  @Column({ nullable: false, type: 'enum', enum: EFileType })
+  @Column({ nullable: false, type: 'varchar' })
   @ColumnType('string')
   @Disabled()
   mimeType: EFileType;

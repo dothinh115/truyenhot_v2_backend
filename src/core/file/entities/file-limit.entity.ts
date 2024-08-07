@@ -20,6 +20,8 @@ export enum EFileType {
 
   APP_PDF = 'application/pdf',
   APP_ZIP = 'application/zip',
+
+  DOCS_XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 }
 
 @Entity()
@@ -28,7 +30,7 @@ export class FileLimit {
   @Disabled()
   id: number;
 
-  @Column({ nullable: false, type: 'enum', enum: EFileType })
+  @Column({ nullable: false, type: 'varchar' })
   @Disabled()
   fileType: EFileType;
 
