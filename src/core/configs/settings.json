@@ -18,11 +18,5 @@
             "application/zip": 2,
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": 5
         }
-    },
-    "OAUTH": {
-        "URL_TO_SEND_TOKEN": [
-            "http://localhost:3000/login",
-            "https://cp.truyenhot.info/login"
-        ]
     }
 }
