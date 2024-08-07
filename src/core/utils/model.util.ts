@@ -18,3 +18,10 @@ export interface CustomRequest extends FastifyRequest {
 export interface ExtendedIncomingMessage extends IncomingMessage {
   user?: User;
 }
+
+export type TAssetsQuery = {
+  format?: 'png' | 'jpg' | 'jpeg' | 'webp';
+  width?: string;
+  height?: string;
+  cache?: string;
+};

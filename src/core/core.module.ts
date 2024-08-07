@@ -21,6 +21,7 @@ import { RoleGuard } from './guards/role.guard';
 import { ResponseModule } from './response/response.module';
 import { HttpModule } from '@nestjs/axios';
 import { AutoJwtExtractMiddleware } from './middlewares/auto-jwt-extract.midleware';
+import { AssetModule } from './asset/asset.module';
 
 @Global()
 @Module({
@@ -42,6 +43,7 @@ import { AutoJwtExtractMiddleware } from './middlewares/auto-jwt-extract.midlewa
     AuthModule,
     MeModule,
     FileUploadModule,
+    AssetModule,
     CacheModule.registerAsync({
       useFactory: async () => ({
         store: redisStore,

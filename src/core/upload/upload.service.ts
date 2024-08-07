@@ -8,6 +8,7 @@ import { QueryService } from '../query/query.service';
 import * as path from 'path';
 import { Folder } from '../folder/entities/folder.entity';
 import * as fs from 'fs';
+import { colorLog } from '../utils/color-console-log.util';
 
 @Injectable()
 export class FileUploadService {
@@ -71,7 +72,7 @@ export class FileUploadService {
       query,
     });
 
-    const id = createdFile.data.id;
+    const id = createdFile.data.data.id;
     const filePath = path.join(
       process.cwd(),
       '/public',
