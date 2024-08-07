@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseInterceptors,
@@ -29,6 +28,7 @@ export class FileController {
     @Req() req: CustomRequest,
     @Query() query: TQuery,
   ) {
+    console.log('vào đây');
     return this.fileService.create(file, body, req, query);
   }
 
