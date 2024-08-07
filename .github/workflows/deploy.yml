@@ -38,14 +38,10 @@ jobs:
             git pull 
             
             # Cài đặt các dependencies
-            rm -rf node_modules
-            rm -f package-lock.json yarn.lock
-
             yarn install
             # Cài sharp với --ignore-engines
             # yarn add sharp --ignore-engines
             npm install --cpu=x64 --os=linux --libc=glibc sharp
-
             yarn build
 
             # Check process
