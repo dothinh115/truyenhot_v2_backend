@@ -15,7 +15,8 @@
             "video/mp4": 5,
 
             "application/pdf": 1,
-            "application/zip": 2
+            "application/zip": 2,
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": 5
         }
     },
     "OAUTH": {
