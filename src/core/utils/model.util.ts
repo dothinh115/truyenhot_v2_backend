@@ -24,4 +24,5 @@ export type TAssetsQuery = {
   width?: string;
   height?: string;
   cache?: string;
+  type?: 'download';
 };

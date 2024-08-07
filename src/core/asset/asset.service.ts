@@ -29,6 +29,9 @@ export class AssetService {
           )
         : path.join(process.cwd(), 'public', file.id + file.extension);
 
+      const isFileExists = fs.existsSync(inputFilePath);
+      if (!isFileExists) throw new Error('File này không tồn tại!');
+
       //trong trường hợp xử lý ảnh với sharp
       if (query.format || query.height || query.width) {
         //kiểm tra định dạng ảnh
@@ -48,8 +51,6 @@ export class AssetService {
         } else if (query.height) {
           transform = transform.resize(+query.height);
         }
-        //đặt content type
-        res.type(file.mimeType);
 
         // Xử lý định dạng
         if (query.format) {
@@ -70,6 +71,9 @@ export class AssetService {
             default:
               throw new Error('Định dạng không hỗ trợ!');
           }
+        } else {
+          //đặt content type mặc định
+          res.type(file.mimeType);
         }
 
         if (query.cache) {
@@ -89,11 +93,7 @@ export class AssetService {
           await new Promise((resolve, reject) => {
             transform.toBuffer((err, buffer) => {
               if (err) {
-                if (
-                  err.message.includes(
-                    'Processed image is too large for the WebP format',
-                  )
-                ) {
+                if (err.message.includes('Processed image is too large')) {
                   reject(new BadRequestException('Ảnh quá lớn.'));
                 } else {
                   reject(new BadRequestException(err.message));
@@ -101,7 +101,7 @@ export class AssetService {
               } else {
                 res.header(
                   'content-disposition',
-                  `inline; filename="${file.originalName}"`,
+                  `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${file.originalName}"`,
                 );
                 res.send(buffer);
                 resolve(true);
@@ -125,7 +125,7 @@ export class AssetService {
         const readStream = fs.createReadStream(inputFilePath);
         res.header(
           'content-disposition',
-          `inline; filename="${file.originalName}"`,
+          `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${file.originalName}"`,
         );
         res.send(readStream);
       }
