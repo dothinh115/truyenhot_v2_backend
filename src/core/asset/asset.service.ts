@@ -54,18 +54,31 @@ export class AssetService {
 
         // Xử lý định dạng
         if (query.format) {
+          const originalName = path.parse(file.originalName).name;
           switch (query.format) {
             case 'webp':
               res.type('image/webp');
+              res.header(
+                'content-disposition',
+                `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${originalName}.webp"`,
+              );
               transform = transform.webp();
               break;
             case 'jpg':
             case 'jpeg':
               res.type('image/jpeg');
+              res.header(
+                'content-disposition',
+                `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${originalName}.jpg"`,
+              );
               transform = transform.jpeg();
               break;
             case 'png':
               res.type('image/png');
+              res.header(
+                'content-disposition',
+                `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${originalName}.png"`,
+              );
               transform = transform.png();
               break;
             default:
@@ -88,28 +101,16 @@ export class AssetService {
           }
         }
 
-        // Xử lý lỗi của sharp bằng cách sử dụng Promise
+        // Xử lý lỗi của Sharp
         try {
-          await new Promise((resolve, reject) => {
-            transform.toBuffer((err, buffer) => {
-              if (err) {
-                if (err.message.includes('Processed image is too large')) {
-                  reject(new BadRequestException('Ảnh quá lớn.'));
-                } else {
-                  reject(new BadRequestException(err.message));
-                }
-              } else {
-                res.header(
-                  'content-disposition',
-                  `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${file.originalName}"`,
-                );
-                res.send(buffer);
-                resolve(true);
-              }
-            });
-          });
-        } catch (error) {
-          throw new Error(error.message); // Ném lỗi lên để được xử lý ở khối catch bên ngoài
+          const buffer = await transform.toBuffer();
+          res.send(buffer);
+        } catch (err) {
+          if (err.message.includes('Processed image is too large')) {
+            throw new BadRequestException('Ảnh quá lớn.');
+          } else {
+            throw new BadRequestException(err.message);
+          }
         }
       } else {
         res.type(file.mimeType);
