@@ -40,7 +40,6 @@
     "class-validator": "^0.14.1",
     "fastify": "^4.28.1",
     "fastify-file-interceptor": "^1.0.9",
-    "fastify-multer": "^2.0.3",
     "pg": "^8.12.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
