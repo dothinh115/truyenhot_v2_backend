@@ -44,7 +44,7 @@ jobs:
             yarn install
             # Cài sharp với --ignore-engines
             # yarn add sharp --ignore-engines
-            yarn add sharp --cpu=x64 --os=linux --libc=glibc
+            npm install --cpu=x64 --os=linux --libc=glibc sharp
 
             yarn build
 
