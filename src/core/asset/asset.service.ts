@@ -48,6 +48,8 @@ export class AssetService {
         } else if (query.height) {
           transform = transform.resize(+query.height);
         }
+        //đặt content type
+        res.type(file.mimeType);
 
         // Xử lý định dạng
         if (query.format) {
