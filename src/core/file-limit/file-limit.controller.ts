@@ -3,7 +3,7 @@ import { FileLimitService } from './file-limit.service';
 import { UpdateFileLimitDto } from './dto/update-file-limit.dto';
 import { TQuery } from '../utils/model.util';
 
-@Controller('file-limit')
+@Controller('fileLimit')
 export class FileLimitController {
   constructor(private readonly fileLimitService: FileLimitService) {}
 
