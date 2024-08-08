@@ -11,7 +11,7 @@ import { PROTECTED_ROUTE_KEY } from '../decorators/protected-route.decorator';
 import fs from 'fs';
 import path from 'path';
 import settings from '../configs/settings.json';
-import { EFileType, FileLimit } from '../file/entities/file-limit.entity';
+import { EFileType, FileLimit } from '../file-limit/entities/file-limit.entity';
 import { EXCLUDED_ROUTE_KEY } from '../decorators/excluded-route.decorator';
 
 @Injectable()

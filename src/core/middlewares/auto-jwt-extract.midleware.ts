@@ -1,8 +1,4 @@
-import {
-  BadGatewayException,
-  Injectable,
-  NestMiddleware,
-} from '@nestjs/common';
+import { Injectable, NestMiddleware } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';

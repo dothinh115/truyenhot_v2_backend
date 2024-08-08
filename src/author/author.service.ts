@@ -1,4 +1,4 @@
-import { BadGatewayException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
 import { Author } from './entities/author.entity';
@@ -24,7 +24,7 @@ export class AuthorService {
         },
       });
     } catch (error) {
-      throw new BadGatewayException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -35,7 +35,7 @@ export class AuthorService {
         query,
       });
     } catch (error) {
-      throw new BadGatewayException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -48,7 +48,7 @@ export class AuthorService {
         query,
       });
     } catch (error) {
-      throw new BadGatewayException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -59,7 +59,7 @@ export class AuthorService {
         id,
       });
     } catch (error) {
-      throw new BadGatewayException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 }

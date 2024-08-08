@@ -1,5 +1,4 @@
 import {
-  BadGatewayException,
   BadRequestException,
   Injectable,
   UnauthorizedException,
@@ -43,7 +42,7 @@ export class MeService {
         query,
       });
     } catch (error) {
-      throw new BadGatewayException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 }

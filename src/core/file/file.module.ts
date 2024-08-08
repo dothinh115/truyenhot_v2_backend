@@ -4,7 +4,7 @@ import { FileController } from './file.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { File } from './entities/file.entity';
 import { Folder } from '../folder/entities/folder.entity';
-import { FileLimit } from './entities/file-limit.entity';
+import { FileLimit } from '../file-limit/entities/file-limit.entity';
 
 @Global()
 @Module({

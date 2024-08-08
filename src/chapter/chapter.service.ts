@@ -1,8 +1,4 @@
-import {
-  BadGatewayException,
-  BadRequestException,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateChapterDto } from './dto/create-chapter.dto';
 import { UpdateChapterDto } from './dto/update-chapter.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -40,7 +36,7 @@ export class ChapterService {
         query,
       });
     } catch (error) {
-      throw new BadGatewayException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -53,7 +49,7 @@ export class ChapterService {
         query,
       });
     } catch (error) {
-      throw new BadGatewayException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 

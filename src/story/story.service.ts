@@ -1,8 +1,4 @@
-import {
-  BadGatewayException,
-  BadRequestException,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -29,7 +25,7 @@ export class StoryService {
         },
       });
     } catch (error) {
-      throw new BadGatewayException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -40,7 +36,7 @@ export class StoryService {
         query,
       });
     } catch (error) {
-      throw new BadGatewayException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -64,7 +60,7 @@ export class StoryService {
         repository: this.storyRepo,
       });
     } catch (error) {
-      throw new BadGatewayException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 }

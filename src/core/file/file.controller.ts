@@ -32,7 +32,7 @@ export class FileController {
   }
 
   @Get()
-  async find(@Query() query: TQuery) {
+  find(@Query() query: TQuery) {
     return this.fileService.find(query);
   }
 

@@ -1,4 +1,4 @@
-import { BadGatewayException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { TQuery } from '../utils/model.util';
 import { QueryBuilderService } from './query-builder.service';
@@ -60,7 +60,7 @@ export class QueryService {
       }
       return this.responseService.success(result);
     } catch (error) {
-      throw new BadGatewayException(error.message);
+      throw new BadRequestException(error.message);
     }
   }
 

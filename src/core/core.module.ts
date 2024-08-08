@@ -22,6 +22,7 @@ import { ResponseModule } from './response/response.module';
 import { HttpModule } from '@nestjs/axios';
 import { AutoJwtExtractMiddleware } from './middlewares/auto-jwt-extract.midleware';
 import { AssetModule } from './asset/asset.module';
+import { FileLimitModule } from './file-limit/file-limit.module';
 
 @Global()
 @Module({
@@ -53,6 +54,7 @@ import { AssetModule } from './asset/asset.module';
     }),
     FolderModule,
     FileModule,
+    FileLimitModule,
   ],
   providers: [
     InitService,

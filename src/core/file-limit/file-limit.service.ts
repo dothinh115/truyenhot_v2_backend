@@ -1,22 +1,22 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { UpdateSettingDto } from './dto/update-setting.dto';
+import { UpdateFileLimitDto } from './dto/update-file-limit.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Setting } from './entities/setting.entity';
+import { FileLimit } from './entities/file-limit.entity';
 import { Repository } from 'typeorm';
-import { QueryService } from '../query/query.service';
 import { TQuery } from '../utils/model.util';
+import { QueryService } from '../query/query.service';
 
 @Injectable()
-export class SettingService {
+export class FileLimitService {
   constructor(
-    @InjectRepository(Setting) private settingRepo: Repository<Setting>,
+    @InjectRepository(FileLimit) private fileLimitRepo: Repository<FileLimit>,
     private queryService: QueryService,
   ) {}
 
   async find(query: TQuery) {
     try {
       return await this.queryService.query({
-        repository: this.settingRepo,
+        repository: this.fileLimitRepo,
         query,
       });
     } catch (error) {
@@ -24,13 +24,13 @@ export class SettingService {
     }
   }
 
-  async update(id: string, body: UpdateSettingDto, query: TQuery) {
+  async update(id: number, body: UpdateFileLimitDto, query: TQuery) {
     try {
       return await this.queryService.update({
-        repository: this.settingRepo,
+        repository: this.fileLimitRepo,
+        body,
         id,
         query,
-        body,
       });
     } catch (error) {
       throw new BadRequestException(error.message);

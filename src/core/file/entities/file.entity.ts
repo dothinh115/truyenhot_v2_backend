@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { ColumnType } from 'src/core/decorators/column-type.decorator';
 import { Folder } from 'src/core/folder/entities/folder.entity';
-import { EFileType } from './file-limit.entity';
+import { EFileType } from '../../file-limit/entities/file-limit.entity';
 import { Disabled } from 'src/core/decorators/disabled.decorator';
 
 export enum FileExtension {

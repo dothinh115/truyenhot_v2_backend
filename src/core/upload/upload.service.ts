@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryRunner, Repository } from 'typeorm';
-import { EFileType, FileLimit } from '../file/entities/file-limit.entity';
+import { EFileType, FileLimit } from '../file-limit/entities/file-limit.entity';
 import { CustomRequest, TQuery } from '../utils/model.util';
 import { File, FileExtension } from '../file/entities/file.entity';
 import { QueryService } from '../query/query.service';
