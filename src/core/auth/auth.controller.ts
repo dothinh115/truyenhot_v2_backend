@@ -1,14 +1,16 @@
-import { Body, Controller, Get, Post, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
-import { CustomRequest, TQuery } from '../utils/model.util';
+import { TQuery } from '../utils/model.util';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { LogoutAuthDto } from './dto/logout-auth.dto';
 import { FastifyReply } from 'fastify';
 import { OAuthLoginDto } from './dto/oauth-login.dto';
+import { Excluded } from '../decorators/excluded-route.decorator';
 
 @Controller()
+@Excluded()
 export class AuthController {
   constructor(private authService: AuthService) {}
 

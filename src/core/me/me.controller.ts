@@ -10,8 +10,10 @@ import {
 import { MeService } from './me.service';
 import { UpdateMeDto } from './dto/update-me.dto';
 import { CustomRequest, TQuery } from '../utils/model.util';
+import { Excluded } from '../decorators/excluded-route.decorator';
 
 @Controller('me')
+@Excluded()
 export class MeController {
   constructor(private readonly meService: MeService) {}
 

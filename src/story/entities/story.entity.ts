@@ -48,8 +48,7 @@ export class Story {
   @Column({ default: 'Sưu tầm' })
   source: string;
 
-  @Column({ default: StatusType.CONTINUE, type: 'enum', enum: StatusType })
-  @ColumnType('string')
+  @Column({ default: StatusType.CONTINUE, type: 'varchar' })
   status: StatusType;
 
   @Column({ default: null })

@@ -1,7 +1,9 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { SchemaService } from './schema.service';
+import { Excluded } from '../decorators/excluded-route.decorator';
 
 @Controller('schema')
+@Excluded()
 export class SchemaController {
   constructor(private readonly schemaService: SchemaService) {}
 

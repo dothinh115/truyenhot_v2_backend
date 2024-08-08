@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit, RequestMethod } from '@nestjs/common';
-import { DiscoveryService } from '@nestjs/core';
+import { DiscoveryService, Reflector } from '@nestjs/core';
 import { colorLog } from '../utils/color-console-log.util';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
@@ -8,11 +8,11 @@ import { ConfigService } from '@nestjs/config';
 import { MethodType, Route } from '../route/entities/route.entity';
 import { METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants';
 import { PROTECTED_ROUTE_KEY } from '../decorators/protected-route.decorator';
-import { getMetadata } from '../utils/metadata.util';
-import * as fs from 'fs';
-import * as path from 'path';
+import fs from 'fs';
+import path from 'path';
 import settings from '../configs/settings.json';
 import { EFileType, FileLimit } from '../file/entities/file-limit.entity';
+import { EXCLUDED_ROUTE_KEY } from '../decorators/excluded-route.decorator';
 
 @Injectable()
 export class InitService implements OnModuleInit {
@@ -22,6 +22,7 @@ export class InitService implements OnModuleInit {
     @InjectRepository(Route) private routeRepo: Repository<Route>,
     @InjectRepository(FileLimit) private fileLimitRepo: Repository<FileLimit>,
     private configService: ConfigService,
+    private reflector: Reflector,
   ) {}
 
   async onModuleInit() {
@@ -32,44 +33,57 @@ export class InitService implements OnModuleInit {
   }
 
   private async createRoutes() {
-    let routes: any[] = [];
+    let routes: { path: string; method: MethodType; isProtected: boolean }[] =
+      [];
     const controllers = this.discoveryService.getControllers();
 
-    controllers.forEach((controller) => {
+    for (const controller of controllers) {
       const { instance } = controller;
       if (instance) {
-        const controllerPath = getMetadata(PATH_METADATA, instance.constructor);
+        const controllerPath = this.reflector.get<string>(
+          PATH_METADATA,
+          instance.constructor,
+        );
 
         const methods = Object.getOwnPropertyNames(
           Object.getPrototypeOf(instance),
         );
 
+        const isExcluded = this.reflector.get<boolean>(
+          EXCLUDED_ROUTE_KEY,
+          instance.constructor,
+        );
+        if (isExcluded) continue;
         methods.forEach((methodName) => {
           const methodHandler = instance[methodName];
 
-          const methodPath = getMetadata(PATH_METADATA, methodHandler);
-          const requestMethod = getMetadata(METHOD_METADATA, methodHandler);
+          const methodPath = this.reflector.get<string>(
+            PATH_METADATA,
+            methodHandler,
+          );
 
-          const isProtected = getMetadata(PROTECTED_ROUTE_KEY, methodHandler);
+          const requestMethod = this.reflector.get<number | undefined>(
+            METHOD_METADATA,
+            methodHandler,
+          );
 
-          const method = RequestMethod[requestMethod];
-          if (
-            method &&
-            !settings.EXCLUDED_ROUTES.some((route) =>
-              `${controllerPath === '/' ? '' : `/${controllerPath}`}${methodPath === '/' ? '' : `/${methodPath}`}`.startsWith(
-                '/' + route,
-              ),
-            )
-          ) {
+          const isProtected = this.reflector.get<boolean>(
+            PROTECTED_ROUTE_KEY,
+            methodHandler,
+          );
+
+          const method = RequestMethod[requestMethod] as MethodType;
+          if (method) {
             routes.push({
               path: `${controllerPath === '/' ? '' : `/${controllerPath}`}${methodPath === '/' ? '' : `/${methodPath}`}`,
-              method: method,
+              method,
               isProtected: isProtected ? true : false,
             });
           }
         });
       }
-    });
+    }
+
     const createdRoute = [];
     for (const route of routes) {
       const isExists = await this.routeRepo.findOne({

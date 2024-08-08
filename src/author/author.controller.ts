@@ -30,6 +30,7 @@ export class AuthorController {
   }
 
   @Patch(':id')
+  @Protected()
   update(
     @Param('id') id: string,
     @Body() body: UpdateAuthorDto,
@@ -39,6 +40,7 @@ export class AuthorController {
   }
 
   @Delete(':id')
+  @Protected()
   remove(@Param('id') id: string) {
     return this.authorService.remove(+id);
   }

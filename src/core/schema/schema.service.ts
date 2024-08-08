@@ -25,15 +25,19 @@ export class SchemaService {
           column.propertyName === 'updatedAt'
         )
           continue;
-        const metadata = getAllMetadata(
+
+        const metadata = getAllMetadata<any>(
           (entity.target as Function).prototype,
           column.propertyName,
         );
+
         let type =
           typeof column.type === 'function'
             ? column.type.name.toLowerCase()
             : column.type;
-        if (type === 'uuid') type = 'string';
+
+        if (type === 'uuid' || type === 'varchar') type = 'string';
+
         schema[column.propertyName] = {
           type,
           required: column.isNullable ? false : true,
@@ -51,7 +55,7 @@ export class SchemaService {
       }
       for (const relation of entity.relations) {
         if (relation.isManyToMany) {
-          const metadata = getAllMetadata(
+          const metadata = getAllMetadata<any>(
             (entity.target as Function).prototype,
             relation.propertyName,
           );

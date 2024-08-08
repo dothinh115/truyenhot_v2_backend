@@ -30,8 +30,7 @@ export class Route {
   @Disabled()
   path: string;
 
-  @Column({ nullable: false, type: 'enum', enum: MethodType })
-  @ColumnType('string')
+  @Column({ nullable: false, type: 'varchar' })
   @Disabled()
   method: MethodType;
 

@@ -37,7 +37,6 @@ export class File {
   id: string;
 
   @Column({ nullable: false, type: 'varchar' })
-  @ColumnType('string')
   @Disabled()
   mimeType: EFileType;
 
@@ -58,8 +57,7 @@ export class File {
   @Disabled()
   folder: Folder;
 
-  @Column({ nullable: false, type: 'enum', enum: FileExtension })
-  @ColumnType('string')
+  @Column({ nullable: false, type: 'varchar' })
   extension: FileExtension;
 
   @CreateDateColumn()

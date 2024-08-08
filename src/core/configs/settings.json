@@ -1,5 +1,4 @@
 {
-    "EXCLUDED_ROUTES": ["schema", "me", "auth", "asset"],
     "API_URL": "https://api.truyenhot.info",
     "FILE_UPLOAD": {
         "MAX_ZISE": { 
