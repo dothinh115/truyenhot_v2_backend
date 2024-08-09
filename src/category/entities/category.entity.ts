@@ -1,17 +1,9 @@
 import { Disabled } from 'src/core/decorators/disabled.decorator';
-import { autoSlug } from 'src/core/middlewares/auto-slug.middleware';
-import {
-  BeforeInsert,
-  BeforeUpdate,
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { BaseEntity } from 'src/core/typeorm/base.entity';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class Category {
+export class Category extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Disabled()
   id: number;
@@ -22,16 +14,4 @@ export class Category {
   @Column({ nullable: false })
   @Disabled()
   slug: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @BeforeInsert()
-  @BeforeUpdate()
-  handleBeforeInsertAndUpdate() {
-    autoSlug(this, { field: 'title' });
-  }
 }

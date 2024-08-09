@@ -1,17 +1,16 @@
 import { Disabled } from 'src/core/decorators/disabled.decorator';
 import { Role } from 'src/core/role/entities/role.entity';
+import { BaseEntity } from 'src/core/typeorm/base.entity';
 import {
   Column,
-  CreateDateColumn,
   Entity,
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
-export class Setting {
+export class Setting extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Disabled()
   id: string;
@@ -22,10 +21,4 @@ export class Setting {
 
   @Column({ nullable: false, default: true })
   duplicateFileCheck: boolean;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

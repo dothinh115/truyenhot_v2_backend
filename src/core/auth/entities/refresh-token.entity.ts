@@ -1,9 +1,10 @@
+import { BaseEntity } from 'src/core/typeorm/base.entity';
 import { Column, Entity, Index, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @Entity()
 @Index(['refreshToken', 'clientId'])
 @Unique(['refreshToken', 'clientId'])
-export class RefreshToken {
+export class RefreshToken extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

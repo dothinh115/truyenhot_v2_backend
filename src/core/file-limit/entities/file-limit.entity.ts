@@ -1,11 +1,6 @@
 import { Disabled } from 'src/core/decorators/disabled.decorator';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { BaseEntity } from 'src/core/typeorm/base.entity';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum EFileType {
   IMG_JPEG = 'image/jpeg',
@@ -25,7 +20,7 @@ export enum EFileType {
 }
 
 @Entity()
-export class FileLimit {
+export class FileLimit extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Disabled()
   id: number;
@@ -36,10 +31,4 @@ export class FileLimit {
 
   @Column()
   maxSize: number;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

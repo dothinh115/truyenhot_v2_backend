@@ -5,8 +5,8 @@ import { EntityManager, Not, Repository } from 'typeorm';
 import { QueryService } from '../query/query.service';
 import { CustomRequest, TQuery } from '../utils/model.util';
 import { CreateFolderDto } from '../folder/dto/create-folder.dto';
-import * as fs from 'fs';
-import * as path from 'path';
+import fs from 'fs';
+import path from 'path';
 import { UpdateFolderDto } from '../folder/dto/update-folder.dto';
 import { File } from '../file/entities/file.entity';
 import { ResponseService } from '../response/response.service';
@@ -171,7 +171,7 @@ export class FolderService {
       }
 
       //xoá folder
-      await folderRepo.delete(folder);
+      await folderRepo.remove(folder);
 
       //xoá file trong hệ thống
       const folderPath = path.join(process.cwd(), '/public', folder.name);

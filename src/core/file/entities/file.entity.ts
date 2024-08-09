@@ -1,16 +1,15 @@
 import { User } from 'src/core/user/entities/user.entity';
 import {
   Column,
-  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { Folder } from 'src/core/folder/entities/folder.entity';
 import { EFileType } from '../../file-limit/entities/file-limit.entity';
 import { Disabled } from 'src/core/decorators/disabled.decorator';
+import { BaseEntity } from 'src/core/typeorm/base.entity';
 
 export enum FileExtension {
   JPEG = '.jpeg',
@@ -30,7 +29,7 @@ export enum FileExtension {
 }
 
 @Entity()
-export class File {
+export class File extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Disabled()
   id: string;
@@ -61,10 +60,4 @@ export class File {
 
   @Column({ nullable: false, type: 'varchar' })
   extension: FileExtension;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

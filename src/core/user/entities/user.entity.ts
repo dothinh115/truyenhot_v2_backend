@@ -1,19 +1,10 @@
 import { Disabled } from 'src/core/decorators/disabled.decorator';
-import { autoHashPassword } from 'src/core/middlewares/auto-hash-password.middleware';
 import { Role } from 'src/core/role/entities/role.entity';
-import {
-  BeforeInsert,
-  BeforeUpdate,
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { BaseEntity } from 'src/core/typeorm/base.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Disabled()
   id: string;
@@ -31,16 +22,4 @@ export class User {
 
   @ManyToOne(() => Role, (role) => role.id, { eager: true })
   role: Role;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @BeforeInsert()
-  @BeforeUpdate()
-  handleBeforeInsertAndUpdate() {
-    autoHashPassword(this);
-  }
 }

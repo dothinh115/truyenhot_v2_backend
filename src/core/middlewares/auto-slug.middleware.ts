@@ -5,7 +5,7 @@ export function autoSlug(
   object: { field: string } = { field: 'title' },
 ) {
   const { field } = object;
-  if (entity[field]) {
+  if (entity[field] && entity.slug) {
     const commonService = new CommonService();
     entity.slug = commonService.toSlug(entity[field]);
   }

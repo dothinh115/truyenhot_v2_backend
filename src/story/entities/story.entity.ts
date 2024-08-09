@@ -2,12 +2,9 @@ import { Author } from 'src/author/entities/author.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { ColumnType } from 'src/core/decorators/column-type.decorator';
 import { Disabled } from 'src/core/decorators/disabled.decorator';
-import { autoSlug } from 'src/core/middlewares/auto-slug.middleware';
+import { BaseEntity } from 'src/core/typeorm/base.entity';
 import {
-  BeforeInsert,
-  BeforeUpdate,
   Column,
-  CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -15,7 +12,6 @@ import {
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 
 export enum StatusType {
@@ -25,7 +21,7 @@ export enum StatusType {
 
 @Entity()
 @Index(['author'])
-export class Story {
+export class Story extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Disabled()
   id: number;
@@ -61,16 +57,4 @@ export class Story {
   @ManyToMany(() => Category, { cascade: true, eager: true, nullable: false })
   @JoinTable()
   categories: Category[];
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @BeforeInsert()
-  @BeforeUpdate()
-  handleBeforeInsertAndUpdate() {
-    autoSlug(this, { field: 'title' });
-  }
 }

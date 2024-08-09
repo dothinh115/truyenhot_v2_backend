@@ -1,6 +1,7 @@
 import { ColumnType } from 'src/core/decorators/column-type.decorator';
 import { Disabled } from 'src/core/decorators/disabled.decorator';
 import { Role } from 'src/core/role/entities/role.entity';
+import { BaseEntity } from 'src/core/typeorm/base.entity';
 import {
   Column,
   CreateDateColumn,
@@ -21,7 +22,7 @@ export enum MethodType {
 
 @Entity()
 @Unique(['path', 'method'])
-export class Route {
+export class Route extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Disabled()
   id: number;
@@ -43,10 +44,4 @@ export class Route {
     name: 'route_roles_role',
   })
   roles: Role[];
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

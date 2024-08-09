@@ -1,20 +1,16 @@
 import { Disabled } from 'src/core/decorators/disabled.decorator';
-import { autoSlug } from 'src/core/middlewares/auto-slug.middleware';
 import { Route } from 'src/core/route/entities/route.entity';
+import { BaseEntity } from 'src/core/typeorm/base.entity';
 import {
-  BeforeInsert,
-  BeforeUpdate,
   Column,
-  CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
-export class Role {
+export class Role extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Disabled()
   id: number;
@@ -31,16 +27,4 @@ export class Role {
     name: 'route_roles_role',
   })
   routes: Route[];
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @BeforeInsert()
-  @BeforeUpdate()
-  handleBeforeInsertAndUpdate() {
-    autoSlug(this);
-  }
 }

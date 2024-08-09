@@ -1,25 +1,24 @@
 import { ColumnType } from 'src/core/decorators/column-type.decorator';
 import { Disabled } from 'src/core/decorators/disabled.decorator';
 import { autoSlug } from 'src/core/middlewares/auto-slug.middleware';
+import { BaseEntity } from 'src/core/typeorm/base.entity';
 import { Story } from 'src/story/entities/story.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
-  CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   Unique,
-  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
 @Index(['story', 'slug', 'name'])
 @Unique(['story', 'slug'])
-export class Chapter {
+export class Chapter extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Disabled()
   id: number;
@@ -43,15 +42,9 @@ export class Chapter {
   @JoinColumn()
   story: Story;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
   @BeforeInsert()
   @BeforeUpdate()
-  handleBeforeInsertAndUpdate() {
+  handleAutoSlug() {
     autoSlug(this, { field: 'name' });
   }
 }

@@ -1,17 +1,16 @@
 import { Disabled } from 'src/core/decorators/disabled.decorator';
+import { BaseEntity } from 'src/core/typeorm/base.entity';
 import { User } from 'src/core/user/entities/user.entity';
 import {
   Column,
-  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
-export class Folder {
+export class Folder extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Disabled()
   id: string;
@@ -23,10 +22,4 @@ export class Folder {
   @JoinColumn()
   @Disabled()
   user: User;
-
-  @CreateDateColumn()
-  createdAt: Date
-
-  @UpdateDateColumn()
-  updatedAt:Date
 }
