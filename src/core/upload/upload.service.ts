@@ -26,10 +26,12 @@ export class FileUploadService {
       },
     });
     if (!findFileType) throw new Error(`Không hỗ trợ loại file này!`);
-    const setting = await this.settingRepo.findOne({});
+    const setting = await this.settingRepo.find({
+      take: 1,
+    });
 
     //kiểm tra duplicate nếu cần
-    if (setting.duplicateFileCheck) {
+    if (setting[0].duplicateFileCheck) {
       const hash = this.getFileHash(file);
       const hashedFile = await this.fileRepo.findOne({
         where: {
@@ -75,8 +77,10 @@ export class FileUploadService {
 
     //lưu vào file vào db để lấy id
     let hash: string | null = null;
-    const setting = await this.settingRepo.findOne({});
-    if (setting.duplicateFileCheck) {
+    const setting = await this.settingRepo.find({
+      take: 1,
+    });
+    if (setting[0].duplicateFileCheck) {
       //lưu hash nếu cần thiết
       hash = this.getFileHash(file);
     }
