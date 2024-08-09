@@ -1,6 +1,7 @@
 {
     "API_URL": "https://api.truyenhot.info",
     "FILE_UPLOAD": {
+        "DUPLICATE_CHECK": true,
         "MAX_ZISE": { 
             //file size tính theo Mb
             "image/jpeg": 2,

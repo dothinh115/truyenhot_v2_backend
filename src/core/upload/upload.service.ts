@@ -3,22 +3,22 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { QueryRunner, Repository } from 'typeorm';
 import { EFileType, FileLimit } from '../file-limit/entities/file-limit.entity';
 import { CustomRequest, TQuery } from '../utils/model.util';
-import { File, FileExtension } from '../file/entities/file.entity';
+import { File as FileRepo, FileExtension } from '../file/entities/file.entity';
 import { QueryService } from '../query/query.service';
 import * as path from 'path';
 import { Folder } from '../folder/entities/folder.entity';
 import * as fs from 'fs';
-import { colorLog } from '../utils/color-console-log.util';
-
+import settings from '../configs/settings.json';
+import crypto from 'crypto';
 @Injectable()
 export class FileUploadService {
   constructor(
     @InjectRepository(FileLimit) private fileLimit: Repository<FileLimit>,
-    @InjectRepository(File) private fileRepo: Repository<File>,
-    @InjectRepository(Folder) private folderRepo: Repository<Folder>,
+    @InjectRepository(FileRepo) private fileRepo: Repository<FileRepo>,
     private queryService: QueryService,
   ) {}
   async validate(file: Express.Multer.File) {
+    //kiểm tra file type
     const findFileType = await this.fileLimit.findOne({
       where: {
         fileType: file.mimetype as EFileType,
@@ -26,6 +26,21 @@ export class FileUploadService {
     });
     if (!findFileType) throw new Error(`Không hỗ trợ loại file này!`);
 
+    //kiểm tra duplicate nếu cần
+    if (settings.FILE_UPLOAD.DUPLICATE_CHECK) {
+      const hash = this.getFileHash(file);
+      const hashedFile = await this.fileRepo.findOne({
+        where: {
+          hash,
+        },
+      });
+      if (hashedFile)
+        throw Error(
+          `File này đã tồn tại trong hệ thống với id: ${hashedFile.id}`,
+        );
+    }
+
+    //kiểm tra file size
     const maxFileSize = findFileType.maxSize * 1024 * 1024; //byte -> Mb
 
     if (file.size > maxFileSize)
@@ -42,7 +57,7 @@ export class FileUploadService {
     queryRunner: QueryRunner,
   ) {
     const extension = path.extname(file.originalname);
-    const fileRepo = queryRunner.manager.getRepository(File);
+    const fileRepo = queryRunner.manager.getRepository(FileRepo);
     const folderRepo = queryRunner.manager.getRepository(Folder);
 
     //kiểm tra folder
@@ -57,6 +72,12 @@ export class FileUploadService {
     }
 
     //lưu vào file vào db để lấy id
+    let hash: string | null = null;
+    if (settings.FILE_UPLOAD.DUPLICATE_CHECK) {
+      //lưu hash nếu cần thiết
+      hash = this.getFileHash(file);
+    }
+
     const createdFile = await this.queryService.create({
       repository: fileRepo,
       body: {
@@ -67,6 +88,9 @@ export class FileUploadService {
         user: req.raw.user.id,
         ...(body.folder && {
           folder: body.folder as any,
+        }),
+        ...(hash && {
+          hash,
         }),
       },
       query,
@@ -81,5 +105,10 @@ export class FileUploadService {
     );
     await fs.promises.writeFile(filePath, file.buffer);
     return createdFile;
+  }
+
+  getFileHash(file: Express.Multer.File) {
+    const fileBuffer = file.buffer;
+    return crypto.createHash('sha256').update(fileBuffer).digest('hex');
   }
 }

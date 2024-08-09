@@ -8,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ColumnType } from 'src/core/decorators/column-type.decorator';
 import { Folder } from 'src/core/folder/entities/folder.entity';
 import { EFileType } from '../../file-limit/entities/file-limit.entity';
 import { Disabled } from 'src/core/decorators/disabled.decorator';
@@ -47,6 +46,9 @@ export class File {
   @Column({ nullable: false })
   @Disabled()
   size: number;
+
+  @Column()
+  hash: string;
 
   @ManyToOne(() => User, (user) => user.id, { eager: true })
   @Disabled()
