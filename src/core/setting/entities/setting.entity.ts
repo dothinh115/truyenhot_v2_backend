@@ -1,6 +1,7 @@
 import { Disabled } from 'src/core/decorators/disabled.decorator';
 import { Role } from 'src/core/role/entities/role.entity';
 import {
+  Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
@@ -18,6 +19,9 @@ export class Setting {
   @OneToOne(() => Role, { eager: true })
   @JoinColumn()
   defaultRole: Role;
+
+  @Column({ nullable: false, default: true })
+  duplicateFileCheck: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

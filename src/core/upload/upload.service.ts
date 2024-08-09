@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryRunner, Repository } from 'typeorm';
 import { EFileType, FileLimit } from '../file-limit/entities/file-limit.entity';
@@ -8,13 +8,14 @@ import { QueryService } from '../query/query.service';
 import * as path from 'path';
 import { Folder } from '../folder/entities/folder.entity';
 import * as fs from 'fs';
-import settings from '../configs/settings.json';
 import crypto from 'crypto';
+import { Setting } from '../setting/entities/setting.entity';
 @Injectable()
 export class FileUploadService {
   constructor(
     @InjectRepository(FileLimit) private fileLimit: Repository<FileLimit>,
     @InjectRepository(FileRepo) private fileRepo: Repository<FileRepo>,
+    @InjectRepository(Setting) private settingRepo: Repository<Setting>,
     private queryService: QueryService,
   ) {}
   async validate(file: Express.Multer.File) {
@@ -25,9 +26,10 @@ export class FileUploadService {
       },
     });
     if (!findFileType) throw new Error(`Không hỗ trợ loại file này!`);
+    const setting = await this.settingRepo.findOne({});
 
     //kiểm tra duplicate nếu cần
-    if (settings.FILE_UPLOAD.DUPLICATE_CHECK) {
+    if (setting.duplicateFileCheck) {
       const hash = this.getFileHash(file);
       const hashedFile = await this.fileRepo.findOne({
         where: {
@@ -73,7 +75,8 @@ export class FileUploadService {
 
     //lưu vào file vào db để lấy id
     let hash: string | null = null;
-    if (settings.FILE_UPLOAD.DUPLICATE_CHECK) {
+    const setting = await this.settingRepo.findOne({});
+    if (setting.duplicateFileCheck) {
       //lưu hash nếu cần thiết
       hash = this.getFileHash(file);
     }
