@@ -87,6 +87,10 @@ export class AssetService {
         } else {
           //đặt content type mặc định
           res.type(file.mimeType);
+          res.header(
+            'content-disposition',
+            `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${file.originalName}"`,
+          );
         }
 
         if (query.cache) {

@@ -47,7 +47,7 @@ export class File extends BaseEntity {
   @Disabled()
   size: number;
 
-  @Column()
+  @Column({ nullable: true })
   hash: string;
 
   @ManyToOne(() => User, (user) => user.id, { eager: true })
