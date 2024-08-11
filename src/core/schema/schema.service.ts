@@ -15,7 +15,11 @@ export class SchemaService {
   findOne(entityName: string) {
     try {
       const entity = this.manager.connection.entityMetadatas.find(
-        (metadata) => metadata.name.toLowerCase() === entityName.toLowerCase(),
+        (metadata) =>
+          metadata.name.toLowerCase() ===
+          entityName.toLowerCase().replace(/-./g, (match) => {
+            return match.charAt(1);
+          }),
       );
       if (!entity) throw new Error('Không có schema này');
       const schema = {};
@@ -37,6 +41,7 @@ export class SchemaService {
             : column.type;
 
         if (type === 'uuid' || type === 'varchar') type = 'string';
+        else if (type === 'float') type = 'number';
 
         schema[column.propertyName] = {
           type,
