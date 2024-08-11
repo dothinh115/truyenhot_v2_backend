@@ -32,6 +32,7 @@ export class FileController {
   }
 
   @Get()
+  @Protected()
   find(@Query() query: TQuery) {
     return this.fileService.find(query);
   }
