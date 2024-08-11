@@ -14,10 +14,8 @@ import { CustomRequest, TQuery } from '../utils/model.util';
 import { CreateFolderDto } from '../folder/dto/create-folder.dto';
 import { UpdateFolderDto } from '../folder/dto/update-folder.dto';
 import { FolderService } from './folder.service';
-import { Excluded } from '../decorators/excluded-route.decorator';
 
 @Controller('folder')
-@Excluded()
 export class FolderController {
   constructor(private folderService: FolderService) {}
 
