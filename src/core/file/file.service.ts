@@ -80,7 +80,7 @@ export class FileService {
         deletedFile.data.folder ? deletedFile.data.folder : '',
         `${deletedFile.data.id}${deletedFile.data.extension}`,
       );
-
+      await fs.promises.access(filePath);
       await fs.promises.rm(filePath, { force: true });
 
       await queryRunner.commitTransaction();
