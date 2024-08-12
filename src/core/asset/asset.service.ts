@@ -4,16 +4,30 @@ import { Repository } from 'typeorm';
 import { TAssetsQuery } from '../utils/model.util';
 import { File } from '../file/entities/file.entity';
 import sharp from 'sharp';
-import fs from 'fs';
+import fs, { read } from 'fs';
 import path from 'path';
-import { FastifyReply } from 'fastify';
 
 @Injectable()
 export class AssetService {
   constructor(@InjectRepository(File) private fileRepo: Repository<File>) {}
 
-  async find(id: string, query: TAssetsQuery, res: FastifyReply) {
+  async find(id: string, query: TAssetsQuery) {
     try {
+      let result: {
+        headers: {
+          'content-disposition': string;
+          'content-type': string;
+          'cache-control': string;
+        };
+        send: Buffer | fs.ReadStream;
+      } = {
+        headers: {
+          'cache-control': '',
+          'content-disposition': '',
+          'content-type': '',
+        },
+        send: Buffer.alloc(0),
+      };
       // Kiểm tra xem file có trong database không
       const file = await this.fileRepo.findOne({
         where: { id },
@@ -28,7 +42,6 @@ export class AssetService {
             file.id + file.extension,
           )
         : path.join(process.cwd(), 'public', file.id + file.extension);
-
       const isFileExists = fs.existsSync(inputFilePath);
       if (!isFileExists) throw new Error('File này không tồn tại!');
 
@@ -57,28 +70,22 @@ export class AssetService {
           const originalName = path.parse(file.originalName).name;
           switch (query.format) {
             case 'webp':
-              res.type('image/webp');
-              res.header(
-                'content-disposition',
-                `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${originalName}.webp"`,
-              );
+              result.headers['content-type'] = 'image/webp';
+              result.headers['content-disposition'] =
+                `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${originalName}.webp"`;
               transform = transform.webp();
               break;
             case 'jpg':
             case 'jpeg':
-              res.type('image/jpeg');
-              res.header(
-                'content-disposition',
-                `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${originalName}.jpg"`,
-              );
+              result.headers['content-type'] = 'image/jpeg';
+              result.headers['content-disposition'] =
+                `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${originalName}.jpg"`;
               transform = transform.jpeg();
               break;
             case 'png':
-              res.type('image/png');
-              res.header(
-                'content-disposition',
-                `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${originalName}.png"`,
-              );
+              result.headers['content-type'] = 'image/png';
+              result.headers['content-disposition'] =
+                `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${originalName}.png"`;
               transform = transform.png();
               break;
             default:
@@ -86,20 +93,16 @@ export class AssetService {
           }
         } else {
           //đặt content type mặc định
-          res.type(file.mimeType);
-          res.header(
-            'content-disposition',
-            `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${file.originalName}"`,
-          );
+          result.headers['content-type'] = file.mimeType;
+          result.headers['content-disposition'] =
+            `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${file.originalName}"`;
         }
 
         if (query.cache) {
           // Kiểm tra và đảm bảo query.cache là số dương
           const maxAge = parseInt(query.cache, 10);
           if (!isNaN(maxAge) && maxAge > 0) {
-            res.headers({
-              'cache-control': `public, max-age=${maxAge}`,
-            });
+            result.headers['cache-control'] = `public, max-age=${maxAge}`;
           } else {
             throw new Error('Giá trị cache không hợp lệ');
           }
@@ -108,7 +111,7 @@ export class AssetService {
         // Xử lý lỗi của Sharp
         try {
           const buffer = await transform.toBuffer();
-          res.send(buffer);
+          result.send = buffer;
         } catch (err) {
           if (err.message.includes('Processed image is too large')) {
             throw new BadRequestException('Ảnh quá lớn.');
@@ -117,23 +120,21 @@ export class AssetService {
           }
         }
       } else {
-        res.type(file.mimeType);
+        result.headers['content-type'] = file.mimeType;
         if (query.cache) {
           const maxAge = parseInt(query.cache, 10);
           if (!isNaN(maxAge) && maxAge > 0) {
-            res.header('cache-control', `public, max-age=${maxAge}`);
+            result.headers['cache-control'] = `public, max-age=${maxAge}`;
           } else {
             throw new Error('Giá trị cache không hợp lệ');
           }
         }
 
-        const readStream = fs.createReadStream(inputFilePath);
-        res.header(
-          'content-disposition',
-          `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${file.originalName}"`,
-        );
-        res.send(readStream);
+        result.headers['content-disposition'] =
+          `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${file.originalName}"`;
+        result.send = await fs.promises.readFile(inputFilePath);
       }
+      return result;
     } catch (error) {
       throw new BadRequestException(error.message);
     }

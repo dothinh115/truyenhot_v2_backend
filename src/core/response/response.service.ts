@@ -16,7 +16,7 @@ export class ResponseService {
 
   error(
     message: string,
-    error: any,
+    error?: any,
     statusCode: number = HttpStatus.BAD_REQUEST,
   ) {
     return {
