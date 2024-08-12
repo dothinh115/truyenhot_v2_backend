@@ -40,7 +40,7 @@ export class FileUploadService {
       });
       if (hashedFile)
         throw Error(
-          `File này đã tồn tại trong hệ thống với id: ${hashedFile.id}`,
+          `${file.originalname} đã tồn tại trong hệ thống với id: ${hashedFile.id}`,
         );
     }
 
