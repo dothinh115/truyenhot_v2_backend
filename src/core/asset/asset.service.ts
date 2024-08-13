@@ -4,14 +4,15 @@ import { Repository } from 'typeorm';
 import { TAssetsQuery } from '../utils/model.util';
 import { File } from '../file/entities/file.entity';
 import sharp from 'sharp';
-import fs, { read } from 'fs';
+import fs from 'fs';
 import path from 'path';
+import { FastifyReply } from 'fastify';
 
 @Injectable()
 export class AssetService {
   constructor(@InjectRepository(File) private fileRepo: Repository<File>) {}
 
-  async find(id: string, query: TAssetsQuery) {
+  async asset(id: string, query: TAssetsQuery, res: FastifyReply) {
     try {
       let result: {
         headers: {
@@ -134,7 +135,12 @@ export class AssetService {
           `${query.type && query.type === 'download' ? 'attachment' : 'inline'}; filename="${file.originalName}"`;
         result.send = await fs.promises.readFile(inputFilePath);
       }
-      return result;
+      res.type(result.headers['content-type']);
+      res.header('content-disposition', result.headers['content-disposition']);
+      if (query.cache) {
+        res.header('cache-control', result.headers['cache-control']);
+      }
+      return res.send(Buffer.from(result.send));
     } catch (error) {
       throw new BadRequestException(error.message);
     }

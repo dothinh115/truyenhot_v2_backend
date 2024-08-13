@@ -18,10 +18,8 @@ export class AssetProcessor {
     });
 
     this.fileQueue.process(async (job) => {
-      const { id, query } = JSON.parse(job.data);
-
-      const result = await this.assetService.find(id, query);
-      return result;
+      //code logic hoặc gọi service ở đây
+      return;
     });
   }
 
