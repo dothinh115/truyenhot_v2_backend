@@ -49,7 +49,7 @@ export class FileUploadService {
 
     if (file.size > maxFileSize)
       throw new Error(
-        `Loại file ${file.mimetype} chỉ được upload tối đa ${findFileType.maxSize} Mb!`,
+        `${file.originalname} đã vượt quá ${findFileType.maxSize} Mb!`,
       );
   }
 
