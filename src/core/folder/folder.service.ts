@@ -177,9 +177,7 @@ export class FolderService {
       const folderPath = path.join(process.cwd(), '/public', folder.name);
       await fs.promises.rm(folderPath, { recursive: true });
       await queryRunner.commitTransaction();
-      return this.resopnseService.success({
-        message: 'Thành công!',
-      });
+      return this.resopnseService.success('Thành công!');
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(error.message);

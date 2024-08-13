@@ -90,9 +90,7 @@ export class FileService {
       await fs.promises.rm(filePath, { force: true });
 
       await queryRunner.commitTransaction();
-      return this.responseService.success({
-        message: 'Thành công!',
-      });
+      return this.responseService.success('Thành công!');
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(error.message);
