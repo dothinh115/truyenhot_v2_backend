@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryRunner, Repository } from 'typeorm';
 import { EFileType, FileLimit } from '../file-limit/entities/file-limit.entity';
@@ -38,10 +38,14 @@ export class FileUploadService {
           hash,
         },
       });
-      if (hashedFile)
-        throw Error(
-          `${file.originalname} đã tồn tại trong hệ thống với id: ${hashedFile.id}`,
-        );
+
+      if (hashedFile) {
+        const errorData = {
+          message: `${file.originalname} đã tồn tại trong hệ thống với id: ${hashedFile.id}`,
+          fileId: hashedFile.id,
+        };
+        throw new Error(JSON.stringify(errorData));
+      }
     }
 
     //kiểm tra file size

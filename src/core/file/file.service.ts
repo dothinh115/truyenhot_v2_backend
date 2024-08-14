@@ -45,6 +45,14 @@ export class FileService {
       return createdFile;
     } catch (error) {
       await queryRunner.rollbackTransaction();
+
+      const errorData = JSON.parse(error.message);
+      if ('fileId' in errorData) {
+        throw new BadRequestException({
+          message: errorData.message,
+          fileId: errorData.fileId,
+        });
+      }
       throw new BadRequestException(error.message);
     } finally {
       await queryRunner.release();
