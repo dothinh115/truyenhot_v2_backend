@@ -75,6 +75,35 @@ export class QueryUtilService {
     }
   }
 
+  removeDeepKey(obj: any): { deep: boolean; result: any } {
+    let deepFlag = false;
+
+    function traverse(currentObj: any): any {
+      if (typeof currentObj !== 'object' || currentObj === null) {
+        return currentObj;
+      }
+
+      if (currentObj.hasOwnProperty('deep')) {
+        deepFlag = true;
+        return traverse(currentObj.deep);
+      }
+
+      if (Array.isArray(currentObj)) {
+        return currentObj.map(traverse);
+      }
+
+      const newObj: any = {};
+      for (const key in currentObj) {
+        if (currentObj.hasOwnProperty(key)) {
+          newObj[key] = traverse(currentObj[key]);
+        }
+      }
+      return newObj;
+    }
+
+    return { deep: deepFlag, result: traverse(obj) };
+  }
+
   convertToEntity<T>(entityName: string, body: T) {
     for (const [key, value] of Object.entries(body)) {
       if (!value) continue;

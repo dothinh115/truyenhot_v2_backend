@@ -41,13 +41,25 @@ export class FilterService {
     object,
     prevAlias,
     prevProperty,
+    deep = false,
   }: {
     joinData: Set<string>;
     object: any;
     prevAlias: string;
     prevProperty: string;
+    deep?: boolean;
   }) {
     for (let [key, value] of Object.entries(object)) {
+      if (key === 'deep') {
+        return this.handleNestedFilter({
+          joinData,
+          object: value, // Bỏ qua key deep và xử lý tiếp phần bên trong
+          prevAlias,
+          prevProperty,
+          deep: true,
+        });
+      }
+
       if ((key === 'and' || key === 'or') && Array.isArray(value)) {
         object[key] = value.map((item) =>
           this.handleNestedFilter({
@@ -82,6 +94,7 @@ export class FilterService {
             object: value,
             prevAlias: `${prevAlias}_${key}`,
             prevProperty: key,
+            deep,
           });
 
           if (!object['and']) object['and'] = [];
@@ -126,6 +139,19 @@ export class FilterService {
           }
 
           let where = '';
+
+          let uniqueKeyValue: any;
+
+          if (key === '_contains' || key === '_ncontains') {
+            uniqueKeyValue = `%${value.toString()}%`;
+          } else if (key === '_in' || key === '_nin') {
+            uniqueKeyValue = value.toString().split(',');
+          } else {
+            uniqueKeyValue = value;
+          }
+          const variable = {
+            [uniqueKey]: uniqueKeyValue,
+          };
 
           //nếu có cặp many to many relation thì chỉ check exists của điều kiện
           if (manyToManyRelationPair && manyToManyRelationPair.length > 0) {
@@ -209,7 +235,13 @@ export class FilterService {
                   }
                 }
               }
-              where += `)`;
+              if (deep) {
+                where += ` GROUP BY sc."${joinTableColumn}" HAVING COUNT(DISTINCT sc."${inverseJoinTableColumn}") = ${uniqueKeyValue.length || 1}`;
+                where += ` AND COUNT(DISTINCT sc."${inverseJoinTableColumn}") = (SELECT COUNT(DISTINCT "${inverseJoinTableColumn}") FROM "${tableName}" sc2 WHERE sc2."${joinTableColumn}" = sc."${joinTableColumn}")`;
+                where += `)`;
+              } else {
+                where += `)`;
+              }
             }
           } else {
             //nếu ko có thì where như bình thường
@@ -237,19 +269,6 @@ export class FilterService {
             }
           }
 
-          let uniqueKeyValue: any;
-
-          if (key === '_contains' || key === '_ncontains') {
-            uniqueKeyValue = `%${value.toString()}%`;
-          } else if (key === '_in' || key === '_nin') {
-            uniqueKeyValue = value.toString().split(',');
-          } else {
-            uniqueKeyValue = value;
-          }
-
-          const variable = {
-            [uniqueKey]: uniqueKeyValue,
-          };
           return { where, variable };
         }
       }
@@ -274,7 +293,8 @@ export class FilterService {
       prevProperty: entityName,
     });
     const result = [];
-    this.mergeConditions(filter, result);
+    filter = this.queryUtilService.removeDeepKey(filter);
+    this.mergeConditions(filter.result, result);
     return result;
   }
 }
