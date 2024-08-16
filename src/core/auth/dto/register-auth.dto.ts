@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, MinLength } from 'class-validator';
 
 export class RegisterAuthDto {
   @Expose()
@@ -8,5 +8,6 @@ export class RegisterAuthDto {
 
   @Expose()
   @IsNotEmpty({ message: 'password không được để trống!' })
+  @MinLength(6, { message: 'password tối thiểu 6 ký tự!' })
   password: string;
 }
