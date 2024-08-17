@@ -5,5 +5,5 @@ export interface IQueue {
 
   add(data: string): Promise<BeeQueue.Job<any>>;
   complete(job: BeeQueue.Job<any>): Promise<any>;
-  process(callback: Function): any;
+  process(callback: Function);
 }

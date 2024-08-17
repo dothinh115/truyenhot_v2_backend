@@ -28,11 +28,10 @@ export class BaseQueue implements IQueue {
   }
 
   //process xử lý job
-  async process(callback: (job: BeeQueue.Job<any>) => Promise<void>) {
+  async process(callback: (job: BeeQueue.Job<any>) => Promise<any>) {
     this.queue.process(async (job) => {
       try {
         await callback(job);
-        return;
       } catch (error) {
         console.error('Lỗi khi xử lý job:', error);
         throw error; // quăng lỗi để xử lý với catch block bên ngoài

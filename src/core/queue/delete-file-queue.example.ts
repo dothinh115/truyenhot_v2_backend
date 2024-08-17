@@ -7,6 +7,9 @@ export class FileDeleteQueue extends BaseQueue {
     this.process(async (job) => {
       const { id } = job.data;
       //có id rồi sẽ gọi logic delete file ở đây, tốt nhất là viết service riêng rồi gọi
+      return {
+        id, //trả id để lấy ra kết quả trong phương thức complete bên dưới
+      };
     });
   }
 }
