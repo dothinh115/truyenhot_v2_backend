@@ -21,10 +21,10 @@ export class FileDeleteControllerExample {
     const job = await fileDeleteProcessingQueue.add(id); //truyền id vào đây để bắt lấy bên trên
     //nếu ko cần chờ thì return ngay ở đây
     /* 
-            return {
-                message: 'File cần xoá đã được đưa vào hàng chờ và sẽ dc xoá khi hệ thống sẵn sàng!'
-            }
-        */
+        return {
+            message: 'File cần xoá đã được đưa vào hàng chờ và sẽ dc xoá khi hệ thống sẵn sàng!'
+        }
+    */
 
     //nếu cần chờ cho job xong mới trả kết quả thì gọi phương thức complete
     const result = await fileDeleteProcessingQueue.complete(job);
