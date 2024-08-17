@@ -3,7 +3,7 @@ import { BaseQueue } from './base-queue';
 
 export class FileDeleteQueue extends BaseQueue {
   constructor() {
-    super('file-delete');
+    super('file-delete'); //nên tạo biến constant rồi truyên vào đây
     this.process(async (job) => {
       const { id } = job.data;
       //có id rồi sẽ gọi logic delete file ở đây, tốt nhất là viết service riêng rồi gọi
