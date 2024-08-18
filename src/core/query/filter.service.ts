@@ -225,7 +225,7 @@ export class FilterService {
                 }
               } else {
                 if (key === '_contains' || key === '_ncontains') {
-                  where += ` unaccent(c.${property}::text) ILIKE unaccent(:${uniqueKey})`;
+                  where += ` unaccent(c."${property}"::text) ILIKE unaccent(:${uniqueKey})`;
                 } else {
                   where += ` c.${property} ${compareKey[key]}`;
                   if (key === '_in' || key === '_nin') {
@@ -252,7 +252,7 @@ export class FilterService {
             if (key === '_contains' || key === '_ncontains') {
               where += `unaccent(`;
             }
-            where += `${prevAlias}.${property}`;
+            where += `"${prevAlias}"."${property}"`;
             if (key === '_contains' || key === '_ncontains') {
               where += `::text)`;
             }
