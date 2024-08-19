@@ -9,7 +9,6 @@ import { User } from '../user/entities/user.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { QueryService } from '../query/query.service';
 import { CustomRequest, TQuery } from '../utils/model.util';
-import { connection } from '../database/connection.database';
 
 @Injectable()
 export class MeService {
@@ -34,14 +33,10 @@ export class MeService {
   }
 
   async update(body: UpdateMeDto, req: CustomRequest, query: TQuery) {
-    const connection = this.entityManager.connection;
-    const queryRunner = connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    const userRepo = queryRunner.connection.getRepository(User);
+    const reqUser = req.raw.user;
+    if (!reqUser) throw new UnauthorizedException();
+
     try {
-      const reqUser = req.raw.user;
-      if (!reqUser) throw new UnauthorizedException();
       const user = await this.userRepo.findOne({
         where: {
           id: reqUser.id,
@@ -54,21 +49,21 @@ export class MeService {
         throw new Error('Chỉ được chỉnh sửa username 1 lần');
       }
 
+      for (const [key, value] of Object.entries(body)) {
+        user[key] = value;
+      }
+
+      user.isEditedUsername = true;
       const updated = await this.queryService.update({
-        repository: userRepo,
-        body,
+        repository: this.userRepo,
+        body: user,
         id: reqUser.id,
         query,
       });
-      user.isEditedUsername = true;
-      await userRepo.save(user);
-      await queryRunner.commitTransaction();
+
       return updated;
     } catch (error) {
-      await queryRunner.rollbackTransaction();
       throw new BadRequestException(error.message);
-    } finally {
-      await queryRunner.release();
     }
   }
 }

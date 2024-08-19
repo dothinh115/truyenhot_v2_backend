@@ -136,6 +136,7 @@ export class QueryService {
     for (const key of Object.keys(body)) {
       item[key] = body[key];
     }
+
     const updated = await repository.save(item);
     return await this.query({
       repository,
