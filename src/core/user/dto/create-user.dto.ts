@@ -9,8 +9,4 @@ export class CreateUserDto {
   @Expose()
   @IsNotEmpty({ message: 'Password không được để trống!' })
   password: string;
-
-  @Expose()
-  @IsOptional()
-  username: string;
 }

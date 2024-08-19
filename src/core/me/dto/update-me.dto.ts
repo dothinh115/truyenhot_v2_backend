@@ -5,8 +5,4 @@ export class UpdateMeDto {
   @Expose()
   @IsOptional()
   password: string;
-
-  @Expose()
-  @IsOptional()
-  username: string;
 }

@@ -17,4 +17,20 @@ export class CommonService {
     const regex = /^([0-9a-zA-Z-]+)(,[0-9a-zA-Z-]+)+$/;
     return regex.test(str);
   }
+
+  generateUsername(name: string) {
+    // Chuyển tên thành chữ thường, bỏ dấu và khoảng trắng
+    const str = name
+      .toLowerCase()
+      .normalize('NFD') // Chuẩn hóa Unicode
+      .replace(/[đĐ]/g, 'd')
+      .replace(/[\u0300-\u036f]/g, '') // Loại bỏ dấu
+      .replace(/\s+/g, ''); // Loại bỏ khoảng trắng
+
+    // Tạo 6 số ngẫu nhiên
+    const randomNumber = Math.floor(100000 + Math.random() * 900000);
+
+    // Ghép chuỗi không dấu với số ngẫu nhiên
+    return str + randomNumber;
+  }
 }

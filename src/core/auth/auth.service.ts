@@ -20,6 +20,7 @@ import { OAuthLoginDto } from './dto/oauth-login.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { v4 as uuidv4 } from 'uuid';
+import { CommonService } from '../common/common.service';
 
 @Injectable()
 export class AuthService {
@@ -35,6 +36,7 @@ export class AuthService {
     private configService: ConfigService,
     private httpService: HttpService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private commonService: CommonService,
   ) {}
 
   async login(body: LoginAuthDto) {
@@ -240,11 +242,31 @@ export class AuthService {
         },
       });
       if (!user) {
+        let username = this.commonService.generateUsername(
+          userInfoFromOAuth.name,
+        );
+        //tìm xem user đã tồn tại chưa
+        let isUsernameExists = await userRepo.exists({
+          where: {
+            username,
+          },
+        });
+        while (isUsernameExists) {
+          username = this.commonService.generateUsername(
+            userInfoFromOAuth.name,
+          );
+          isUsernameExists = await userRepo.exists({
+            where: {
+              username,
+            },
+          });
+        }
         const newUser = await this.queryService.create({
           repository: userRepo,
           body: {
             email: userInfoFromOAuth.email,
             password: Math.random().toString(),
+            username,
           },
           query: null,
         });
@@ -265,7 +287,7 @@ export class AuthService {
       const expiredDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
       //xoá token cũ của clientId này
-      await this.refreshTokenRepo.delete({ clientId });
+      await refreshTokenRepo.delete({ clientId });
 
       //lưu refreshToken vào db để kiểm tra lại
       const newRefreshToken = refreshTokenRepo.create({
