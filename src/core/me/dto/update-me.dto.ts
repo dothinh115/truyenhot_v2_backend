@@ -1,10 +1,12 @@
 import { Expose } from 'class-transformer';
-import { IsNotEmpty } from 'class-validator';
+import { IsOptional } from 'class-validator';
 
 export class UpdateMeDto {
   @Expose()
-  @IsNotEmpty({
-    message: 'password không được để trống!',
-  })
+  @IsOptional()
   password: string;
+
+  @Expose()
+  @IsOptional()
+  username: string;
 }

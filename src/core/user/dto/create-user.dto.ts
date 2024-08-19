@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateUserDto {
   @Expose()
@@ -9,4 +9,8 @@ export class CreateUserDto {
   @Expose()
   @IsNotEmpty({ message: 'Password không được để trống!' })
   password: string;
+
+  @Expose()
+  @IsOptional()
+  username: string;
 }
