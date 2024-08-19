@@ -13,4 +13,8 @@ export class CreateUserDto {
   @Expose()
   @IsOptional()
   username: string;
+
+  @Expose()
+  @IsOptional()
+  isEditedUsername: boolean;
 }
