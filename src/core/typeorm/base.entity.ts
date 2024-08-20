@@ -6,6 +6,7 @@ import {
 } from 'typeorm';
 import { autoSlug } from '../middlewares/auto-slug.middleware';
 import { autoHashPassword } from '../middlewares/auto-hash-password.middleware';
+import { autoTrim } from '../middlewares/auto-trim.middleware';
 
 export class BaseEntity {
   @CreateDateColumn()
@@ -24,5 +25,11 @@ export class BaseEntity {
   @BeforeUpdate()
   handleHashPassword() {
     autoHashPassword(this);
+  }
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  autoTrimProperties() {
+    autoTrim(this);
   }
 }
