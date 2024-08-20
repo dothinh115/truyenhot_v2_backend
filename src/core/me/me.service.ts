@@ -48,8 +48,12 @@ export class MeService {
       if (user.isEditedUsername && !user.rootUser) {
         throw new Error('Chỉ được chỉnh sửa username 1 lần');
       }
-
-      if ('username' in body && body.username !== user.username) {
+      console.log(body);
+      if (
+        'username' in body &&
+        body.username &&
+        body.username !== user.username
+      ) {
         const findIfUsernameExists = await this.userRepo.findOne({
           where: {
             username: body.username,
@@ -60,6 +64,7 @@ export class MeService {
           throw new Error('Username này đã được sử dụng!');
         body['isEditedUsername'] = true;
       }
+
       const updated = await this.queryService.update({
         repository: this.userRepo,
         body,
