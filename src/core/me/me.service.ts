@@ -49,7 +49,7 @@ export class MeService {
         throw new Error('Chỉ được chỉnh sửa username 1 lần');
       }
 
-      if ('username' in body) {
+      if ('username' in body && body.username !== user.username) {
         body['isEditedUsername'] = true;
       }
       console.log(body);
