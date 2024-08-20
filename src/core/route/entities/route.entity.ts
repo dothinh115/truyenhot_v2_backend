@@ -42,4 +42,7 @@ export class Route extends BaseEntity {
     name: 'route_roles_role',
   })
   roles: Role[];
+
+  @Column({ nullable: false, default: false })
+  isHidden: boolean;
 }

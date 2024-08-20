@@ -33,8 +33,12 @@ export class InitService implements OnModuleInit {
   }
 
   private async createRoutes() {
-    let routes: { path: string; method: MethodType; isProtected: boolean }[] =
-      [];
+    let routes: {
+      path: string;
+      method: MethodType;
+      isProtected: boolean;
+      isHidden: boolean;
+    }[] = [];
     const controllers = this.discoveryService.getControllers();
 
     for (const controller of controllers) {
@@ -56,6 +60,10 @@ export class InitService implements OnModuleInit {
         if (isExcluded) continue;
         methods.forEach((methodName) => {
           const methodHandler = instance[methodName];
+          const isExcluded = this.reflector.get<boolean>(
+            EXCLUDED_ROUTE_KEY,
+            methodHandler,
+          );
 
           const methodPath = this.reflector.get<string>(
             PATH_METADATA,
@@ -78,6 +86,7 @@ export class InitService implements OnModuleInit {
               path: `${controllerPath === '/' ? '' : `/${controllerPath}`}${methodPath === '/' ? '' : `/${methodPath}`}`,
               method,
               isProtected: isProtected ? true : false,
+              isHidden: isExcluded ? true : false,
             });
           }
         });
