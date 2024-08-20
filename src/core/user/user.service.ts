@@ -41,7 +41,24 @@ export class UserService {
 
   async update(id: string, body: UpdateUserDto, query: TQuery) {
     try {
-      return this.queryService.update({
+      const user = await this.userRepo.findOne({
+        where: {
+          id,
+        },
+      });
+      if (!user) throw new Error('Không có user này!');
+
+      if ('username' in body && body.username !== user.username) {
+        const findIfUsernameExists = await this.userRepo.findOne({
+          where: {
+            username: body.username,
+          },
+        });
+        if (findIfUsernameExists)
+          throw new Error('Username này đã được sử dụng!');
+        body['isEditedUsername'] = true;
+      }
+      return await this.queryService.update({
         repository: this.userRepo,
         body,
         query,

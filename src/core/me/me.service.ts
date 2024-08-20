@@ -6,7 +6,7 @@ import {
 import { UpdateMeDto } from './dto/update-me.dto';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Not, Repository } from 'typeorm';
 import { QueryService } from '../query/query.service';
 import { CustomRequest, TQuery } from '../utils/model.util';
 
@@ -33,7 +33,7 @@ export class MeService {
   }
 
   async update(body: UpdateMeDto, req: CustomRequest, query: TQuery) {
-    const reqUser = req.raw.user;
+    const { user: reqUser } = req.raw;
     if (!reqUser) throw new UnauthorizedException();
 
     try {
@@ -50,9 +50,16 @@ export class MeService {
       }
 
       if ('username' in body && body.username !== user.username) {
+        const findIfUsernameExists = await this.userRepo.findOne({
+          where: {
+            username: body.username,
+            id: Not(reqUser.id),
+          },
+        });
+        if (findIfUsernameExists)
+          throw new Error('Username này đã được sử dụng!');
         body['isEditedUsername'] = true;
       }
-      console.log(body);
       const updated = await this.queryService.update({
         repository: this.userRepo,
         body,
