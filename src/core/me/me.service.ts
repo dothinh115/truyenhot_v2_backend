@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { UpdateMeDto } from './dto/update-me.dto';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
 import { EntityManager, Not, Repository } from 'typeorm';
 import { QueryService } from '../query/query.service';
@@ -14,7 +14,6 @@ import { CustomRequest, TQuery } from '../utils/model.util';
 export class MeService {
   constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
-    @InjectEntityManager() private entityManager: EntityManager,
     private queryService: QueryService,
   ) {}
 
