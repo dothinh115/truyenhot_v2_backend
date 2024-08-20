@@ -56,7 +56,6 @@ export class UserService {
         });
         if (findIfUsernameExists)
           throw new Error('Username này đã được sử dụng!');
-        body['isEditedUsername'] = true;
       }
       return await this.queryService.update({
         repository: this.userRepo,
