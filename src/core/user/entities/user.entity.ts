@@ -25,6 +25,7 @@ export class User extends BaseEntity {
   rootUser: boolean;
 
   @Column({ nullable: false, default: false })
+  @Disabled()
   isEditedUsername: boolean;
 
   @ManyToOne(() => Role, (role) => role.id, { eager: true })

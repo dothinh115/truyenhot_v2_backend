@@ -49,14 +49,13 @@ export class MeService {
         throw new Error('Chỉ được chỉnh sửa username 1 lần');
       }
 
-      for (const [key, value] of Object.entries(body)) {
-        user[key] = value;
+      if ('username' in body) {
+        body['isEditedUsername'] = true;
       }
-
-      user.isEditedUsername = true;
+      console.log(body);
       const updated = await this.queryService.update({
         repository: this.userRepo,
-        body: user,
+        body,
         id: reqUser.id,
         query,
       });
