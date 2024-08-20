@@ -9,4 +9,8 @@ export class UpdateRouteDto {
   @Expose()
   @IsOptional()
   isHidden: boolean;
+
+  @Expose()
+  @IsOptional()
+  isProtected: boolean;
 }

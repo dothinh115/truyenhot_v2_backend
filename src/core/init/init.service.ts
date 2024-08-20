@@ -101,10 +101,7 @@ export class InitService implements OnModuleInit {
           method: route.method,
         },
       });
-      if (isExists) {
-        isExists.isProtected = route.isProtected;
-        createdRoute.push(isExists);
-      } else {
+      if (!isExists) {
         const newRoute = this.routeRepo.create(route);
         createdRoute.push(newRoute);
       }
