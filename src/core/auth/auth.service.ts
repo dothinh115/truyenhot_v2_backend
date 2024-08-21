@@ -65,7 +65,7 @@ export class AuthService {
 
       const accessToken = this.jwtService.sign(
         { id: user.id },
-        { expiresIn: '15m' },
+        { expiresIn: '5s' },
       );
 
       const refreshToken = this.jwtService.sign(
@@ -136,7 +136,6 @@ export class AuthService {
         { id: decoded.id },
         { expiresIn: '15m' },
       );
-
       return this.responseService.success({
         accessToken,
       });
