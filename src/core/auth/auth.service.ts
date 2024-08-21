@@ -65,7 +65,7 @@ export class AuthService {
 
       const accessToken = this.jwtService.sign(
         { id: user.id },
-        { expiresIn: '15m' },
+        { expiresIn: '1m' },
       );
 
       const refreshToken = this.jwtService.sign(
@@ -136,22 +136,9 @@ export class AuthService {
         { id: decoded.id },
         { expiresIn: '15m' },
       );
-      const newRefreshToken = this.jwtService.sign(
-        { id: decoded.id },
-        { expiresIn: '7d' },
-      );
-
-      const expiredDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-
-      //sau khi tạo ra refreshToken mới thì update lại
-      refToken.refreshToken = newRefreshToken;
-      refToken.expiredDate = expiredDate;
-      refToken.refreshCount++;
-      await this.refreshTokenRepo.save(refToken);
 
       return this.responseService.success({
         accessToken,
-        refreshToken: newRefreshToken,
       });
     } catch (error) {
       //Xử lý khi token hết hạn
@@ -162,8 +149,6 @@ export class AuthService {
         });
         throw new BadRequestException('Token đã hết hạn!');
       }
-      console.log('error', error.mesage);
-      console.log('lỗi khác');
       throw new BadRequestException(error.message);
     }
   }

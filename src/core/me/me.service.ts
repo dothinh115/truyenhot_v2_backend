@@ -6,7 +6,7 @@ import {
 import { UpdateMeDto } from './dto/update-me.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
-import { EntityManager, Not, Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { QueryService } from '../query/query.service';
 import { CustomRequest, TQuery } from '../utils/model.util';
 
