@@ -63,11 +63,6 @@ export class AuthService {
 
       if (!passwordCheck) throw new Error('Email hoặc mật khẩu không đúng!');
 
-      const accessToken = this.jwtService.sign(
-        { id: user.id },
-        { expiresIn: '15m' },
-      );
-
       const refreshToken = this.jwtService.sign(
         { id: user.id },
         { expiresIn: '7d' },
@@ -87,7 +82,6 @@ export class AuthService {
       await refreshTokenRepo.save(newRefreshToken);
       await queryRunner.commitTransaction();
       return this.responseService.success({
-        accessToken,
         refreshToken,
       });
     } catch (error) {
