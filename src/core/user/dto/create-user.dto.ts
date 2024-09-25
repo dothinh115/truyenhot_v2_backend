@@ -17,4 +17,8 @@ export class CreateUserDto {
   @Expose()
   @IsOptional()
   isEditedUsername: boolean;
+
+  @Expose()
+  @IsOptional()
+  role: number;
 }
