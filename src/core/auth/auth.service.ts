@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, LessThan, Repository } from 'typeorm';
 import { BcryptService } from '../common/bcrypt.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginAuthDto } from './dto/login-auth.dto';
@@ -21,6 +21,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { v4 as uuidv4 } from 'uuid';
 import { CommonService } from '../common/common.service';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class AuthService {
@@ -136,6 +137,8 @@ export class AuthService {
         { id: decoded.id },
         { expiresIn: '15m' },
       );
+      refToken.refreshCount++;
+      await this.refreshTokenRepo.save(refToken);
       return this.responseService.success({
         accessToken,
       });
@@ -279,6 +282,7 @@ export class AuthService {
         refreshToken,
         expiredDate,
       });
+
       await refreshTokenRepo.save(newRefreshToken);
       await queryRunner.commitTransaction();
       //sau khi có dc tất cả session thì tiến hành tạo 1 id để trả về cho FE, đồng thời cache lại kết quả để truy xuất nhanh
@@ -316,5 +320,38 @@ export class AuthService {
     //xoá trong cache để free bộ nhớ và huỷ dữ liệu về token
     await this.cacheManager.del(tokenId);
     return this.responseService.success(data);
+  }
+
+  @Cron('0 0 * * *') // Mỗi ngày lúc 00:00
+  async clearExpiredToken() {
+    const perPage = 50;
+    const totalTokens = await this.refreshTokenRepo.count();
+    const totalPages = Math.ceil(totalTokens / perPage);
+    let removeTokens: number[] = [];
+    for (let page = 1; page <= totalPages; page++) {
+      //chạy qua từng trang
+      const expiredTokenPerPage = await this.refreshTokenRepo.find({
+        take: perPage,
+        skip: (page - 1) * perPage,
+        where: {
+          expiredDate: LessThan(new Date()),
+        },
+      });
+      if (expiredTokenPerPage.length > 0) {
+        removeTokens = [
+          ...removeTokens,
+          ...expiredTokenPerPage.map((token) => token.id),
+        ];
+      }
+    }
+    if (removeTokens.length > 0) {
+      await this.refreshTokenRepo.delete(removeTokens);
+    }
+    console.log('Expired tokens cleared');
+  }
+
+  async onModuleInit() {
+    //clear khi chạy lần đầu
+    await this.clearExpiredToken();
   }
 }

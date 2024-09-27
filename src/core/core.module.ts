@@ -23,6 +23,7 @@ import { HttpModule } from '@nestjs/axios';
 import { AutoJwtExtractMiddleware } from './middlewares/auto-jwt-extract.midleware';
 import { AssetModule } from './asset/asset.module';
 import { FileLimitModule } from './file-limit/file-limit.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Global()
 @Module({
@@ -44,6 +45,7 @@ import { FileLimitModule } from './file-limit/file-limit.module';
     AuthModule,
     MeModule,
     FileUploadModule,
+    ScheduleModule.forRoot(),
     AssetModule,
     CacheModule.registerAsync({
       useFactory: async () => ({
