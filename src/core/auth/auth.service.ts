@@ -99,7 +99,7 @@ export class AuthService {
       const decoded = await this.jwtService.verifyAsync(refreshToken);
       const accessToken = this.jwtService.sign(
         { id: decoded.id },
-        { expiresIn: '5s' },
+        { expiresIn: '15m' },
       );
       return this.responseService.success({
         accessToken,
