@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
-import { EntityManager, LessThan, Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { BcryptService } from '../common/bcrypt.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginAuthDto } from './dto/login-auth.dto';
@@ -9,8 +9,6 @@ import { RegisterAuthDto } from './dto/register-auth.dto';
 import { QueryService } from '../query/query.service';
 import { TQuery } from '../utils/model.util';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { RefreshToken } from './entities/refresh-token.entity';
-import { LogoutAuthDto } from './dto/logout-auth.dto';
 import { ResponseService } from '../response/response.service';
 import { ConfigService } from '@nestjs/config';
 import settings from '../configs/settings.json';
@@ -30,9 +28,8 @@ export class AuthService {
     private bcryptService: BcryptService,
     private jwtService: JwtService,
     private queryService: QueryService,
-    @InjectRepository(RefreshToken)
-    private refreshTokenRepo: Repository<RefreshToken>,
-    @InjectEntityManager() private entityManager: EntityManager,
+    @InjectEntityManager()
+    private entityManager: EntityManager,
     private responseService: ResponseService,
     private configService: ConfigService,
     private httpService: HttpService,
@@ -41,13 +38,8 @@ export class AuthService {
   ) {}
 
   async login(body: LoginAuthDto) {
-    const connection = this.entityManager.connection;
-    const queryRunner = connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    const refreshTokenRepo = queryRunner.manager.getRepository(RefreshToken);
     try {
-      const { email, password, clientId } = body;
+      const { email, password } = body;
       const user = await this.userRepo.findOne({
         where: {
           email: email.toLowerCase(),
@@ -74,28 +66,12 @@ export class AuthService {
         { expiresIn: '7d' },
       );
 
-      const expiredDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-
-      //xoá token cũ của clientId này
-      await refreshTokenRepo.delete({ clientId });
-
-      //lưu refreshToken vào db để kiểm tra lại
-      const newRefreshToken = refreshTokenRepo.create({
-        clientId,
-        refreshToken,
-        expiredDate,
-      });
-      await refreshTokenRepo.save(newRefreshToken);
-      await queryRunner.commitTransaction();
       return this.responseService.success({
         accessToken,
         refreshToken,
       });
     } catch (error) {
-      await queryRunner.rollbackTransaction();
       throw new BadRequestException(error.message);
-    } finally {
-      await queryRunner.release();
     }
   }
 
@@ -119,55 +95,21 @@ export class AuthService {
 
   async refreshToken(body: RefreshTokenDto) {
     try {
-      const { clientId, refreshToken } = body;
+      const { refreshToken } = body;
       const decoded = await this.jwtService.verifyAsync(refreshToken);
-      //kiểm tra refreshToken và clientId có hợp lệ
-      const refToken = await this.refreshTokenRepo.findOne({
-        where: {
-          refreshToken,
-        },
-      });
-      //nếu ko có thì quăng lỗi
-      if (!refToken) throw new Error('Không có token trong hệ thống');
-      //nếu có thì so sánh tiếp với clientId
-      if (refToken.clientId !== clientId)
-        throw new Error('ClientId không hợp lệ!');
-
       const accessToken = this.jwtService.sign(
         { id: decoded.id },
-        { expiresIn: '15m' },
+        { expiresIn: '5s' },
       );
-      refToken.refreshCount++;
-      await this.refreshTokenRepo.save(refToken);
       return this.responseService.success({
         accessToken,
       });
     } catch (error) {
+      console.log(error);
       //Xử lý khi token hết hạn
       if (error.name === 'TokenExpiredError') {
-        console.log('token hết hạn');
-        await this.refreshTokenRepo.delete({
-          refreshToken: body.refreshToken,
-        });
         throw new BadRequestException('Token đã hết hạn!');
       }
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  async logout(body: LogoutAuthDto) {
-    try {
-      const { refreshToken } = body;
-      const refToken = await this.refreshTokenRepo.findOne({
-        where: {
-          refreshToken,
-        },
-      });
-      if (!refToken) throw new Error('Token không hợp lệ!');
-      await this.refreshTokenRepo.delete({ refreshToken });
-
-      return this.responseService.success({ message: 'Logout thành công!' });
-    } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
@@ -188,9 +130,8 @@ export class AuthService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     const userRepo = queryRunner.manager.getRepository(User);
-    const refreshTokenRepo = queryRunner.manager.getRepository(RefreshToken);
     const body = JSON.parse(state);
-    const { clientId, redirectTo } = body;
+    const { redirectTo } = body;
 
     try {
       const callBackUri = `${settings.API_URL}/auth/google/callback`;
@@ -271,19 +212,6 @@ export class AuthService {
         { expiresIn: '7d' },
       );
 
-      const expiredDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-
-      //xoá token cũ của clientId này
-      await refreshTokenRepo.delete({ clientId });
-
-      //lưu refreshToken vào db để kiểm tra lại
-      const newRefreshToken = refreshTokenRepo.create({
-        clientId,
-        refreshToken,
-        expiredDate,
-      });
-
-      await refreshTokenRepo.save(newRefreshToken);
       await queryRunner.commitTransaction();
       //sau khi có dc tất cả session thì tiến hành tạo 1 id để trả về cho FE, đồng thời cache lại kết quả để truy xuất nhanh
       const tokenId = uuidv4();
@@ -320,38 +248,5 @@ export class AuthService {
     //xoá trong cache để free bộ nhớ và huỷ dữ liệu về token
     await this.cacheManager.del(tokenId);
     return this.responseService.success(data);
-  }
-
-  @Cron('0 0 * * *') // Mỗi ngày lúc 00:00
-  async clearExpiredToken() {
-    const perPage = 50;
-    const totalTokens = await this.refreshTokenRepo.count();
-    const totalPages = Math.ceil(totalTokens / perPage);
-    let removeTokens: number[] = [];
-    for (let page = 1; page <= totalPages; page++) {
-      //chạy qua từng trang
-      const expiredTokenPerPage = await this.refreshTokenRepo.find({
-        take: perPage,
-        skip: (page - 1) * perPage,
-        where: {
-          expiredDate: LessThan(new Date()),
-        },
-      });
-      if (expiredTokenPerPage.length > 0) {
-        removeTokens = [
-          ...removeTokens,
-          ...expiredTokenPerPage.map((token) => token.id),
-        ];
-      }
-    }
-    if (removeTokens.length > 0) {
-      await this.refreshTokenRepo.delete(removeTokens);
-    }
-    console.log('Expired tokens cleared');
-  }
-
-  async onModuleInit() {
-    //clear khi chạy lần đầu
-    await this.clearExpiredToken();
   }
 }

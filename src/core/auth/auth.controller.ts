@@ -4,7 +4,6 @@ import { RegisterAuthDto } from './dto/register-auth.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { TQuery } from '../utils/model.util';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { LogoutAuthDto } from './dto/logout-auth.dto';
 import { FastifyReply } from 'fastify';
 import { OAuthLoginDto } from './dto/oauth-login.dto';
 import { Excluded } from '../decorators/excluded-route.decorator';
@@ -27,11 +26,6 @@ export class AuthController {
   @Post('refresh-token')
   refreshToken(@Body() body: RefreshTokenDto) {
     return this.authService.refreshToken(body);
-  }
-
-  @Post('logout')
-  logout(@Body() body: LogoutAuthDto) {
-    return this.authService.logout(body);
   }
 
   @Post('auth/google/url')
