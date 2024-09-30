@@ -17,7 +17,6 @@ export class AuthController {
   login(@Body() body: LoginAuthDto) {
     return this.authService.login(body);
   }
-
   @Post('register')
   register(@Body() body: RegisterAuthDto, @Query() query: TQuery) {
     return this.authService.register(body, query);
