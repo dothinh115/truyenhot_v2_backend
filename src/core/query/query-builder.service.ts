@@ -27,9 +27,9 @@ export class QueryBuilderService {
     this.queryBuilder = null;
     this.entityName = null;
     this.joinData = new Set<string>();
-    this.metaData = [];
+    this.metaData.length = 0;
     this.isFiltering = false;
-    this.fieldDataArr = [];
+    this.fieldDataArr.length = 0;
     this.clonedQueryBuilder = null;
   }
 
