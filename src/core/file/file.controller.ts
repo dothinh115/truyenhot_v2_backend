@@ -17,11 +17,11 @@ import { CustomRequest, TQuery } from '../utils/model.util';
 import { Excluded } from '../decorators/excluded-route.decorator';
 
 @Controller('file')
+@Protected()
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
   @Post()
-  @Protected()
   @UseInterceptors(FileFastifyInterceptor('file'))
   create(
     @UploadedFile() file: Express.Multer.File,
@@ -33,14 +33,12 @@ export class FileController {
   }
 
   @Get()
-  @Protected()
   @Excluded()
   find(@Query() query: TQuery) {
     return this.fileService.find(query);
   }
 
   @Delete(':id')
-  @Protected()
   remove(@Param('id') id: string) {
     return this.fileService.remove(id);
   }

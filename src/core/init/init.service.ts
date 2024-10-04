@@ -58,6 +58,12 @@ export class InitService implements OnModuleInit {
           instance.constructor,
         );
         if (isExcluded) continue;
+
+        const isProtected = this.reflector.get<boolean>(
+          PROTECTED_ROUTE_KEY,
+          instance.constructor,
+        );
+
         methods.forEach((methodName) => {
           const methodHandler = instance[methodName];
           const isExcluded = this.reflector.get<boolean>(
@@ -75,17 +81,16 @@ export class InitService implements OnModuleInit {
             methodHandler,
           );
 
-          const isProtected = this.reflector.get<boolean>(
-            PROTECTED_ROUTE_KEY,
-            methodHandler,
-          );
+          const isMethodProtected =
+            isProtected ??
+            this.reflector.get<boolean>(PROTECTED_ROUTE_KEY, methodHandler);
 
           const method = RequestMethod[requestMethod] as MethodType;
           if (method) {
             routes.push({
               path: `${controllerPath === '/' ? '' : `/${controllerPath}`}${methodPath === '/' ? '' : `/${methodPath}`}`,
               method,
-              isProtected: isProtected ? true : false,
+              isProtected: isMethodProtected,
               isHidden: isExcluded ? true : false,
             });
           }

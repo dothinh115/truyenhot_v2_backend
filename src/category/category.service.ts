@@ -19,6 +19,7 @@ export class CategoryService extends BaseApiService<
   ) {
     super(categoryRepo, queryService);
   }
+
   async create(body: CreateCategoryDto, query: TQuery) {
     try {
       return await this.queryService.create({
