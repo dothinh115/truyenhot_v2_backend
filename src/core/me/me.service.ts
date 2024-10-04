@@ -1,14 +1,10 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UpdateMeDto } from './dto/update-me.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
 import { Not, Repository } from 'typeorm';
 import { QueryService } from '../query/query.service';
-import { CustomRequest, TQuery } from '../utils/model.util';
+import { TQuery } from '../utils/model.util';
 
 @Injectable()
 export class MeService {
@@ -17,24 +13,19 @@ export class MeService {
     private queryService: QueryService,
   ) {}
 
-  async find(query: TQuery, req: CustomRequest) {
+  async find(query: TQuery, user: User) {
     try {
-      const reqUser = req.raw.user;
-      if (!reqUser) throw new UnauthorizedException();
       return await this.queryService.query({
         repository: this.userRepo,
         query,
-        id: reqUser.id,
+        id: user.id,
       });
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
-  async update(body: UpdateMeDto, req: CustomRequest, query: TQuery) {
-    const { user: reqUser } = req.raw;
-    if (!reqUser) throw new UnauthorizedException();
-
+  async update(body: UpdateMeDto, reqUser: User, query: TQuery) {
     try {
       const user = await this.userRepo.findOne({
         where: {
@@ -47,7 +38,6 @@ export class MeService {
       if (user.isEditedUsername && !user.rootUser) {
         throw new Error('Chỉ được chỉnh sửa username 1 lần');
       }
-      console.log(body);
       if (
         'username' in body &&
         body.username &&

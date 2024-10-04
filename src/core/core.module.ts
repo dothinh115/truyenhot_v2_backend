@@ -24,6 +24,9 @@ import { AutoJwtExtractMiddleware } from './middlewares/auto-jwt-extract.midlewa
 import { AssetModule } from './asset/asset.module';
 import { FileLimitModule } from './file-limit/file-limit.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { PassportModule } from '@nestjs/passport';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { JwtStrategy } from 'src/strategies/jwt.strategy';
 
 @Global()
 @Module({
@@ -31,6 +34,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    PassportModule,
     DatabaseModule,
     UserModule,
     SchemaModule,
@@ -62,13 +66,18 @@ import { ScheduleModule } from '@nestjs/schedule';
     InitService,
     {
       provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
       useClass: RoleGuard,
     },
+    JwtStrategy,
   ],
   exports: [CacheModule, HttpModule],
 })
 export class CoreModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AutoJwtExtractMiddleware).forRoutes('*');
-  }
+  // configure(consumer: MiddlewareConsumer) {
+  //   consumer.apply(AutoJwtExtractMiddleware).forRoutes('*');
+  // }
 }

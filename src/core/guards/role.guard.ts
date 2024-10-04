@@ -10,7 +10,7 @@ import { MethodType, Route } from '../route/entities/route.entity';
 import { Repository } from 'typeorm';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { CustomRequest, ExtendedIncomingMessage } from '../utils/model.util';
+import { ExtendedIncomingMessage } from '../utils/model.util';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -20,12 +20,10 @@ export class RoleGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const req: CustomRequest = context.switchToHttp().getRequest();
+    const req: ExtendedIncomingMessage = context.switchToHttp().getRequest();
     //check xem route đang được truy cập có được phân quyền hay ko
-    const { raw }: { raw: ExtendedIncomingMessage } = req;
     //đối với fastify, req.raw tham chiếu trực tiếp đến InComingMessage, nên gán cho req chính là gán cho raw
-    const { url, method } = req.routeOptions.config;
-    const { user } = raw;
+    const { url, method, user } = req;
     const routeCacheKey = `route:${url}:${method}`;
     let currentRoute: Route = await this.cacheManager.get<Route>(routeCacheKey);
     if (!currentRoute) {

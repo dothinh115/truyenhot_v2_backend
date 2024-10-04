@@ -1,16 +1,10 @@
-import {
-  Controller,
-  Get,
-  Body,
-  Patch,
-  Param,
-  Query,
-  Req,
-} from '@nestjs/common';
+import { Controller, Get, Body, Patch, Query } from '@nestjs/common';
 import { MeService } from './me.service';
 import { UpdateMeDto } from './dto/update-me.dto';
-import { CustomRequest, TQuery } from '../utils/model.util';
+import { TQuery } from '../utils/model.util';
 import { Excluded } from '../decorators/excluded-route.decorator';
+import { User } from '../decorators/user.decorator';
+import { User as ReqUser } from '../user/entities/user.entity';
 
 @Controller('me')
 @Excluded()
@@ -18,16 +12,16 @@ export class MeController {
   constructor(private readonly meService: MeService) {}
 
   @Get()
-  findAll(@Query() query: TQuery, @Req() req: CustomRequest) {
-    return this.meService.find(query, req);
+  findAll(@Query() query: TQuery, @User() user: ReqUser) {
+    return this.meService.find(query, user);
   }
 
   @Patch()
   update(
     @Body() body: UpdateMeDto,
-    @Req() req: CustomRequest,
+    @User() user: ReqUser,
     @Query() query: TQuery,
   ) {
-    return this.meService.update(body, req, query);
+    return this.meService.update(body, user, query);
   }
 }
