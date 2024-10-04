@@ -6,13 +6,19 @@ import { Story } from './entities/story.entity';
 import { Repository } from 'typeorm';
 import { TQuery } from 'src/core/utils/model.util';
 import { QueryService } from 'src/core/query/query.service';
+import { BaseApiService } from 'src/core/services/crud.base';
 
 @Injectable()
-export class StoryService {
+export class StoryService extends BaseApiService<
+  CreateStoryDto,
+  UpdateStoryDto
+> {
   constructor(
     @InjectRepository(Story) private storyRepo: Repository<Story>,
-    private queryService: QueryService,
-  ) {}
+    protected queryService: QueryService,
+  ) {
+    super(storyRepo, queryService);
+  }
   async create(body: CreateStoryDto, query: TQuery) {
     try {
       return await this.queryService.create({
@@ -23,41 +29,6 @@ export class StoryService {
           title: body.title,
           author: body.author,
         },
-      });
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  async find(query: TQuery) {
-    try {
-      return await this.queryService.query({
-        repository: this.storyRepo,
-        query,
-      });
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  async update(id: number, body: UpdateStoryDto, query: TQuery) {
-    try {
-      return await this.queryService.update({
-        repository: this.storyRepo,
-        body,
-        query,
-        id,
-      });
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  async remove(id: number) {
-    try {
-      return await this.queryService.delete({
-        id,
-        repository: this.storyRepo,
       });
     } catch (error) {
       throw new BadRequestException(error.message);

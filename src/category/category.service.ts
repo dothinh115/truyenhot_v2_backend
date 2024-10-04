@@ -6,13 +6,19 @@ import { Category } from './entities/category.entity';
 import { Repository } from 'typeorm';
 import { TQuery } from 'src/core/utils/model.util';
 import { QueryService } from 'src/core/query/query.service';
+import { BaseApiService } from 'src/core/services/crud.base';
 
 @Injectable()
-export class CategoryService {
+export class CategoryService extends BaseApiService<
+  CreateCategoryDto,
+  UpdateCategoryDto
+> {
   constructor(
     @InjectRepository(Category) private categoryRepo: Repository<Category>,
-    private queryService: QueryService,
-  ) {}
+    protected queryService: QueryService,
+  ) {
+    super(categoryRepo, queryService);
+  }
   async create(body: CreateCategoryDto, query: TQuery) {
     try {
       return await this.queryService.create({
@@ -22,41 +28,6 @@ export class CategoryService {
         checkIsExists: {
           title: body.title,
         },
-      });
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  async find(query: TQuery) {
-    try {
-      return this.queryService.query({
-        repository: this.categoryRepo,
-        query,
-      });
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  async update(id: number, body: UpdateCategoryDto, query: TQuery) {
-    try {
-      return await this.queryService.update({
-        repository: this.categoryRepo,
-        body,
-        id,
-        query,
-      });
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  async remove(id: number) {
-    try {
-      return await this.queryService.delete({
-        repository: this.categoryRepo,
-        id,
       });
     } catch (error) {
       throw new BadRequestException(error.message);

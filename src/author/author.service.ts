@@ -6,13 +6,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { QueryService } from 'src/core/query/query.service';
 import { TQuery } from 'src/core/utils/model.util';
+import { BaseApiService } from 'src/core/services/crud.base';
 
 @Injectable()
-export class AuthorService {
+export class AuthorService extends BaseApiService<
+  CreateAuthorDto,
+  UpdateAuthorDto
+> {
   constructor(
     @InjectRepository(Author) private authorRepo: Repository<Author>,
-    private queryService: QueryService,
-  ) {}
+    protected queryService: QueryService,
+  ) {
+    super(authorRepo, queryService);
+  }
   async create(body: CreateAuthorDto, query: TQuery) {
     try {
       return await this.queryService.create({
@@ -22,41 +28,6 @@ export class AuthorService {
         checkIsExists: {
           name: body.name,
         },
-      });
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  async find(query: TQuery) {
-    try {
-      return await this.queryService.query({
-        repository: this.authorRepo,
-        query,
-      });
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  async update(id: number, body: UpdateAuthorDto, query: TQuery) {
-    try {
-      return await this.queryService.update({
-        repository: this.authorRepo,
-        body,
-        id,
-        query,
-      });
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  async remove(id: number) {
-    try {
-      return this.queryService.delete({
-        repository: this.authorRepo,
-        id,
       });
     } catch (error) {
       throw new BadRequestException(error.message);
