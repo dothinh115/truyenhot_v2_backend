@@ -15,6 +15,7 @@ export class QueryBuilderService {
   isFiltering: boolean = false;
   fieldDataArr: string[] = [];
   clonedQueryBuilder: SelectQueryBuilder<any>;
+
   constructor(
     private fieldService: FieldService,
     private filterService: FilterService,
@@ -34,7 +35,7 @@ export class QueryBuilderService {
   }
 
   create(repository: Repository<any>) {
-    this.reset();
+    // this.reset();
     this.entityName = repository.metadata.name.toLowerCase();
     this.queryBuilder = repository.createQueryBuilder(this.entityName);
     this.clonedQueryBuilder = this.queryBuilder.clone();
@@ -103,7 +104,7 @@ export class QueryBuilderService {
   }
 
   meta(meta: string[]) {
-    if (!meta) return this;
+    if (!meta || meta.length === 0) return this;
     this.metaData = this.metaService.handleMeta(meta);
     return this;
   }

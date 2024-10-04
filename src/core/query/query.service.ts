@@ -6,6 +6,10 @@ import { QueryUtilService } from './query-util.service';
 import { OrmService } from './orm.service';
 import * as qs from 'qs';
 import { ResponseService } from '../response/response.service';
+import { FieldService } from './field.service';
+import { FilterService } from './filter.service';
+import { SortService } from './sort.service';
+import { MetaService } from './meta.service';
 
 @Injectable()
 export class QueryService {
@@ -14,6 +18,10 @@ export class QueryService {
     private queryUtilService: QueryUtilService,
     private ormService: OrmService,
     private responseService: ResponseService,
+    private fieldService: FieldService,
+    private filterService: FilterService,
+    private sortService: SortService,
+    private metaService: MetaService,
   ) {}
 
   public async query({
@@ -47,7 +55,14 @@ export class QueryService {
     }
 
     try {
-      const queryBuilder = this.queryBuilderService.create(repository);
+      const queryBuilder = new QueryBuilderService(
+        this.fieldService,
+        this.filterService,
+        this.sortService,
+        this.metaService,
+        this.queryUtilService,
+      );
+      queryBuilder.create(repository);
       const result = await queryBuilder
         .field(fields)
         .filter(filter)
