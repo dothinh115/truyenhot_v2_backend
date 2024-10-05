@@ -2,6 +2,7 @@ import {
   BeforeInsert,
   BeforeUpdate,
   CreateDateColumn,
+  Index,
   UpdateDateColumn,
 } from 'typeorm';
 import { autoSlug } from '../middlewares/auto-slug.middleware';
@@ -9,9 +10,11 @@ import { autoHashPassword } from '../middlewares/auto-hash-password.middleware';
 import { autoTrim } from '../middlewares/auto-trim.middleware';
 
 export class BaseEntity {
+  @Index()
   @CreateDateColumn()
   createdAt: Date;
 
+  @Index()
   @UpdateDateColumn()
   updatedAt: Date;
 
