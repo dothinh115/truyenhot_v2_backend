@@ -13,8 +13,11 @@ export class AppInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((res) => {
-        if (!query.full?.includeds('*')) {
-          res.data = truncateLongStrings(res.data.data, fullArr, 200);
+        console.log(query.full);
+        if (!res.data.data || !Array.isArray(res.data.data)) return res;
+        const shouldNotTruncate = query.full?.includes('*');
+        if (!shouldNotTruncate) {
+          res.data = truncateLongStrings(res?.data?.data, fullArr, 200);
         }
         return res;
       }),
@@ -27,7 +30,7 @@ function truncateLongStrings(
   excludedFields: string[] = [],
   maxLength: number = 200,
 ): any[] {
-  return dataArray.map((item) => {
+  return dataArray?.map((item) => {
     if (typeof item === 'object' && item !== null) {
       const result: any = {};
       for (const key in item) {
