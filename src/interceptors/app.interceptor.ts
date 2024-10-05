@@ -13,7 +13,7 @@ export class AppInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map(async (res) => {
-        if (!res.data.data || !Array.isArray(res.data.data)) return res;
+        if (!res || !res.data.data || !Array.isArray(res.data.data)) return res;
         const shouldNotTruncate = query.full?.includes('*');
         if (!shouldNotTruncate) {
           res.data.data = await truncateLongStrings(
