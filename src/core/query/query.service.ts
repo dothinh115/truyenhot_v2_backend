@@ -14,7 +14,6 @@ import { MetaService } from './meta.service';
 @Injectable()
 export class QueryService {
   constructor(
-    private queryBuilderService: QueryBuilderService,
     private queryUtilService: QueryUtilService,
     private ormService: OrmService,
     private responseService: ResponseService,

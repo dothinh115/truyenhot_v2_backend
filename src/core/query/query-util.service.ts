@@ -44,7 +44,7 @@ export class QueryUtilService {
     else if (ifFalse) joinData.add(JSON.stringify(ifFalse));
   }
 
-  handleMapResult(object: any) {
+  async handleMapResult(object: any): Promise<void> {
     if (typeof object !== 'object') return;
     for (const [key, value] of Object.entries(object)) {
       if (Array.isArray(value)) {
@@ -56,11 +56,13 @@ export class QueryUtilService {
             object[key] = value.map((x) => x.id);
           } else {
             // Đệ quy cho từng đối tượng trong mảng
-            for (const item of value) {
-              if (typeof item === 'object' && item !== null) {
-                this.handleMapResult(item);
-              }
-            }
+            await Promise.all(
+              value.map((item) => {
+                if (typeof item === 'object' && item !== null) {
+                  this.handleMapResult(item);
+                }
+              }),
+            );
           }
         }
       } else if (typeof value === 'object' && value !== null) {
@@ -69,7 +71,7 @@ export class QueryUtilService {
           object[key] = value['id'];
         } else {
           // Đệ quy cho đối tượng
-          this.handleMapResult(value);
+          await this.handleMapResult(value);
         }
       }
     }
