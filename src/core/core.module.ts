@@ -20,13 +20,12 @@ import { FileUploadModule } from './upload/upload.module';
 import { RoleGuard } from './guards/role.guard';
 import { ResponseModule } from './response/response.module';
 import { HttpModule } from '@nestjs/axios';
-import { AutoJwtExtractMiddleware } from './middlewares/auto-jwt-extract.midleware';
 import { AssetModule } from './asset/asset.module';
 import { FileLimitModule } from './file-limit/file-limit.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PassportModule } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { JwtStrategy } from 'src/strategies/jwt.strategy';
+import { JwtStrategy } from 'src/core/strategies/jwt.strategy';
 
 @Global()
 @Module({
