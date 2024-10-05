@@ -34,7 +34,7 @@ async function truncateLongStrings(
   maxLength: number = 200,
 ): Promise<any[]> {
   return await Promise.all(
-    dataArray?.map(async (item) => {
+    dataArray.map(async (item) => {
       if (typeof item === 'object' && item !== null) {
         const result: any = {};
         for (const key in item) {
@@ -66,15 +66,15 @@ async function truncateLongStrings(
               result[key] = await truncateLongStrings(
                 [value],
                 excludedFields,
-              )[0]; // Gọi đệ quy với excludedFields
+              ).then((res) => res[0]); // Gọi đệ quy với excludedFields
             } else {
-              result[key] = value;
+              result[key] = value; // Giữ nguyên giá trị nếu không thuộc các trường hợp trên
             }
           }
         }
-        return result;
+        return result; // Trả về kết quả đã xử lý
       }
-      return item;
+      return item; // Nếu không phải đối tượng, trả về giá trị gốc
     }),
   );
 }
