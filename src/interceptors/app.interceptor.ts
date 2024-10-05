@@ -13,11 +13,10 @@ export class AppInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((res) => {
-        console.log(query.full);
         if (!res.data.data || !Array.isArray(res.data.data)) return res;
         const shouldNotTruncate = query.full?.includes('*');
         if (!shouldNotTruncate) {
-          res.data = truncateLongStrings(res?.data?.data, fullArr, 200);
+          res.data.data = truncateLongStrings(res?.data?.data, fullArr, 200);
         }
         return res;
       }),
