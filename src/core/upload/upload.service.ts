@@ -10,6 +10,7 @@ import { Folder } from '../folder/entities/folder.entity';
 import * as fs from 'fs';
 import crypto from 'crypto';
 import { Setting } from '../setting/entities/setting.entity';
+import { User } from '../user/entities/user.entity';
 @Injectable()
 export class FileUploadService {
   constructor(
@@ -60,7 +61,7 @@ export class FileUploadService {
   async handling(
     file: Express.Multer.File,
     body: any,
-    req: CustomRequest,
+    user: User,
     query: TQuery,
     queryRunner: QueryRunner,
   ) {
@@ -96,7 +97,7 @@ export class FileUploadService {
         extension: extension as FileExtension,
         originalName: file.originalname,
         size: file.size,
-        user: req.raw.user.id,
+        user: user.id,
         ...(body.folder && {
           folder: body.folder as any,
         }),

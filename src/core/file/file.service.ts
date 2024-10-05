@@ -8,6 +8,7 @@ import { QueryService } from '../query/query.service';
 import * as path from 'path';
 import * as fs from 'fs';
 import { ResponseService } from '../response/response.service';
+import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class FileService {
@@ -21,7 +22,7 @@ export class FileService {
   async create(
     file: Express.Multer.File,
     body: any,
-    req: CustomRequest,
+    user: User,
     query: TQuery,
   ) {
     const connection = this.entityManager.connection;
@@ -36,7 +37,7 @@ export class FileService {
       const createdFile = await this.fileUploadService.handling(
         file,
         body,
-        req,
+        user,
         query,
         queryRunner,
       );

@@ -15,6 +15,8 @@ import { FileFastifyInterceptor } from 'fastify-file-interceptor';
 import { Protected } from '../decorators/protected-route.decorator';
 import { CustomRequest, TQuery } from '../utils/model.util';
 import { Excluded } from '../decorators/excluded-route.decorator';
+import { User } from '../decorators/user.decorator';
+import { User as TUser } from '../user/entities/user.entity';
 
 @Controller('file')
 @Protected()
@@ -26,10 +28,10 @@ export class FileController {
   create(
     @UploadedFile() file: Express.Multer.File,
     @Body() body: any,
-    @Req() req: CustomRequest,
+    @User() user: TUser,
     @Query() query: TQuery,
   ) {
-    return this.fileService.create(file, body, req, query);
+    return this.fileService.create(file, body, user, query);
   }
 
   @Get()
