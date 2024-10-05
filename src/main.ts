@@ -5,6 +5,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import { AppInterceptor } from './interceptors/app.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -16,6 +17,7 @@ async function bootstrap() {
   );
 
   await app.register(require('@fastify/multipart'));
+  app.useGlobalInterceptors(new AppInterceptor());
 
   app.enableCors({
     origin: '*',
