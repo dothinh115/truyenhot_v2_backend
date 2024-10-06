@@ -24,18 +24,7 @@ export class QueryBuilderService {
     private queryUtilService: QueryUtilService,
   ) {}
 
-  private reset() {
-    this.queryBuilder = null;
-    this.entityName = null;
-    this.joinData = new Set<string>();
-    this.metaData.length = 0;
-    this.isFiltering = false;
-    this.fieldDataArr.length = 0;
-    this.clonedQueryBuilder = null;
-  }
-
   create(repository: Repository<any>) {
-    // this.reset();
     this.entityName = repository.metadata.name.toLowerCase();
     this.queryBuilder = repository.createQueryBuilder(this.entityName);
     this.clonedQueryBuilder = this.queryBuilder.clone();
