@@ -158,9 +158,12 @@ export class QueryBuilderService {
     }
 
     const result = this.isFiltering ? getMany[0] : getMany;
-    for (const item of result) {
-      this.queryUtilService.handleMapResult(item);
-    }
+
+    await Promise.all(
+      result.map((item: any) => {
+        this.queryUtilService.handleMapResult(item);
+      }),
+    );
     return {
       data: result,
       ...((this.metaData.includes('totalCount') || filterCount) && {
