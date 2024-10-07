@@ -75,8 +75,4 @@ import { JwtStrategy } from 'src/core/strategies/jwt.strategy';
   ],
   exports: [CacheModule, HttpModule],
 })
-export class CoreModule {
-  // configure(consumer: MiddlewareConsumer) {
-  //   consumer.apply(AutoJwtExtractMiddleware).forRoutes('*');
-  // }
-}
+export class CoreModule {}

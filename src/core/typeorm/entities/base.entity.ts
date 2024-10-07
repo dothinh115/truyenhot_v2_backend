@@ -5,9 +5,9 @@ import {
   Index,
   UpdateDateColumn,
 } from 'typeorm';
-import { autoSlug } from '../middlewares/auto-slug.middleware';
-import { autoHashPassword } from '../middlewares/auto-hash-password.middleware';
 import { autoTrim } from '../middlewares/auto-trim.middleware';
+import { autoHashPassword } from '../middlewares/auto-hash-password.middleware';
+import { autoSlug } from '../middlewares/auto-slug.middleware';
 
 @Index(['createdAt', 'updatedAt'])
 export class BaseEntity {

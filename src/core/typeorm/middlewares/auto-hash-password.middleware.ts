@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { BcryptService } from '../common/bcrypt.service';
+import { BcryptService } from 'src/core/common/bcrypt.service';
 
 export const autoHashPassword = (entity: any) => {
   if (entity.password) {

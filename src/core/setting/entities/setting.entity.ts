@@ -1,6 +1,6 @@
 import { Disabled } from 'src/core/decorators/disabled.decorator';
 import { Role } from 'src/core/role/entities/role.entity';
-import { BaseEntity } from 'src/core/typeorm/base.entity';
+import { BaseEntity } from 'src/core/typeorm/entities/base.entity';
 import {
   Column,
   Entity,

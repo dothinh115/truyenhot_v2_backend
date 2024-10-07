@@ -1,4 +1,4 @@
-import { CommonService } from '../common/common.service';
+import { CommonService } from 'src/core/common/common.service';
 
 export function autoSlug(
   entity: any,
