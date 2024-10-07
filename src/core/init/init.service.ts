@@ -37,7 +37,6 @@ export class InitService implements OnModuleInit {
       path: string;
       method: MethodType;
       isProtected: boolean;
-      isHidden: boolean;
     }[] = [];
     const controllers = this.discoveryService.getControllers();
 
@@ -70,6 +69,7 @@ export class InitService implements OnModuleInit {
             EXCLUDED_ROUTE_KEY,
             methodHandler,
           );
+          if (isExcluded) return;
 
           const methodPath = this.reflector.get<string>(
             PATH_METADATA,
@@ -91,7 +91,6 @@ export class InitService implements OnModuleInit {
               path: `${controllerPath === '/' ? '' : `/${controllerPath}`}${methodPath === '/' ? '' : `/${methodPath}`}`,
               method,
               isProtected: isMethodProtected,
-              isHidden: isExcluded ? true : false,
             });
           }
         });
