@@ -57,9 +57,8 @@ export class AssetService {
       const lastModified = fileStats.mtime.toUTCString();
       result.headers['last-modified'] = lastModified;
 
-      // Tạo ETag từ nội dung file hoặc từ thời gian sửa đổi cuối cùng
-      const fileContent = await fs.promises.readFile(inputFilePath);
-      const etag = crypto.createHash('md5').update(fileContent).digest('hex');
+      // lấy ETag từ nội dung file
+      const etag = file.hash;
       result.headers['etag'] = etag;
 
       // Kiểm tra các tiêu đề If-None-Match (ETag) và If-Modified-Since (Last-Modified) từ yêu cầu
