@@ -2,12 +2,11 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { FileUploadService } from '../upload/upload.service';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
-import { CustomRequest, TQuery } from '../utils/model.util';
+import { TQuery } from '../utils/model.util';
 import { File } from './entities/file.entity';
 import { QueryService } from '../query/query.service';
 import * as path from 'path';
 import * as fs from 'fs';
-import { ResponseService } from '../response/response.service';
 import { User } from '../user/entities/user.entity';
 
 @Injectable()
@@ -17,7 +16,6 @@ export class FileService {
     @InjectEntityManager() private entityManager: EntityManager,
     @InjectRepository(File) private fileRepo: Repository<File>,
     private queryService: QueryService,
-    private responseService: ResponseService,
   ) {}
   async create(
     file: Express.Multer.File,
@@ -88,8 +86,8 @@ export class FileService {
       const filePath = path.join(
         process.cwd(),
         '/public',
-        deletedFile.data.folder ? deletedFile.data.folder : '',
-        `${deletedFile.data.id}${deletedFile.data.extension}`,
+        deletedFile.folder ? deletedFile.folder : '',
+        `${deletedFile.id}${deletedFile.extension}`,
       );
       try {
         await fs.promises.access(filePath);
@@ -101,8 +99,10 @@ export class FileService {
       await fs.promises.rm(filePath, { force: true });
 
       await queryRunner.commitTransaction();
-      return this.responseService.success('Thành công!');
+      return 'Thành công!';
     } catch (error) {
+      console.log(error);
+
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(error.message);
     } finally {

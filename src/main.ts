@@ -5,7 +5,8 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { AppInterceptor } from './interceptors/app.interceptor';
+import { TruncateLongStringsInterceptor } from './core/interceptors/truncate-long-strings.interceptor';
+import { ResponseInterceptor } from './core/interceptors/response.intercepter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -17,7 +18,8 @@ async function bootstrap() {
   );
 
   await app.register(require('@fastify/multipart'));
-  app.useGlobalInterceptors(new AppInterceptor());
+  app.useGlobalInterceptors(new TruncateLongStringsInterceptor());
+  app.useGlobalInterceptors(new ResponseInterceptor());
 
   app.enableCors({
     origin: '*',

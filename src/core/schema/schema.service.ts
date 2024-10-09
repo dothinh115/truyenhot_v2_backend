@@ -3,14 +3,12 @@ import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { getAllMetadata } from '../utils/metadata.util';
 import { OrmService } from '../query/orm.service';
-import { ResponseService } from '../response/response.service';
 
 @Injectable()
 export class SchemaService {
   constructor(
     @InjectEntityManager() private manager: EntityManager,
     private ormService: OrmService,
-    private responseService: ResponseService,
   ) {}
   findOne(entityName: string) {
     try {
@@ -75,7 +73,7 @@ export class SchemaService {
         }
       }
 
-      return this.responseService.success(schema);
+      return schema;
     } catch (error) {
       throw new BadRequestException(error.message);
     }

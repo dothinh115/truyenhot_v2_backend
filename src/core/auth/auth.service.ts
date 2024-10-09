@@ -9,7 +9,6 @@ import { RegisterAuthDto } from './dto/register-auth.dto';
 import { QueryService } from '../query/query.service';
 import { TQuery } from '../utils/model.util';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { ResponseService } from '../response/response.service';
 import { ConfigService } from '@nestjs/config';
 import settings from '../configs/settings.json';
 import { FastifyReply } from 'fastify';
@@ -29,7 +28,6 @@ export class AuthService {
     private queryService: QueryService,
     @InjectEntityManager()
     private entityManager: EntityManager,
-    private responseService: ResponseService,
     private configService: ConfigService,
     private httpService: HttpService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
@@ -65,10 +63,10 @@ export class AuthService {
         { expiresIn: '7d' },
       );
 
-      return this.responseService.success({
+      return {
         accessToken,
         refreshToken,
-      });
+      };
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -100,9 +98,9 @@ export class AuthService {
         { id: decoded.id },
         { expiresIn: '15m' },
       );
-      return this.responseService.success({
+      return {
         accessToken,
-      });
+      };
     } catch (error) {
       console.log(error);
       //Xử lý khi token hết hạn
@@ -118,9 +116,7 @@ export class AuthService {
     const clientId = this.configService.get('OAUTH_CLIENT_ID');
     const callBackUri = `${settings.API_URL}/auth/google/callback`;
     const scope = 'email profile';
-    return this.responseService.success(
-      `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${callBackUri}&response_type=code&scope=${scope}&state=${state}`,
-    );
+    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${callBackUri}&response_type=code&scope=${scope}&state=${state}`;
   }
 
   async oAuthCallback(code: string, state: string, res: FastifyReply) {
@@ -246,6 +242,6 @@ export class AuthService {
     const data = JSON.parse(cachedData);
     //xoá trong cache để free bộ nhớ và huỷ dữ liệu về token
     await this.cacheManager.del(tokenId);
-    return this.responseService.success(data);
+    return data;
   }
 }

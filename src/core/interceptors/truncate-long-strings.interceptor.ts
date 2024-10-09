@@ -2,7 +2,7 @@ import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-export class AppInterceptor implements NestInterceptor {
+export class TruncateLongStringsInterceptor implements NestInterceptor {
   intercept(
     context: ExecutionContext,
     next: CallHandler<any>,
@@ -13,14 +13,10 @@ export class AppInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map(async (res) => {
-        if (!res || !res.data.data || !Array.isArray(res.data.data)) return res;
+        if (!res || !res.data || !Array.isArray(res.data)) return res;
         const shouldNotTruncate = query.full?.includes('*');
         if (!shouldNotTruncate) {
-          res.data.data = await truncateLongStrings(
-            res?.data?.data,
-            fullArr,
-            200,
-          );
+          res.data = await truncateLongStrings(res?.data, fullArr, 200);
         }
         return res;
       }),

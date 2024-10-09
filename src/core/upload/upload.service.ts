@@ -108,7 +108,7 @@ export class FileUploadService {
       query,
     });
 
-    const id = createdFile.data.data.id;
+    const id = createdFile.data.id;
     const filePath = path.join(
       process.cwd(),
       '/public',

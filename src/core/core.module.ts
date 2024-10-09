@@ -18,7 +18,6 @@ import { FolderModule } from './folder/folder.module';
 import { FileModule } from './file/file.module';
 import { FileUploadModule } from './upload/upload.module';
 import { RoleGuard } from './guards/role.guard';
-import { ResponseModule } from './response/response.module';
 import { HttpModule } from '@nestjs/axios';
 import { AssetModule } from './asset/asset.module';
 import { FileLimitModule } from './file-limit/file-limit.module';
@@ -42,7 +41,6 @@ import { JwtStrategy } from 'src/core/strategies/jwt.strategy';
     DiscoveryModule,
     RoleModule,
     RouteModule,
-    ResponseModule,
     HttpModule,
     SettingModule,
     AuthModule,

@@ -5,7 +5,6 @@ import { QueryBuilderService } from './query-builder.service';
 import { QueryUtilService } from './query-util.service';
 import { OrmService } from './orm.service';
 import * as qs from 'qs';
-import { ResponseService } from '../response/response.service';
 import { FieldService } from './field.service';
 import { FilterService } from './filter.service';
 import { SortService } from './sort.service';
@@ -16,7 +15,6 @@ export class QueryService {
   constructor(
     private queryUtilService: QueryUtilService,
     private ormService: OrmService,
-    private responseService: ResponseService,
     private fieldService: FieldService,
     private filterService: FilterService,
     private sortService: SortService,
@@ -72,7 +70,7 @@ export class QueryService {
       if (id) {
         result.data = result.data[0];
       }
-      return this.responseService.success(result);
+      return result;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -178,6 +176,6 @@ export class QueryService {
 
     //nếu pass hết thì tiến hành xoá
     await repository.delete(id);
-    return this.responseService.success(isExists);
+    return isExists;
   }
 }
