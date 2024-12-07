@@ -54,17 +54,19 @@ export class QueryBuilderService {
     if (filterDataArr.length > 0) {
       let where = '';
       let variables = {};
-      filterDataArr.forEach((item, index) => {
-        if (index === 0) {
-          where += `(${item.where})`;
-        } else {
-          where += ` ${item.type.toUpperCase()} (${item.where})`;
-        }
-        variables = {
-          ...variables,
-          ...item.variable,
-        };
-      });
+      filterDataArr
+        .filter((item) => item.where && item.variable && item.type)
+        .forEach((item, index) => {
+          if (index === 0) {
+            where += `(${item.where})`;
+          } else {
+            where += ` ${item.type.toUpperCase()} (${item.where})`;
+          }
+          variables = {
+            ...variables,
+            ...item.variable,
+          };
+        });
 
       this.queryBuilder.where(where, variables);
     }

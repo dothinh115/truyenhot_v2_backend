@@ -24,6 +24,7 @@ export class FilterService {
         for (const item of value) {
           if ((key === 'and' || key === 'or') && item.where) {
             const conjunction = key.toUpperCase(); // "AND" hoặc "OR"
+
             data.where +=
               data.where === '' ? item.where : ` ${conjunction} ${item.where}`;
             data.variable = { ...data.variable, ...item.variable };
