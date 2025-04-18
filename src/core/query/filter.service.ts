@@ -107,7 +107,6 @@ export class FilterService {
             typeof Number(value) === 'number' && !isNaN(Number(value));
           if (checkIfNumber) value = Number(value);
 
-          //
           //kiểm tra toán tử hợp lệ
           if (!compareKey[key])
             throw new Error(
