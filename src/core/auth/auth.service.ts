@@ -193,7 +193,7 @@ export class AuthService {
           },
           query: null,
         });
-        user = newUser.data.data;
+        user = newUser.data;
       }
 
       //sau đó tiến hành cấp accessToken và refreshToken như bình thường
@@ -227,7 +227,7 @@ export class AuthService {
     } catch (error) {
       await queryRunner.rollbackTransaction();
       const url = new URL(redirectTo);
-      url.searchParams.set('error', error);
+      url.searchParams.set('error', 'true');
       const urlString = url.toString();
       res.status(302).header('Location', urlString).send();
     } finally {
