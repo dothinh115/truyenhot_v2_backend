@@ -114,7 +114,7 @@ export class AuthService {
   getAuthUrl(body: OAuthLoginDto) {
     const state = JSON.stringify(body);
     const clientId = this.configService.get('OAUTH_CLIENT_ID');
-    const callBackUri = `${settings.API_URL}/auth/google/callback`;
+    const callBackUri = `${settings.API_URL}/auth/google/callback`; //https://api.truyenhot.info/auth/google/callback?code=abc&state=/
     const scope = 'email profile';
     return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${callBackUri}&response_type=code&scope=${scope}&state=${state}`;
   }
@@ -220,14 +220,14 @@ export class AuthService {
       await this.cacheManager.set(tokenId, data, 600000);
 
       const url = new URL(redirectTo);
-      url.searchParams.set('tokenId', tokenId);
+      url.searchParams.set('tokenId', tokenId); // abc.com?tokenId=1234
       const urlString = url.toString();
       //redirect về FE
       res.status(302).header('Location', urlString).send();
     } catch (error) {
       await queryRunner.rollbackTransaction();
       const url = new URL(redirectTo);
-      url.searchParams.set('error', 'true');
+      url.searchParams.set('error', error);
       const urlString = url.toString();
       res.status(302).header('Location', urlString).send();
     } finally {
