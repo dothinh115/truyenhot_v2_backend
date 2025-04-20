@@ -47,11 +47,12 @@ export class BaseApiService<CreateDto, UpdateDto> {
 
   async remove(id: number | string) {
     try {
-      return this.queryService.delete({
+      return await this.queryService.delete({
         repository: this.repository,
         id,
       });
     } catch (error) {
+      console.log(error);
       throw new BadRequestException(error.message);
     }
   }
