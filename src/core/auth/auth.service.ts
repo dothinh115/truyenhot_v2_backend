@@ -114,36 +114,13 @@ export class AuthService {
   getAuthUrl(body: OAuthLoginDto) {
     const state = JSON.stringify(body);
     const clientId = this.configService.get('OAUTH_CLIENT_ID');
-    const callBackUri = `${settings.API_URL}/auth/google/callback`; //https://api.truyenhot.info/auth/google/callback?code=abc&state=/
+    const callBackUri = `http://localhost:3000/api/auth/google/callback`; //https://api.truyenhot.info/auth/google/callback?code=abc&state=/
     const scope = 'email profile';
     return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${callBackUri}&response_type=code&scope=${scope}&state=${state}`;
   }
 
-  async oAuthCallback(code: string, state: string, res: FastifyReply) {
-    const connection = this.entityManager.connection;
-    const queryRunner = connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    const userRepo = queryRunner.manager.getRepository(User);
-    const body = JSON.parse(state);
-    const { redirectTo } = body;
-
+  async oAuthCallback(access_token: string) {
     try {
-      const callBackUri = `${settings.API_URL}/auth/google/callback`;
-      //lấy token từ oauth
-      const tokenResponse = await this.httpService.axiosRef.post(
-        'https://oauth2.googleapis.com/token',
-        {
-          client_id: this.configService.get('OAUTH_CLIENT_ID'),
-          client_secret: this.configService.get('OAUTH_SECRET'),
-          code,
-          grant_type: 'authorization_code',
-          redirect_uri: callBackUri,
-        },
-      );
-
-      const { access_token } = tokenResponse.data;
-
       //lấy user info từ oauth
       const userInfoResponse = await this.httpService.axiosRef.get(
         'https://www.googleapis.com/oauth2/v2/userinfo',
@@ -159,7 +136,7 @@ export class AuthService {
       //khi có thông tin user, tiến hành kiểm tra xem email đã được đăng ký trong hệ thống hay chưa
 
       //nếu chưa có thì lưu lại vào hệ thống
-      let user: User = await userRepo.findOne({
+      let user: User = await this.userRepo.findOne({
         where: {
           email: userInfoFromOAuth.email,
         },
@@ -169,7 +146,7 @@ export class AuthService {
           userInfoFromOAuth.name,
         );
         //tìm xem user đã tồn tại chưa
-        let isUsernameExists = await userRepo.exists({
+        let isUsernameExists = await this.userRepo.exists({
           where: {
             username,
           },
@@ -178,14 +155,14 @@ export class AuthService {
           username = this.commonService.generateUsername(
             userInfoFromOAuth.name,
           );
-          isUsernameExists = await userRepo.exists({
+          isUsernameExists = await this.userRepo.exists({
             where: {
               username,
             },
           });
         }
         const newUser = await this.queryService.create({
-          repository: userRepo,
+          repository: this.userRepo,
           body: {
             email: userInfoFromOAuth.email,
             password: Math.random().toString(),
@@ -207,31 +184,12 @@ export class AuthService {
         { expiresIn: '7d' },
       );
 
-      await queryRunner.commitTransaction();
-      //sau khi có dc tất cả session thì tiến hành tạo 1 id để trả về cho FE, đồng thời cache lại kết quả để truy xuất nhanh
-      const tokenId = uuidv4();
-      //chuyển data thành chuỗi để cache
-      const data = JSON.stringify({
+      return {
         accessToken,
         refreshToken,
-      });
-
-      //lưu vào cache, sống 10 phút
-      await this.cacheManager.set(tokenId, data, 600000);
-
-      const url = new URL(redirectTo);
-      url.searchParams.set('tokenId', tokenId); // abc.com?tokenId=1234
-      const urlString = url.toString();
-      //redirect về FE
-      res.status(302).header('Location', urlString).send();
+      };
     } catch (error) {
-      await queryRunner.rollbackTransaction();
-      const url = new URL(redirectTo);
-      url.searchParams.set('error', 'true');
-      const urlString = url.toString();
-      res.status(302).header('Location', urlString).send();
-    } finally {
-      await queryRunner.release();
+      throw new BadRequestException('Có lỗi xảy ra!');
     }
   }
 

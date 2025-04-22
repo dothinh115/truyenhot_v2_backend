@@ -4,7 +4,6 @@ import { RegisterAuthDto } from './dto/register-auth.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { TQuery } from '../utils/model.util';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { FastifyReply } from 'fastify';
 import { OAuthLoginDto } from './dto/oauth-login.dto';
 import { Excluded } from '../decorators/excluded-route.decorator';
 
@@ -32,13 +31,9 @@ export class AuthController {
     return this.authService.getAuthUrl(body);
   }
 
-  @Get('auth/google/callback')
-  oauthCallback(
-    @Query('code') code: string,
-    @Query('state') state: string,
-    @Res() res: FastifyReply,
-  ) {
-    return this.authService.oAuthCallback(code, state, res);
+  @Get('auth/google')
+  oauthCallback(@Query('access_token') access_token: string) {
+    return this.authService.oAuthCallback(access_token);
   }
 
   @Get('auth/token')
