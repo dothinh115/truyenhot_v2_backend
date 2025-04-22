@@ -26,11 +26,6 @@ export class AuthController {
     return this.authService.refreshToken(body);
   }
 
-  @Post('auth/google/url')
-  getAuthUrl(@Body() body: OAuthLoginDto) {
-    return this.authService.getAuthUrl(body);
-  }
-
   @Get('auth/google')
   oauthCallback(@Query('access_token') access_token: string) {
     return this.authService.oAuthCallback(access_token);

@@ -104,14 +104,6 @@ export class AuthService {
     }
   }
 
-  getAuthUrl(body: OAuthLoginDto) {
-    const state = JSON.stringify(body);
-    const clientId = this.configService.get('OAUTH_CLIENT_ID');
-    const callBackUri = `http://localhost:3000/api/auth/google/callback`; //https://api.truyenhot.info/auth/google/callback?code=abc&state=/
-    const scope = 'email profile';
-    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${callBackUri}&response_type=code&scope=${scope}&state=${state}`;
-  }
-
   async oAuthCallback(access_token: string) {
     try {
       //lấy user info từ oauth
