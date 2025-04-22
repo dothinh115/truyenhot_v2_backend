@@ -12,8 +12,6 @@ import { RouteModule } from './route/route.module';
 import { SettingModule } from './setting/setting.module';
 import { AuthModule } from './auth/auth.module';
 import { MeModule } from './me/me.module';
-import { CacheModule } from '@nestjs/cache-manager';
-import { redisStore } from 'cache-manager-redis-yet';
 import { FolderModule } from './folder/folder.module';
 import { FileModule } from './file/file.module';
 import { FileUploadModule } from './upload/upload.module';
@@ -25,6 +23,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { PassportModule } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtStrategy } from 'src/core/strategies/jwt.strategy';
+import { CacheModule } from '@nestjs/cache-manager';
+import KeyvRedis, { Keyv } from '@keyv/redis';
 
 @Global()
 @Module({
@@ -49,10 +49,9 @@ import { JwtStrategy } from 'src/core/strategies/jwt.strategy';
     ScheduleModule.forRoot(),
     AssetModule,
     CacheModule.registerAsync({
+      isGlobal: true, // để sử dụng cache ở bất cứ đâu
       useFactory: async () => ({
-        store: redisStore,
-        host: '127.0.0.1',
-        port: 6379,
+        store: new Keyv({ store: new KeyvRedis('redis://localhost:6379') }),
       }),
     }),
     FolderModule,

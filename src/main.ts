@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -12,12 +12,17 @@ async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter({
-      logger: true,
       connectionTimeout: 120000,
+      logger: true,
     }),
+    {
+      logger: new ConsoleLogger({
+        json: true,
+        colors: true,
+      }),
+    },
   );
-
-  await app.register(require('@fastify/multipart'));
+  app.register(require('@fastify/multipart'));
   app.useGlobalInterceptors(new TruncateLongStringsInterceptor());
   app.useGlobalInterceptors(new ResponseInterceptor());
 
