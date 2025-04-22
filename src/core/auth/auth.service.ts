@@ -1,7 +1,7 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
-import { EntityManager, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { BcryptService } from '../common/bcrypt.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginAuthDto } from './dto/login-auth.dto';
@@ -12,8 +12,6 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { OAuthLoginDto } from './dto/oauth-login.dto';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
 import { CommonService } from '../common/common.service';
 
 @Injectable()
@@ -24,10 +22,8 @@ export class AuthService {
     private jwtService: JwtService,
     private queryService: QueryService,
     @InjectEntityManager()
-    private entityManager: EntityManager,
     private configService: ConfigService,
     private httpService: HttpService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private commonService: CommonService,
   ) {}
 
