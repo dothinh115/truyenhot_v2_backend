@@ -10,13 +10,10 @@ import { QueryService } from '../query/query.service';
 import { TQuery } from '../utils/model.util';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { ConfigService } from '@nestjs/config';
-import settings from '../configs/settings.json';
-import { FastifyReply } from 'fastify';
 import { HttpService } from '@nestjs/axios';
 import { OAuthLoginDto } from './dto/oauth-login.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { v4 as uuidv4 } from 'uuid';
 import { CommonService } from '../common/common.service';
 
 @Injectable()
@@ -191,15 +188,5 @@ export class AuthService {
     } catch (error) {
       throw new BadRequestException('Có lỗi xảy ra!');
     }
-  }
-
-  async getToken(tokenId: string) {
-    const cachedData = await this.cacheManager.get<string>(tokenId);
-    if (!cachedData)
-      throw new BadRequestException('tokenId đã hết hạn hoặc không hợp lệ!');
-    const data = JSON.parse(cachedData);
-    //xoá trong cache để free bộ nhớ và huỷ dữ liệu về token
-    await this.cacheManager.del(tokenId);
-    return data;
   }
 }

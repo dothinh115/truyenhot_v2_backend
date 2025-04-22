@@ -35,9 +35,4 @@ export class AuthController {
   oauthCallback(@Query('access_token') access_token: string) {
     return this.authService.oAuthCallback(access_token);
   }
-
-  @Get('auth/token')
-  getToken(@Query('tokenId') tokenId: string) {
-    return this.authService.getToken(tokenId);
-  }
 }
