@@ -25,7 +25,6 @@ export class UserController {
   }
 
   @Get()
-  @Protected()
   find(@Query() query: TQuery) {
     return this.userService.find(query);
   }
