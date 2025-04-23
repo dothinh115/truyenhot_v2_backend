@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { QueryService } from 'src/core/query/query.service';
 import { TQuery } from 'src/core/utils/model.util';
@@ -8,6 +8,7 @@ export class BaseApiService<CreateDto, UpdateDto> {
   constructor(
     protected repository: Repository<any>,
     protected queryService: QueryService,
+    private logger: Logger = new Logger(BaseApiService.name),
   ) {}
   async create(body: CreateDto, query: TQuery) {
     try {
@@ -17,6 +18,7 @@ export class BaseApiService<CreateDto, UpdateDto> {
         body,
       });
     } catch (error) {
+      this.logger.error(error.message);
       throw new BadRequestException(error.message);
     }
   }
@@ -28,6 +30,7 @@ export class BaseApiService<CreateDto, UpdateDto> {
         query,
       });
     } catch (error) {
+      this.logger.error(error.message);
       throw new BadRequestException(error.message);
     }
   }
@@ -41,6 +44,7 @@ export class BaseApiService<CreateDto, UpdateDto> {
         query,
       });
     } catch (error) {
+      this.logger.error(error.message);
       throw new BadRequestException(error.message);
     }
   }
@@ -52,7 +56,7 @@ export class BaseApiService<CreateDto, UpdateDto> {
         id,
       });
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message);
       throw new BadRequestException(error.message);
     }
   }

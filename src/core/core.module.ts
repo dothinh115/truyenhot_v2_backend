@@ -1,4 +1,4 @@
-import { Global, MiddlewareConsumer, Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
@@ -25,6 +25,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtStrategy } from 'src/core/strategies/jwt.strategy';
 import { CacheModule } from '@nestjs/cache-manager';
 import KeyvRedis, { Keyv } from '@keyv/redis';
+import { LogsModule } from './logs/logs.module';
 
 @Global()
 @Module({
@@ -57,6 +58,7 @@ import KeyvRedis, { Keyv } from '@keyv/redis';
     FolderModule,
     FileModule,
     FileLimitModule,
+    LogsModule,
   ],
   providers: [
     InitService,
