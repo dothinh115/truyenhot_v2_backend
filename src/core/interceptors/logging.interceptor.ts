@@ -19,11 +19,12 @@ export class LoggingInterceptor implements NestInterceptor {
     const method = req.method;
     const url = req.url;
     const userId = req.user?.id || 'Guest';
-    const contextName = `<br><br>[${method}]: ${url}<br>[User: ${userId}]`;
+    const now = new Date().toISOString();
+    const contextName = `<br><br>[${now}] [${method}]: ${url}<br>[User: ${userId}]`;
 
     return next.handle().pipe(
       catchError((err) => {
-        this.logger.error(err.message, `\n${err.stack}\n${contextName}`);
+        this.logger.error(err.message, `${err.stack}${contextName}`);
         return throwError(() => err);
       }),
     );
