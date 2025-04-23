@@ -1,10 +1,9 @@
-import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { TQuery } from '../utils/model.util';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { OAuthLoginDto } from './dto/oauth-login.dto';
 import { Excluded } from '../decorators/excluded-route.decorator';
 
 @Controller()

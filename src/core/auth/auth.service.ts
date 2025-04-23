@@ -11,7 +11,6 @@ import { TQuery } from '../utils/model.util';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
-import { OAuthLoginDto } from './dto/oauth-login.dto';
 import { CommonService } from '../common/common.service';
 
 @Injectable()
