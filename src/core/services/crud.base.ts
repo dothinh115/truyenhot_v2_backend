@@ -8,7 +8,6 @@ export class BaseApiService<CreateDto, UpdateDto> {
   constructor(
     protected repository: Repository<any>,
     protected queryService: QueryService,
-    private logger: Logger = new Logger(BaseApiService.name),
   ) {}
   async create(body: CreateDto, query: TQuery) {
     try {
@@ -18,7 +17,6 @@ export class BaseApiService<CreateDto, UpdateDto> {
         body,
       });
     } catch (error) {
-      this.logger.error(error.message);
       throw new BadRequestException(error.message);
     }
   }
@@ -30,7 +28,6 @@ export class BaseApiService<CreateDto, UpdateDto> {
         query,
       });
     } catch (error) {
-      this.logger.error(error.message);
       throw new BadRequestException(error.message);
     }
   }
@@ -44,7 +41,6 @@ export class BaseApiService<CreateDto, UpdateDto> {
         query,
       });
     } catch (error) {
-      this.logger.error(error.message);
       throw new BadRequestException(error.message);
     }
   }
@@ -56,7 +52,6 @@ export class BaseApiService<CreateDto, UpdateDto> {
         id,
       });
     } catch (error) {
-      this.logger.error(error.message);
       throw new BadRequestException(error.message);
     }
   }
