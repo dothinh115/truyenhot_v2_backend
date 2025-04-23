@@ -31,10 +31,25 @@ export class RoleGuard implements CanActivate {
     const controllerPath =
       this.reflector.get<string[]>('path', controller) ?? [];
     const handlerPath = this.reflector.get<string[]>('path', handler) ?? [];
-    const routePattern = '/' + [controllerPath, handlerPath].join('/');
+
+    const normalizePath = (part: string | string[]): string => {
+      const parts = Array.isArray(part) ? part : [part];
+      return parts
+        .map((p) => p.replace(/^\/|\/$/g, ''))
+        .filter(Boolean)
+        .join('/');
+    };
+
+    const controllerPathNormalized = normalizePath(controllerPath);
+    const handlerPathNormalized = normalizePath(handlerPath);
+
+    const routePattern =
+      '/' +
+      [controllerPathNormalized, handlerPathNormalized]
+        .filter(Boolean)
+        .join('/');
 
     const rawUrl = routePattern.split('?')[0].replace(/\/$/, '');
-    console.log(rawUrl);
     const routeCacheKey = `route:${rawUrl}:${method}`;
     let currentRoute: Route = await this.cacheManager.get<Route>(routeCacheKey);
     if (!currentRoute) {
