@@ -1,6 +1,7 @@
 import {
   CallHandler,
   ExecutionContext,
+  HttpException,
   Injectable,
   Logger,
   NestInterceptor,
@@ -24,6 +25,13 @@ export class LoggingInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       catchError((err) => {
+        let statusCode = 500;
+
+        if (err instanceof HttpException) {
+          statusCode = err.getStatus();
+        }
+
+        if (statusCode === 401) return throwError(() => err);
         this.logger.error(err.message, `${err.stack}${contextName}`);
         return throwError(() => err);
       }),

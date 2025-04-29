@@ -21,7 +21,6 @@ export class AuthService {
     private jwtService: JwtService,
     private queryService: QueryService,
     @InjectEntityManager()
-    private configService: ConfigService,
     private httpService: HttpService,
     private commonService: CommonService,
   ) {}
@@ -117,9 +116,6 @@ export class AuthService {
 
       const userInfoFromOAuth = userInfoResponse.data;
 
-      //khi có thông tin user, tiến hành kiểm tra xem email đã được đăng ký trong hệ thống hay chưa
-
-      //nếu chưa có thì lưu lại vào hệ thống
       let user: User = await this.userRepo.findOne({
         where: {
           email: userInfoFromOAuth.email,
@@ -129,7 +125,6 @@ export class AuthService {
         let username = this.commonService.generateUsername(
           userInfoFromOAuth.name,
         );
-        //tìm xem user đã tồn tại chưa
         let isUsernameExists = await this.userRepo.exists({
           where: {
             username,
@@ -157,7 +152,6 @@ export class AuthService {
         user = newUser.data;
       }
 
-      //sau đó tiến hành cấp accessToken và refreshToken như bình thường
       const accessToken = this.jwtService.sign(
         { id: user.id },
         { expiresIn: '15m' },
