@@ -9,7 +9,6 @@ import { RegisterAuthDto } from './dto/register-auth.dto';
 import { QueryService } from '../query/query.service';
 import { TQuery } from '../utils/model.util';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { CommonService } from '../common/common.service';
 
@@ -20,7 +19,6 @@ export class AuthService {
     private bcryptService: BcryptService,
     private jwtService: JwtService,
     private queryService: QueryService,
-    @InjectEntityManager()
     private httpService: HttpService,
     private commonService: CommonService,
   ) {}
@@ -167,6 +165,7 @@ export class AuthService {
         refreshToken,
       };
     } catch (error) {
+      console.log(error);
       throw new BadRequestException('Có lỗi xảy ra!');
     }
   }

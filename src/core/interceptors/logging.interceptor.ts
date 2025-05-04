@@ -30,7 +30,6 @@ export class LoggingInterceptor implements NestInterceptor {
         if (err instanceof HttpException) {
           statusCode = err.getStatus();
         }
-
         if (statusCode === 401) return throwError(() => err);
         this.logger.error(err.message, `${err.stack}${contextName}`);
         return throwError(() => err);
